@@ -1,0 +1,21 @@
+{
+  "Console.log": {
+    "prefix": ["cl"],
+    "body": ["console.log(\"$1\")"],
+    "description": "console.log"
+  },
+  "Debug": {
+    "prefix": ["db"],
+    "body": ["console.log(\"$1 :\", $1)"],
+    "description": "debug"
+  },
+  "router handler": {
+    "prefix": ["rh"],
+    "body": [
+      "app.use((err: $1, res: Response, req: Request, next: NextFunction) => {",
+      "  $2",
+      "})"
+    ],
+    "description": "debug"
+  }
+}
