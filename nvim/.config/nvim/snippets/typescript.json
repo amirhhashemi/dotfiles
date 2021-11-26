@@ -9,13 +9,27 @@
     "body": ["console.log(\"$1 :\", $1)"],
     "description": "debug"
   },
-  "router handler": {
+  "Import": {
+    "prefix": ["imp"],
+    "body": ["import { $2 } from \"$1\""],
+    "description": "import"
+  },
+  "Route handler": {
     "prefix": ["rh"],
+    "body": [
+      "app.$1(\"$2\", async (req: Request, res: Response) => {",
+      "  $3",
+      "})"
+    ],
+    "description": "import"
+  },
+  "Error handling middleware": {
+    "prefix": ["ehm"],
     "body": [
       "app.use((err: $1, res: Response, req: Request, next: NextFunction) => {",
       "  $2",
       "})"
     ],
-    "description": "debug"
+    "description": "error handling middleware"
   }
 }
