@@ -427,6 +427,17 @@ lua require("nvim-autopairs").setup()
 """""""""""""""""""""""""
 
 
+
+"""""""""""""""""""""""""
+" plugin: vim-fugitiv
+set diffopt=vertical
+
+nmap <leader>gj :diffget //3<CR>
+nmap <leader>gf :diffget //2<CR>
+nmap <leader>gs :G<CR>
+"""""""""""""""""""""""""
+
+
 """""""""""""""""""""""""
 " plugin: colorizer
 lua require("colorizer").setup()
