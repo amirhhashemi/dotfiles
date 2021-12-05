@@ -11,7 +11,6 @@
 
 call plug#begin('~/.config/nvim/plugged')
 """""""""""""""""""""""""
-" Prerequirements
 Plug 'nvim-lua/plenary.nvim' " some plugins like telescope need this
 """""""""""""""""""""""""
 
@@ -19,10 +18,10 @@ Plug 'nvim-lua/plenary.nvim' " some plugins like telescope need this
 """""""""""""""""""""""""
 " These help me code faster
 Plug 'windwp/nvim-autopairs'
-Plug 'tpope/vim-surround'
+Plug 'blackcauldron7/surround.nvim'
 Plug 'mattn/emmet-vim'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'tpope/vim-commentary'
+Plug 'numToStr/Comment.nvim'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
 """""""""""""""""""""""""
@@ -36,16 +35,15 @@ Plug 'hoob3rt/lualine.nvim'
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'norcalli/nvim-colorizer.lua'
+Plug 'folke/todo-comments.nvim'
 """""""""""""""""""""""""
-
+"
 
 """""""""""""""""""""""""
 " IDE functionalities
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'kyazdani42/nvim-tree.lua'
 Plug 'nvim-telescope/telescope.nvim' " fuzzy finder
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rhubarb'
 Plug 'ahmedkhalf/project.nvim'       " finds the root of project
 Plug 'akinsho/toggleterm.nvim'
 Plug 'ThePrimeagen/refactoring.nvim'
@@ -58,11 +56,7 @@ Plug 'lbrayner/vim-rzip'
 
 """""""""""""""""""""""""
 " Themes
-Plug 'morhetz/gruvbox'
-Plug 'ayu-theme/ayu-vim'
-Plug 'projekt0n/github-nvim-theme'
-Plug 'ghifarit53/tokyonight-vim'
-Plug 'mhartington/oceanic-next'
+Plug 'Shatur/neovim-ayu'
 
 " prisma syntax highlighting
 Plug 'pantharshit00/vim-prisma'
@@ -94,12 +88,10 @@ set cursorline
 set termguicolors
 set signcolumn=yes
 
-" make scrolling easier
 set nowrap
 set scrolloff=7
 set sidescrolloff=20
 
-" Better splitting
 set splitbelow
 set splitright
 
@@ -111,23 +103,9 @@ set expandtab
 
 """""""""""""""""""""""""
 " Background
-
 set bg=dark
 
-let g:tokyonight_style = 'night' " available: night, storm
-let g:tokyonight_enable_italic = 1
-colorscheme tokyonight
-
-" let ayucolor="mirage"
-" colorscheme ayu
-
-" let g:gruvbox_contrast_light= 'hard'
-" let g:gruvbox_contrast_dark= 'hard'
-" colorscheme gruvbox
-
-" colorscheme github_dark_default
-
-" colorscheme OceanicNext
+lua require("ayu").colorscheme()
 """""""""""""""""""""""""
 
 
@@ -135,14 +113,14 @@ colorscheme tokyonight
 " Highlights
 
 " hi SignColumn guibg=NONE
-hi CustomGitSignsAdd guifg=#89d138 guibg=none
-hi CustomGitSignsChange guifg=#f7a636 guibg=none
-hi CustomGitSignsDelete guifg=#f94f6f guibg=none
+" hi CustomGitSignsAdd guifg=#89d138 guibg=none
+" hi CustomGitSignsChange guifg=#f7a636 guibg=none
+" hi CustomGitSignsDelete guifg=#f94f6f guibg=none
 hi SignColumn guibg=none
 " hi NvimTreeNormal guibg=#041226
 hi CocFloating guibg=#0b0e11
 
-" Highlight Bad Workspace
+" Highlight Bad Whitespace
 au BufRead,BufNewFile *.py match BadWhitespace /\s\+$/
 highlight BadWhitespace ctermbg=red guibg=darkred
 
@@ -168,7 +146,7 @@ nnoremap N Nzzzv
 nnoremap J mzJ'z
 
 " Undo breakpoints
-" inoremap , ,<c-g>u         
+" inoremap , ,<c-g>u        
 inoremap . .<c-g>u
 inoremap ! !<c-g>u
 inoremap ? ?<c-g>u
@@ -243,8 +221,19 @@ nnoremap <Leader>d :bd<CR>
 
 
 """""""""""""""""""""""""
-" plugin: lualine
+" plugin: todo-comments
+lua << EOF
+  require("todo-comments").setup {
+    signs = false,
+  }
+EOF
 
+nnoremap <leader>ft <CMD>TodoTelescope<CR>
+"""""""""""""""""""""""""
+
+
+"""""""""""""""""""""""""
+" plugin: lualine
 lua <<EOF
 local colors = {
   bg = "#202328",
@@ -279,7 +268,7 @@ local function diff_source()
   end
 end
 
-local lualine = require 'lualine'
+local lualine = require('lualine')
 
 local theme = {
   normal = {
@@ -405,6 +394,14 @@ EOF
 
 
 """""""""""""""""""""""""
+" plugin: surround.nvim
+lua <<EOF
+require"surround".setup{}
+EOF
+"""""""""""""""""""""""""
+
+
+"""""""""""""""""""""""""
 " plugin: bufferline
 lua <<EOF
 require("bufferline").setup({
@@ -427,17 +424,6 @@ lua require("nvim-autopairs").setup()
 """""""""""""""""""""""""
 
 
-
-"""""""""""""""""""""""""
-" plugin: vim-fugitiv
-set diffopt=vertical
-
-nmap <leader>gj :diffget //3<CR>
-nmap <leader>gf :diffget //2<CR>
-nmap <leader>gs :G<CR>
-"""""""""""""""""""""""""
-
-
 """""""""""""""""""""""""
 " plugin: colorizer
 lua require("colorizer").setup()
@@ -450,11 +436,11 @@ lua require("colorizer").setup()
 lua << EOF
 require("gitsigns").setup({
   signs = {
-    add          = {hl = 'CustomGitSignsAdd'   , text = '▎', numhl='GitSignsAddNr'   , linehl='GitSignsAddLn'},
-    change       = {hl = 'CustomGitSignsChange', text = '▎', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
-    delete       = {hl = 'CustomGitSignsDelete', text = '▎', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
-    topdelete    = {hl = 'CustomGitSignsDelete', text = '▎', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
-    changedelete = {hl = 'CustomGitSignsChange', text = '▎', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+    add          = {hl = 'GitSignsAdd'   , text = '▎', numhl='GitSignsAddNr'   , linehl='GitSignsAddLn'},
+    change       = {hl = 'GitSignsChange', text = '▎', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+    delete       = {hl = 'GitSignsDelete', text = '▎', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+    topdelete    = {hl = 'GitSignsDelete', text = '▎', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+    changedelete = {hl = 'GitSignsChange', text = '▎', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
   },
 })
 EOF
@@ -537,7 +523,11 @@ nnoremap <leader>e :NvimTreeToggle<CR>
 
 
 """""""""""""""""""""""""
-" plugin: vim-commentary
+" plugin: Comment.nvim
+
+lua <<EOF
+require('Comment').setup()
+EOF
 
 nmap <leader>c gcc
 vmap <leader>c gc
