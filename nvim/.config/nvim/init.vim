@@ -81,7 +81,6 @@ call plug#end()
 let mapleader = ";"
 inoremap jk <ESC>
 
-set hidden
 set number
 set relativenumber
 set cursorline
@@ -138,8 +137,6 @@ hi Visual guifg=#000000 guibg=#f7768e gui=none
 """""""""""""""""""""""""""""""""""""""""""
 "               KEYBINDINGS               "
 """""""""""""""""""""""""""""""""""""""""""
-
-nnoremap Y yg_
 
 nnoremap n nzzzv
 nnoremap N Nzzzv
