@@ -12,7 +12,7 @@ window:
 scrolling:
   history: 10000
   multiplier: 3
-background_opacity: .97
+background_opacity: 1
 window.dynamic_title: true
 
 # Font Customization
@@ -38,65 +38,30 @@ font:
     persistent_logging: false
 draw_bold_text_with_bright_colors: true
 
-schemes:
-  # Tokyo Night theme, based on both:
-  #   https://github.com/ghifarit53/tokyonight-vim
-  #   https://github.com/enkia/tokyo-night-vscode-theme
-  tokyo-night: &tokyo-night # Default colors
-    primary:
-      background: "0x1a1b26"
-      foreground: "0xa9b1d6"
+colors:
+  primary:
+    background: "0x2b2d3a"
+    foreground: "0xe1e3e4"
 
-    # Normal colors
-    normal:
-      black: "0x32344a"
-      red: "0xf7768e"
-      green: "0x9ece6a"
-      yellow: "0xe0af68"
-      blue: "0x7aa2f7"
-      magenta: "0xad8ee6"
-      cyan: "0x449dab"
-      white: "0x787c99"
+  normal:
+    black: "0x181a1c"
+    red: "0xfb617e"
+    green: "0x9ed06c"
+    yellow: "0xedc763"
+    blue: "0x6dcae8"
+    magenta: "0xbb97ee"
+    cyan: "0xf89860"
+    white: "0xe1e3e4"
 
-    # Bright colors
-    bright:
-      black: "0x444b6a"
-      red: "0xff7a93"
-      green: "0xb9f27c"
-      yellow: "0xff9e64"
-      blue: "0x7da6ff"
-      magenta: "0xbb9af7"
-      cyan: "0x0db9d7"
-      white: "0xacb0d0"
-
-  tokyo-night-storm: &tokyo-night-storm # Default colors
-    primary:
-      background: "0x24283b"
-      foreground: "0xa9b1d6"
-
-    # Normal colors
-    normal:
-      black: "0x32344a"
-      red: "0xf7768e"
-      green: "0x9ece6a"
-      yellow: "0xe0af68"
-      blue: "0x7aa2f7"
-      magenta: "0xad8ee6"
-      cyan: "0x449dab"
-      white: "0x9699a8"
-
-    # Bright colors
-    bright:
-      black: "0x444b6a"
-      red: "0xff7a93"
-      green: "0xb9f27c"
-      yellow: "0xff9e64"
-      blue: "0x7da6ff"
-      magenta: "0xbb9af7"
-      cyan: "0x0db9d7"
-      white: "0xacb0d0"
-
-colors: *tokyo-night
+  bright:
+    black: "0x7e8294"
+    red: "0xfb617e"
+    green: "0x9ed06c"
+    yellow: "0xedc763"
+    blue: "0x6dcae8"
+    magenta: "0xbb97ee"
+    cyan: "0xf89860"
+    white: "0xe1e3e4"
 
 key_bindings:
   - { key: C, mods: Control|Shift, action: Copy }

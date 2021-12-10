@@ -56,7 +56,7 @@ Plug 'lbrayner/vim-rzip'
 
 """""""""""""""""""""""""
 " Themes
-Plug 'Shatur/neovim-ayu'
+Plug 'sainnhe/sonokai'
 
 " prisma syntax highlighting
 Plug 'pantharshit00/vim-prisma'
@@ -104,7 +104,11 @@ set expandtab
 " Background
 set bg=dark
 
-lua require("ayu").colorscheme()
+let g:sonokai_style = 'andromeda'
+let g:sonokai_enable_italic = 1
+let g:sonokai_disable_italic_comment = 1
+colorscheme sonokai
+
 """""""""""""""""""""""""
 
 
@@ -123,7 +127,7 @@ hi CocFloating guibg=#0b0e11
 au BufRead,BufNewFile *.py match BadWhitespace /\s\+$/
 highlight BadWhitespace ctermbg=red guibg=darkred
 
-hi Visual guifg=#000000 guibg=#f7768e gui=none
+" hi Visual guifg=#000000 guibg=#f7768e gui=none
 """""""""""""""""""""""""
 
 
