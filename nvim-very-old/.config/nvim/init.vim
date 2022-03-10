@@ -16,7 +16,6 @@ Plug 'nvim-lua/plenary.nvim' " some plugins like telescope need this
 
 
 """""""""""""""""""""""""
-" These help me code faster
 Plug 'windwp/nvim-autopairs'
 Plug 'blackcauldron7/surround.nvim'
 Plug 'mattn/emmet-vim'
@@ -28,7 +27,6 @@ Plug 'hrsh7th/vim-vsnip-integ'
 
 
 """""""""""""""""""""""""
-" These make vim more beautiful
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'akinsho/nvim-bufferline.lua'
 Plug 'hoob3rt/lualine.nvim'
