@@ -54,7 +54,10 @@ Plug 'lbrayner/vim-rzip'
 
 """""""""""""""""""""""""
 " Themes
-Plug 'sainnhe/sonokai'
+Plug 'rktjmp/lush.nvim'
+Plug 'ellisonleao/gruvbox.nvim'
+Plug 'bluz71/vim-moonfly-colors'
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 
 " prisma syntax highlighting
 Plug 'pantharshit00/vim-prisma'
@@ -102,10 +105,14 @@ set expandtab
 " Background
 set bg=dark
 
-let g:sonokai_style = 'andromeda'
-let g:sonokai_enable_italic = 1
-let g:sonokai_disable_italic_comment = 1
-colorscheme sonokai
+" let g:gruvbox_contrast_dark = 'hard'
+" let g:gruvbox_italic = 1
+" let g:gruvbox_sign_column = 'bg0'
+" let g:gruvbox_color_column = 'bg0'
+" colorscheme gruvbox
+
+let g:tokyonight_style = "night"
+colorscheme tokyonight
 
 """""""""""""""""""""""""
 
@@ -205,7 +212,7 @@ vnoremap < <gv
 nnoremap <leader>h :set hlsearch!<CR>
 
 " delete current buffer
-nnoremap <Leader>d :bd<CR>
+nnoremap <leader>d :bd<CR>
 
 """""""""""""""""""""""""""""""""""""""""""
 "             END OF KEYBINDINGS          "
@@ -476,9 +483,8 @@ require('telescope').setup {
 }
 EOF
 
-nnoremap <leader>ff <CMD>Telescope find_files<CR>
-nnoremap <leader>fg <CMD>Telescope live_grep<CR>
-nnoremap <leader>fp <CMD>Telescope projects<CR>
+nnoremap <c-f> <CMD>Telescope find_files<CR>
+nnoremap <c-g> <CMD>Telescope live_grep<CR>
 """""""""""""""""""""""""
 
 
@@ -517,7 +523,7 @@ require'nvim-tree'.setup {
 }
 EOF
 
-nnoremap <leader>e :NvimTreeToggle<CR>
+nnoremap <c-n> :NvimTreeToggle<CR>
 """""""""""""""""""""""""
 
 
@@ -578,7 +584,6 @@ let g:coc_global_extensions = [
       \'coc-snippets',
       \'coc-tailwindcss',
       \'coc-prisma',
-      \'coc-tabnine',
       \]
 
 inoremap <silent><expr> <TAB>
@@ -652,17 +657,6 @@ nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
 
-
-" Remap <C-f> and <C-b> for scroll float windows/popups.
-if has('nvim-0.4.0') || has('patch-8.2.0750')
-  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-endif
-
 " focus on float window
 nmap <leader>fw <Plug>(coc-float-jump)
 
@@ -719,5 +713,5 @@ autocmd VimEnter * call RzipOverride()
 
 
 """""""""""""""""""""""""""""""""""""""""""
-"           END OF PLUGIN SETTINGS        "
+          " END OF PLUGIN SETTINGS        "
 """""""""""""""""""""""""""""""""""""""""""
