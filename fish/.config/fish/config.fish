@@ -1,5 +1,6 @@
 set fish_greeting
 
+abbr --add ni npm install
 abbr --add gs git switch
 abbr --add gss git status -s
 abbr --add glog git log --oneline --all --graph
@@ -13,8 +14,8 @@ abbr --add grc git rebase --continue
 abbr --add gra git rebase --abort
 abbr --add gsp git stash pop
 abbr --add gsu git stash -u
+abbr --add gdc git diff-tree --no-commit-id --name-status -r
 abbr --add c clear
-
 abbr --add yd yarn dev
 abbr --add yt yarn test
 
