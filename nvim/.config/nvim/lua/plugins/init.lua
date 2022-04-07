@@ -8,7 +8,6 @@ end
 local override_req = require("core.utils").override_req
 
 local plugins = {
-   { "NvChad/extensions" },
    { "nvim-lua/plenary.nvim" },
    { "lewis6991/impatient.nvim" },
    { "nathom/filetype.nvim" },
@@ -16,6 +15,13 @@ local plugins = {
    {
       "wbthomason/packer.nvim",
       event = "VimEnter",
+   },
+
+   {
+      "NvChad/extensions",
+      config = function ()
+         vim.schedule_wrap(require("nvchad.terminal").init())
+      end
    },
 
    {
@@ -185,7 +191,7 @@ local plugins = {
    {
       disable = not plugin_settings.status.alpha,
       "goolord/alpha-nvim",
-      config = override_req("alpha", "plugins.configs.alpha"),
+      config = override_req("alpha", "plugins.configs.alpha", "setup"),
    },
 
    {

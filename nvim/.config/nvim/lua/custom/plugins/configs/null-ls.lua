@@ -4,6 +4,9 @@ local b = null_ls.builtins
 local sources = {
    b.formatting.prettierd,
    b.formatting.stylua,
+   b.formatting.rustfmt.with {
+      args = { "--edition=2018" },
+   },
    -- null_ls.builtins.code_actions.gitsigns,
 }
 
@@ -13,12 +16,11 @@ M.setup = function()
    null_ls.setup {
       debug = true,
       sources = sources,
-
-      on_attach = function(client)
-         if client.resolved_capabilities.document_formatting then
-            vim.cmd "autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()"
-         end
-      end,
+      -- on_attach = function(client)
+      --    if client.resolved_capabilities.document_formatting then
+      --       vim.cmd "autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()"
+      --    end
+      -- end,
    }
 end
 

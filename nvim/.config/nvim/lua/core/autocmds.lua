@@ -1,4 +1,4 @@
-local settings=require("core.utils").load_config().options.nvChad
+local settings = require("core.utils").load_config().options.nvChad
 -- uncomment this if you want to open nvim with a dir
 -- vim.cmd [[ autocmd BufEnter * if &buftype != "terminal" | lcd %:p:h | endif ]]
 

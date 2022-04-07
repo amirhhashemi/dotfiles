@@ -4,6 +4,24 @@ if not present then
    return
 end
 
+local parser_configs = require("nvim-treesitter.parsers").get_parser_configs()
+
+parser_configs.norg_meta = {
+   install_info = {
+      url = "https://github.com/nvim-neorg/tree-sitter-norg-meta",
+      files = { "src/parser.c" },
+      branch = "main",
+   },
+}
+
+parser_configs.norg_table = {
+   install_info = {
+      url = "https://github.com/nvim-neorg/tree-sitter-norg-table",
+      files = { "src/parser.c" },
+      branch = "main",
+   },
+}
+
 local options = {
    ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
    sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
@@ -23,7 +41,7 @@ local options = {
    },
    rainbow = {
       enable = true,
-      extended_mode = false, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+      extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
    },
    autotag = {
       enable = true,
@@ -34,8 +52,10 @@ local options = {
          lookahead = true,
          keymaps = {
             ["af"] = "@function.outer",
-            ["if"] = "@function.inner",
             ["ac"] = "@call.outer",
+            -- ["ic"] = "@comment.outer",
+            -- ["ib"] = "@block.inner",
+            -- ["as"] = "@statement.outer",
          },
       },
    },

@@ -1,4 +1,6 @@
 local userPlugins = require "custom.plugins"
+local map = require("core.utils").map
+local cmp = require "cmp"
 
 local M = {}
 
@@ -10,6 +12,7 @@ M.options = {
    whichwrap = "",
    relativenumber = true,
    numberwidth = 3,
+   hl_override = "custom.highlights"
 }
 
 M.ui = {
@@ -24,6 +27,12 @@ M.plugins = {
       nvim_tree = "custom.plugins.configs.nvim-tree",
       nvim_comment = "custom.plugins.configs.comment",
       luasnip = "custom.plugins.configs.luasnip",
+      telescope = "custom.plugins.configs.telescope",
+      nvim_colorizer = {
+         user_default_options = {
+            css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+         },
+      },
       signature = {
          floating_window = false,
       },
@@ -32,12 +41,6 @@ M.plugins = {
             delay = 0,
          },
          on_attach = function()
-            -- TODO: update this when nvim 0.7 released
-            local function map(mode, lhs, rhs, opts)
-               opts = vim.tbl_extend("force", { noremap = true, silent = true }, opts or {})
-               vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
-            end
-
             -- Actions
             map("n", "<leader>cs", ":Gitsigns stage_hunk<CR>")
             map("v", "<leader>cs", ":Gitsigns stage_hunk<CR>")
@@ -68,6 +71,16 @@ M.plugins = {
          },
          highlights = false,
       },
+      nvim_cmp = {
+         sources = {
+            { name = "nvim_lsp" },
+            { name = "luasnip" },
+            { name = "buffer" },
+            { name = "nvim_lua" },
+            { name = "path" },
+            { name = "neorg" },
+         },
+      },
    },
    default_plugin_remove = {
       "lukas-reineke/indent-blankline.nvim",
@@ -77,6 +90,9 @@ M.plugins = {
       lspconfig = {
          setup_lspconf = "custom.plugins.configs.lsp-installer",
       },
+   },
+   status = {
+      colorizer = true,
    },
 }
 

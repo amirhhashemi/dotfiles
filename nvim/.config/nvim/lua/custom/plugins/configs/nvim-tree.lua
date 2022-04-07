@@ -4,9 +4,6 @@ if not present then
    return
 end
 
-local nvim_tree_config = require "nvim-tree.config"
-local tree_cb = nvim_tree_config.nvim_tree_callback
-
 local g = vim.g
 
 g.nvim_tree_show_icons = {
@@ -16,8 +13,8 @@ g.nvim_tree_show_icons = {
 }
 
 g.nvim_tree_highlight_opened_files = 1
+g.nvim_tree_indent_markers = 0
 
--- following options are the default
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
 g.nvim_tree_icons = {
    default = "",
