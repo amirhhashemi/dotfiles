@@ -23,7 +23,7 @@ parser_configs.norg_table = {
 }
 
 local options = {
-   ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+   ensure_installed = "all",
    sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
    ignore_install = { "jsonc", "fusion" }, -- List of parsers to ignore installing
    autopairs = {

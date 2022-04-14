@@ -1,6 +1,5 @@
 require "custom.autocmds"
 
--- local map = require("core.utils").map
 local map = vim.keymap.set
 local g = vim.g
 local opt = vim.opt
@@ -53,6 +52,43 @@ map("n", "<A-k>", function()
    require("neoscroll").scroll(-15, true, 250)
 end)
 
+map("n", "f", function()
+   require("hop").hint_char1 { direction = require("hop.hint").HintDirection.AFTER_CURSOR, current_line_only = true }
+end)
+map("n", "F", function()
+   require("hop").hint_char1 {
+      direction = require("hop.hint").HintDirection.BEFORE_CURSOR,
+      current_line_only = true,
+   }
+end)
+map("o", "f", function()
+   require("hop").hint_char1 {
+      direction = require("hop.hint").HintDirection.AFTER_CURSOR,
+      current_line_only = true,
+      inclusive_jump = true,
+   }
+end)
+map("o", "F", function()
+   require("hop").hint_char1 {
+      direction = require("hop.hint").HintDirection.BEFORE_CURSOR,
+      current_line_only = true,
+      inclusive_jump = true,
+   }
+end)
+map("", "t", function()
+   require("hop").hint_char1 { direction = require("hop.hint").HintDirection.AFTER_CURSOR, current_line_only = true }
+end)
+map("", "T", function()
+   require("hop").hint_char1 {
+      direction = require("hop.hint").HintDirection.BEFORE_CURSOR,
+      current_line_only = true,
+   }
+end)
+map("n", "<leader>gl", ":HopLineStart<CR>")
+map("n", "<leader>gw", ":HopWord<CR>")
+
+map("n", "<leader>fd", ":Telescope file_browser<CR>", { noremap = true })
+
 map("n", "<leader>on", ":Neorg gtd capture<CR>")
 map("n", "<leader>ov", ":Neorg gtd views<CR>")
 
@@ -61,10 +97,13 @@ map("n", "<leader>cc", ":Telescope <CR>")
 map("n", "n", "nzzzv")
 map("n", "N", "Nzzzv")
 
+-- don't yank text on cut ( X )
+map({ "n", "v" }, "X", '"_x')
+
 -- remove search highlights
 map("n", "<leader>l", ":noh<CR>")
 
--- go to last buffer
+-- go to the last buffer
 map("n", "<leader><leader>", "<C-^>")
 
 map("n", "<leader>bp", ":BufferLinePick<CR>")
@@ -87,4 +126,4 @@ opt.wrap = false
 opt.scrolloff = 8
 opt.sidescrolloff = 8
 
-g.gitblame_enabled = 0
+vim.notify = require "notify"

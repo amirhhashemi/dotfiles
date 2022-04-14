@@ -41,7 +41,7 @@ local M = {}
 
 M.options = options
 
-M.setup = function()
+M.config = function()
    project.setup(options)
 end
 

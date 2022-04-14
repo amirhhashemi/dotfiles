@@ -5,14 +5,16 @@ local cmp = require "cmp"
 local M = {}
 
 -- make sure you maintain the structure of `core/default_config.lua` here,
--- example of changing theme:
 
 M.options = {
    tabstop = 2,
    whichwrap = "",
    relativenumber = true,
    numberwidth = 3,
-   hl_override = "custom.highlights"
+   hl_override = "custom.highlights",
+   nvChad = {
+      copy_cut = true, -- copy cut text ( x key ), visual and normal mode
+   },
 }
 
 M.ui = {

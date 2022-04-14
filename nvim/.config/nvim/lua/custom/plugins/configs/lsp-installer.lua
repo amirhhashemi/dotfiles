@@ -21,6 +21,7 @@ M.setup_lsp = function(attach, capabilities)
       "rust_analyzer",
       "sumneko_lua",
       "svelte",
+      "gopls",
    }
 
    for _, name in pairs(servers) do

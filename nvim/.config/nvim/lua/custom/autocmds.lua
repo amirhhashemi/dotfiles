@@ -10,9 +10,12 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 vim.api.nvim_create_autocmd("FileType", {
    callback = function()
-      vim.cmd "setlocal spell"
-      vim.cmd "hi clear SpellCap"
-      vim.cmd "hi SpellBad gui=undercurl guifg=red"
+      vim.opt_local.spell = true
+      vim.api.nvim_set_hl(0, "SpellCap", {})
+      vim.api.nvim_set_hl(0, "SpellBad", {
+         fg = "red",
+         undercurl = true,
+      })
    end,
    pattern = "gitcommit",
    group = group_git,

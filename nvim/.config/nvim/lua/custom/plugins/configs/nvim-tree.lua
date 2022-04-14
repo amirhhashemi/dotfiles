@@ -13,7 +13,6 @@ g.nvim_tree_show_icons = {
 }
 
 g.nvim_tree_highlight_opened_files = 1
-g.nvim_tree_indent_markers = 0
 
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
 g.nvim_tree_icons = {
@@ -59,6 +58,16 @@ local options = {
          info = "",
          warning = "",
          error = "",
+      },
+   },
+   renderer = {
+      indent_markers = {
+         enable = false,
+         icons = {
+            corner = "└ ",
+            edge = "│ ",
+            none = "  ",
+         },
       },
    },
    update_focused_file = {

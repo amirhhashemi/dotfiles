@@ -64,11 +64,24 @@ local default = {
       -- Developer configurations: Not meant for general override
       buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
    },
+   extensions = {
+      file_browser = {
+         theme = "ivy",
+         mappings = {
+            ["i"] = {
+               -- your custom insert mode mappings
+            },
+            ["n"] = {
+               -- your custom normal mode mappings
+            },
+         },
+      },
+   },
 }
 
 telescope.setup(default)
 
-local extensions = { "themes", "terms", "smart_history", "ui-select" }
+local extensions = { "themes", "terms", "smart_history", "ui-select", "notify", "file_browser" }
 
 pcall(function()
    for _, ext in ipairs(extensions) do

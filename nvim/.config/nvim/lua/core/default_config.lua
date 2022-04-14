@@ -51,6 +51,14 @@ M.options = {
       location = {
          horizontal = "rightbelow",
          vertical = "rightbelow",
+         float = {
+           relative = 'editor',
+           row = 0.3,
+           col = 0.25,
+           width = 0.5,
+           height = 0.4,
+           border = "single",
+         }
       },
    },
 }
@@ -129,6 +137,7 @@ M.plugins = {
          snippet_path = {},
       },
       statusline = {
+         hide_disable = false,
          -- hide, show on specific filetypes
          hidden = {
             "help",
@@ -175,8 +184,8 @@ M.mappings = {
       backward = "<C-h>",
       end_of_line = "<C-e>",
       forward = "<C-l>",
-      next_line = "<C-k>",
-      prev_line = "<C-j>",
+      next_line = "<C-j>",
+      prev_line = "<C-k>",
       beginning_of_line = "<C-a>",
    },
 
@@ -204,10 +213,11 @@ M.mappings = {
       -- this just works like toggleterm kinda
       new_horizontal = "<leader>h",
       new_vertical = "<leader>v",
+      new_float = "<A-i>",
 
       -- spawn new terminals
-      spawn_horizontal = "<leader>H",
-      spawn_vertical = "<leader>V",
+      spawn_horizontal = "<A-h>",
+      spawn_vertical = "<A-v>",
       spawn_window = "<leader>w",
    },
 }

@@ -42,9 +42,6 @@ M.misc = function()
       map_wrapper("n", "<Esc>", ":noh <CR>")
 
       -- center cursor when moving (goto_definition)
-
-      -- yank from current cursor to end of line
-      map_wrapper("n", "Y", "yg$")
    end
 
    local function optional_mappings()
@@ -65,8 +62,8 @@ M.misc = function()
          map("i", inav.backward, "<Left>")
          map("i", inav.end_of_line, "<End>")
          map("i", inav.forward, "<Right>")
-         map("i", inav.next_line, "<Up>")
-         map("i", inav.prev_line, "<Down>")
+         map("i", inav.next_line, "<Down>")
+         map("i", inav.prev_line, "<Up>")
          map("i", inav.beginning_of_line, "<ESC>^i")
       end
 
@@ -114,6 +111,11 @@ M.misc = function()
          "<CMD>lua require('nvchad.terminal').new_or_toggle('vertical', "
             .. tostring(terminal_options.window.vsplit_width)
             .. ")<CR>"
+      )
+      map(
+         { "n", "t" },
+         term_maps.new_float,
+         "<CMD>lua require('nvchad.terminal').new_or_toggle('float')<CR>"
       )
 
       -- spawns terminals
