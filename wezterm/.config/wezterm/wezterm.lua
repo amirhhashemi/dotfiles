@@ -5,9 +5,6 @@ return {
 	font_size = 11.0,
 	window_background_opacity = 1.0,
 	enable_tab_bar = false,
-	keys = {
-		{ key = "/", mods = "CTRL", action = wezterm.action({ SendString = "\x1f" }) },
-	},
 	window_padding = {
 		left = 0,
 		right = 0,
