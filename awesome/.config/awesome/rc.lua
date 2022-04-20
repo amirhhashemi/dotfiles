@@ -225,11 +225,16 @@ screen.connect_signal("request::desktop_decoration", function(s)
         -- require("widgets.separator"),
       },
       -- s.mytasklist, -- Middle widget
-      require("widgets.icon-only-tasklist")(s),
+      {
+        layout = wibox.layout.fixed.horizontal,
+        wibox.widget.textbox("  "),
+        require("widgets.icon-only-tasklist")(s),
+      },
       { -- Right widgets
         layout = wibox.layout.fixed.horizontal,
-        mykeyboardlayout,
         wibox.widget.systray(),
+        wibox.widget.textbox("  "),
+        mykeyboardlayout,
         mytextclock,
         s.mylayoutbox,
       },
