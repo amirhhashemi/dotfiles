@@ -82,9 +82,6 @@ end)
 -- get out of terminal mode
 map("t", "jk", "<C-\\><C-n>")
 
--- pick a hidden term
-map("n", "<leader>W", ":Telescope terms <CR>")
-
 -- spawns terminals
 map("n", "<A-h>", ":execute 15 .. 'new +terminal' | let b:term_type = 'hori' | startinsert <CR>")
 map("n", "<A-v>", ":execute 'vnew +terminal' | let b:term_type = 'vert' | startinsert <CR>")
@@ -132,6 +129,8 @@ M.telescope = function()
   map("n", "<leader>fo", ":Telescope oldfiles <CR>")
   map("n", "<leader>th", ":Telescope themes <CR>")
   map("n", "<leader>cc", ":Telescope<CR>")
+
+  map("n", "<leader>fd", ":Telescope file_browser<CR>")
 end
 
 M.gitsigns = function()

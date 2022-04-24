@@ -1,14 +1,5 @@
 require("plugins.configs.others").lsp_handlers()
 
-local buf_opts = { noremap = true, silent = true }
-
-local map = require("core.utils").map
-
-map("n", "<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>")
-map("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>")
-map("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>")
-map("n", "<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>")
-
 local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
@@ -20,7 +11,12 @@ local on_attach = function(client, bufnr)
   -- See `:help vim.lsp.*` for documentation on any of the below functions
 
   local buf_map = vim.api.nvim_buf_set_keymap
+  local buf_opts = { noremap = true, silent = true }
 
+  buf_map(bufnr, "n", "<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", buf_opts)
+  buf_map(bufnr, "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", buf_opts)
+  buf_map(bufnr, "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", buf_opts)
+  buf_map(bufnr, "n", "<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", buf_opts)
   buf_map(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", buf_opts)
   buf_map(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", buf_opts)
   buf_map(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", buf_opts)

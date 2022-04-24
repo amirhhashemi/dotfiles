@@ -44,8 +44,8 @@ local default = {
       preview_cutoff = 120,
     },
     history = {
-      -- path = "~/.local/share/nvim/databases/telescope_history.sqlite3",
-      path = "~/.config/nvim/telescope_history.sqlite3",
+      path = "~/.local/share/nvim/databases/telescope_history.sqlite3",
+      -- path = "~/.config/nvim/telescope_history.sqlite3",
       limit = 100,
     },
     file_sorter = require("telescope.sorters").get_fuzzy_file,
@@ -85,12 +85,13 @@ local default = {
 
 telescope.setup(default)
 
-local extensions = { "themes", "terms", "smart_history", "ui-select", "notify", "file_browser", "cheat" }
-
 pcall(function()
+  local extensions = { "smart_history", "ui-select", "notify", "file_browser", "cheat" }
   for _, ext in ipairs(extensions) do
-    telescope.load_extension(ext)
+    require("telescope").load_extension(ext)
   end
 
-  require("telescope").extensions.notify.notify()
+  telescope.load_extension("file_browser")
+
+  telescope.extensions.notify.notify()
 end)

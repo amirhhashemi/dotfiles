@@ -30,6 +30,19 @@ return require("packer").startup(function()
     end,
   })
 
+  use("MunifTanjim/nui.nvim")
+
+  use({
+    "bennypowers/nvim-regexplainer",
+    requires = {
+      "nvim-treesitter/nvim-treesitter",
+      "MunifTanjim/nui.nvim",
+    },
+    config = function()
+      require("plugins.configs.others").regexplainer()
+    end,
+  })
+
   use({
     "kyazdani42/nvim-web-devicons",
     config = function()
@@ -166,6 +179,13 @@ return require("packer").startup(function()
   })
 
   use({
+    "Mofiqul/trld.nvim",
+    config = function()
+      require("trld").setup()
+    end,
+  })
+
+  use({
     "andymass/vim-matchup",
     opt = true,
     setup = function()
@@ -274,7 +294,7 @@ return require("packer").startup(function()
   })
   use({ "nvim-telescope/telescope-smart-history.nvim" })
   use({ "nvim-telescope/telescope-ui-select.nvim" })
-  use({ "nvim-telescope/telescope-file-browser.nvim" })
+  use({ "nvim-telescope/telescope-file-browser.nvim", after = "telescope.nvim" })
   use({ "nvim-telescope/telescope-cheat.nvim" })
 
   use({
@@ -394,4 +414,6 @@ return require("packer").startup(function()
       require("core.mappings").dap()
     end,
   })
+
+  use("Pocco81/dap-buddy.nvim")
 end)

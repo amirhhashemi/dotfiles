@@ -310,4 +310,30 @@ M.neorg = function()
   neorg.setup(options)
 end
 
+M.regexplainer = function()
+  local present, regexplainer = pcall(require, "regexplainer")
+  if not present then
+    return
+  end
+
+  regexplainer.setup({
+    auto = true,
+    filetypes = {},
+    mappings = {
+      toggle = "gR",
+      -- examples, not defaults:
+      -- show = 'gS',
+      hide = "gH",
+      -- show_split = 'gP',
+      -- show_popup = 'gU',
+    },
+    popup = {
+      border = {
+        padding = { 1, 1 },
+        style = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
+      },
+    },
+  })
+end
+
 return M

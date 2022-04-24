@@ -52,9 +52,10 @@ local options = {
       lookahead = true,
       keymaps = {
         ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
         ["ac"] = "@call.outer",
         -- ["ic"] = "@comment.outer",
-        -- ["ib"] = "@block.inner",
+        ["ib"] = "@block.inner",
         -- ["as"] = "@statement.outer",
       },
     },

@@ -1,3 +1,5 @@
+local fn = vim.fn
+
 local hl = require("core.utils").hl
 
 local group_lsp = vim.api.nvim_create_augroup("_lsp", { clear = true })
@@ -26,6 +28,16 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("TextYankPost", {
   callback = function()
     vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufReadPost", {
+  pattern = "*",
+  callback = function()
+    if fn.line("'\"") > 0 and fn.line("'\"") <= fn.line("$") then
+      fn.setpos(".", fn.getpos("'\""))
+      vim.api.nvim_feedkeys("zz", "n", true)
+    end
   end,
 })
 
@@ -59,13 +71,13 @@ vim.api.nvim_create_autocmd("Filetype", {
 vim.api.nvim_create_autocmd("BufEnter", { command = [[if &buftype != "terminal" | lcd %:p:h | endif]] })
 
 -- Use relative & absolute line numbers in 'n' & 'i' modes respectively
--- vim.api.nvim_create_autocmd("InsertEnter", {
---    callback = function()
---       vim.opt.relativenumber = false
---    end,
--- })
--- vim.api.nvim_create_autocmd("InsertLeave", {
---    callback = function()
---       vim.opt.relativenumber = true
---    end,
--- })
+vim.api.nvim_create_autocmd("InsertEnter", {
+  callback = function()
+    vim.opt.relativenumber = false
+  end,
+})
+vim.api.nvim_create_autocmd("InsertLeave", {
+  callback = function()
+    vim.opt.relativenumber = true
+  end,
+})
