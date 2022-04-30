@@ -1,39 +1,13 @@
+local lsp_installer = require("nvim-lsp-installer")
+lsp_installer.setup()
+
+local lspconfig = require("lspconfig")
+
 require("plugins.configs.others").lsp_handlers()
-
-local on_attach = function(client, bufnr)
-  vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-
-  -- as we use null-ls formatter by default so we disable the inbult lsp formatter
-  client.resolved_capabilities.document_formatting = false
-  client.resolved_capabilities.document_range_formatting = false
-
-  -- Mappings.
-  -- See `:help vim.lsp.*` for documentation on any of the below functions
-
-  local buf_map = vim.api.nvim_buf_set_keymap
-  local buf_opts = { noremap = true, silent = true }
-
-  buf_map(bufnr, "n", "<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", buf_opts)
-  buf_map(bufnr, "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", buf_opts)
-  buf_map(bufnr, "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", buf_opts)
-  buf_map(bufnr, "n", "<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", buf_opts)
-  buf_map(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", buf_opts)
-  buf_map(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", buf_opts)
-  buf_map(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", buf_opts)
-  buf_map(bufnr, "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", buf_opts)
-  buf_map(bufnr, "n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", buf_opts)
-  buf_map(bufnr, "n", "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", buf_opts)
-  buf_map(bufnr, "n", "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", buf_opts)
-  buf_map(bufnr, "n", "<leader>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>", buf_opts)
-  buf_map(bufnr, "n", "<leader>D", "<cmd>lua vim.lsp.buf.type_definition()<CR>", buf_opts)
-  buf_map(bufnr, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", buf_opts)
-  buf_map(bufnr, "n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", buf_opts)
-  buf_map(bufnr, "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", buf_opts)
-  buf_map(bufnr, "n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", buf_opts)
-end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
+capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
 capabilities.textDocument.completion.completionItem.documentationFormat = { "markdown", "plaintext" }
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 capabilities.textDocument.completion.completionItem.preselectSupport = true
@@ -50,8 +24,6 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
   },
 }
 
-local lsp_installer = require("nvim-lsp-installer")
-
 local servers = {
   "tsserver",
   "cssls",
@@ -64,47 +36,8 @@ local servers = {
   "sumneko_lua",
   "svelte",
   "gopls",
+  "dockerls",
 }
-
-lsp_installer.settings({
-  ui = {},
-})
-
-lsp_installer.on_server_ready(function(server)
-  local opts = {
-    on_attach = on_attach,
-    capabilities = capabilities,
-    flags = {
-      debounce_text_changes = 150,
-    },
-    settings = {},
-  }
-
-  if server.name == "tsserver" then
-    local tsserver_opts = require("plugins.configs.lsp.tsserver")
-    opts = vim.tbl_deep_extend("force", opts, tsserver_opts)
-  end
-
-  if server.name == "jsonls" then
-    local tsserver_opts = require("plugins.configs.lsp.jsonls")
-    opts = vim.tbl_deep_extend("force", opts, tsserver_opts)
-  end
-
-  if server.name == "sumneko_lua" then
-    local sumneko_opts = require("plugins.configs.lsp.sumneko")
-    opts = vim.tbl_deep_extend("keep", sumneko_opts, opts)
-  end
-
-  server:setup(opts)
-  vim.cmd([[ do User LspAttachBuffers ]])
-end)
-
-vim.diagnostic.config({
-  virtual_text = false,
-  signs = true,
-  underline = true,
-  update_in_insert = false,
-})
 
 for _, name in pairs(servers) do
   local server_is_found, server = lsp_installer.get_server(name)
@@ -113,3 +46,43 @@ for _, name in pairs(servers) do
     server:install()
   end
 end
+
+local on_attach = function(client, bufnr)
+  -- As we use null-ls formatter by default so we disable the inbult lsp formatter
+  client.resolved_capabilities.document_formatting = false
+  client.resolved_capabilities.document_range_formatting = false
+
+  -- Mappings
+  require("core.mappings").lspconfig(bufnr)
+end
+
+for _, server in pairs(servers) do
+  local opts = {
+    on_attach = on_attach,
+    capabilities = capabilities,
+  }
+
+  if server == "tsserver" then
+    local tsserver_opts = require("plugins.configs.lsp.tsserver")
+    opts = vim.tbl_deep_extend("force", opts, tsserver_opts)
+  end
+
+  if server == "jsonls" then
+    local tsserver_opts = require("plugins.configs.lsp.jsonls")
+    opts = vim.tbl_deep_extend("force", opts, tsserver_opts)
+  end
+
+  if server == "sumneko_lua" then
+    local sumneko_opts = require("plugins.configs.lsp.sumneko")
+    opts = vim.tbl_deep_extend("keep", sumneko_opts, opts)
+  end
+
+  lspconfig[server].setup(opts)
+end
+
+vim.diagnostic.config({
+  virtual_text = false,
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+})

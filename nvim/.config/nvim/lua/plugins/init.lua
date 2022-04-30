@@ -18,8 +18,6 @@ return require("packer").startup(function()
 
   use({ "antoinemadec/FixCursorHold.nvim" })
 
-  use("famiu/bufdelete.nvim")
-
   use({
     "NvChad/nvterm",
     config = function()
@@ -27,6 +25,7 @@ return require("packer").startup(function()
         horizontal = { location = "rightbelow", split_ratio = 0.3 },
         vertical = { location = "rightbelow", split_ratio = 0.3 },
       })
+      require("core.mappings").nvterm()
     end,
   })
 
@@ -158,14 +157,6 @@ return require("packer").startup(function()
     end,
   })
 
-  use({
-    "ray-x/lsp_signature.nvim",
-    after = "nvim-lspconfig",
-    config = function()
-      require("plugins.configs.others").signature()
-    end,
-  })
-
   use({ "williamboman/nvim-lsp-installer" })
 
   use({ "jose-elias-alvarez/nvim-lsp-ts-utils" })
@@ -179,19 +170,26 @@ return require("packer").startup(function()
   })
 
   use({
-    "Mofiqul/trld.nvim",
+    "j-hui/fidget.nvim",
     config = function()
-      require("trld").setup()
+      require("fidget").setup({})
     end,
   })
 
-  use({
-    "andymass/vim-matchup",
-    opt = true,
-    setup = function()
-      require("core.utils").packer_lazy_load("vim-matchup")
-    end,
-  })
+  -- use({
+  --   "Mofiqul/trld.nvim",
+  --   config = function()
+  --     require("trld").setup()
+  --   end,
+  -- })
+
+  -- use({
+  --   "andymass/vim-matchup",
+  --   opt = true,
+  --   setup = function()
+  --     require("core.utils").packer_lazy_load("vim-matchup")
+  --   end,
+  -- })
 
   use({
     "max397574/better-escape.nvim",
@@ -292,10 +290,10 @@ return require("packer").startup(function()
       require("core.mappings").telescope()
     end,
   })
-  use({ "nvim-telescope/telescope-smart-history.nvim" })
-  use({ "nvim-telescope/telescope-ui-select.nvim" })
-  use({ "nvim-telescope/telescope-file-browser.nvim", after = "telescope.nvim" })
-  use({ "nvim-telescope/telescope-cheat.nvim" })
+  use({ "nvim-telescope/telescope-smart-history.nvim", requires = "nvim-telescope/telescope.nvim" })
+  use({ "nvim-telescope/telescope-ui-select.nvim", requires = "nvim-telescope/telescope.nvim" })
+  use({ "nvim-telescope/telescope-file-browser.nvim", requires = "nvim-telescope/telescope.nvim" })
+  use({ "nvim-telescope/telescope-cheat.nvim", requires = "nvim-telescope/telescope.nvim" })
 
   use({
     "ur4ltz/surround.nvim",
@@ -362,6 +360,10 @@ return require("packer").startup(function()
     config = function()
       vim.notify = require("notify")
     end,
+
+    setup = function()
+      require("core.utils").packer_lazy_load("nvim-notify")
+    end,
   })
 
   use({
@@ -396,14 +398,14 @@ return require("packer").startup(function()
     end,
   })
 
-  use({
-    "phaazon/hop.nvim",
-    branch = "v1",
-    config = function()
-      require("plugins.configs.others").hop()
-      require("core.mappings").hop()
-    end,
-  })
+  -- use({
+  --   "phaazon/hop.nvim",
+  --   branch = "v1",
+  --   config = function()
+  --     require("plugins.configs.others").hop()
+  --     require("core.mappings").hop()
+  --   end,
+  -- })
 
   use({
     "mfussenegger/nvim-dap",

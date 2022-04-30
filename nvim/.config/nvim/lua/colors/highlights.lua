@@ -94,6 +94,8 @@ hl("TelescopePromptPrefix", { bg = "NONE" })
 hl("TelescopeBorder", { fg = c.one_bg })
 hl("TelescopeResultsTitle", { fg = c.black, bg = c.blue })
 
-hl("Normal", { bg = "NONE" })
-hl("Folded", { bg = "NONE" })
-hl("Folded", { fg = "NONE" })
+hl("FidgetTask", { bg = "NONE" })
+
+-- hl("Normal", { bg = "NONE" })
+-- hl("Folded", { bg = "NONE" })
+-- hl("Folded", { fg = "NONE" })

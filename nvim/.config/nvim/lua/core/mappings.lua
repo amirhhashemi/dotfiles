@@ -50,10 +50,22 @@ map("n", "<C-l>", "<C-w>l")
 map("n", "<C-k>", "<C-w>k")
 map("n", "<C-j>", "<C-w>j")
 
+-- quickfix list
+map("n", "<leader>j", ":cnext<CR>")
+map("n", "<leader>k", ":cprev<CR>")
+
+-- control system cilpboard
+map("n", "<leader>y", '"+y')
+map("n", "<leader>p", '"+p')
+
 map("n", "<leader>x", function()
-  -- Force delete current buffer
-  require("bufdelete").bufdelete(0, false)
+  if not vim.bo.buflisted then
+    cmd(":bd!")
+  else
+    cmd("bd")
+  end
 end)
+
 map("n", "<C-c>", ":%y+ <CR>") -- copy whole file content
 map("n", "<S-t>", ":enew <CR>") -- new buffer
 map("n", "<C-t>b", ":tabnew <CR>") -- new tabs
@@ -66,18 +78,6 @@ map("x", "J", ":move '>+1<CR>gv-gv")
 map("x", "K", ":move '<-2<CR>gv-gv")
 map("x", "<A-j>", ":move '>+1<CR>gv-gv")
 map("x", "<A-k>", ":move '<-2<CR>gv-gv")
-
-map("t", "JK", function()
-  terminal.hide()
-end)
-
--- terminal mappings
-map("n", "<Leader>s", function()
-  terminal.new_or_toggle("horizontal")
-end)
-map("n", "<Leader>v", function()
-  terminal.new_or_toggle("vertical")
-end)
 
 -- get out of terminal mode
 map("t", "jk", "<C-\\><C-n>")
@@ -102,6 +102,20 @@ map("n", "<leader>uu", ":NvChadUpdate <CR>")
 -- plugin related mappings
 
 local M = {}
+
+M.nvterm = function()
+  map("t", "JK", function()
+    terminal.hide()
+  end)
+
+  -- terminal mappings
+  map("n", "<Leader>s", function()
+    terminal.new_or_toggle("horizontal")
+  end)
+  map("n", "<Leader>v", function()
+    terminal.new_or_toggle("vertical")
+  end)
+end
 
 M.bufferline = function()
   map("n", "<S-l>", ":BufferLineCycleNext <CR>")
@@ -246,6 +260,87 @@ M.neoscroll = function()
   end)
   map("n", "<A-k>", function()
     neoscroll.scroll(-15, true, 250)
+  end)
+end
+
+M.lspconfig = function(bufnr)
+  local buf = vim.lsp.buf
+  local d = vim.diagnostic
+
+  local buf_map = function(...)
+    local key, lhs, rhs = ...
+    map(key, lhs, rhs, { buffer = bufnr })
+  end
+
+  buf_map("n", "<leader>e", function()
+    d.open_float()
+  end)
+
+  buf_map("n", "[d", function()
+    d.goto_prev()
+  end)
+
+  buf_map("n", "]d", function()
+    d.goto_next()
+  end)
+
+  buf_map("n", "<leader>q", function()
+    d.setloclist({
+      open = false,
+      severity = { min = vim.diagnostic.severity.WARN },
+    })
+  end)
+
+  buf_map("n", "gD", function()
+    buf.declaration()
+  end)
+
+  buf_map("n", "gd", function()
+    buf.definition()
+  end)
+
+  buf_map("n", "K", function()
+    buf.hover()
+  end)
+
+  buf_map("n", "gi", function()
+    buf.implementation()
+  end)
+
+  buf_map("n", "<C-k>", function()
+    buf.signature_help()
+  end)
+
+  buf_map("n", "<leader>wa", function()
+    buf.add_workspace_folder()
+  end)
+
+  buf_map("n", "<leader>wr", function()
+    buf.remove_workspace_folder()
+  end)
+
+  buf_map("n", "<leader>wl", function()
+    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+  end)
+
+  buf_map("n", "<leader>D", function()
+    buf.type_definition()
+  end)
+
+  buf_map("n", "<leader>rn", function()
+    buf.rename()
+  end)
+
+  buf_map("n", "<leader>ca", function()
+    buf.code_action()
+  end)
+
+  buf_map("n", "gr", function()
+    buf.references()
+  end)
+
+  buf_map("n", "<leader>f", function()
+    buf.formatting()
   end)
 end
 

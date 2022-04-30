@@ -172,6 +172,19 @@ M.lsp_handlers = function()
     border = "single",
   })
 
+  local default_publish_handler = vim.lsp.handlers["textDocument/publishDiagnostics"]
+  vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, method, result, client_id, bufnr, config)
+    default_publish_handler(err, method, result, client_id, bufnr, config)
+    vim.diagnostic.setqflist({
+      open = false,
+      severity = { min = vim.diagnostic.severity.WARN },
+    })
+    -- vim.diagnostic.setloclist({
+    --   open = false,
+    --   severity = { min = vim.diagnostic.severity.WARN },
+    -- })
+  end
+
   -- suppress error messages from lang servers
   vim.notify = function(msg, log_level)
     if msg:match("exit code") then
