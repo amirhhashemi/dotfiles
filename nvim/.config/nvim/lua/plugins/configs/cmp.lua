@@ -1,8 +1,4 @@
-local present, cmp = pcall(require, "cmp")
-
-if not present then
-  return
-end
+local cmp = prequire("cmp")
 
 vim.opt.completeopt = "menuone,noselect"
 

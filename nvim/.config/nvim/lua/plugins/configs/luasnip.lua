@@ -1,11 +1,6 @@
-local present, ls = pcall(require, "luasnip")
-
-if not present then
-  return
-end
+local ls = prequire("luasnip")
 
 local types = require("luasnip.util.types")
-local map = require("core.utils").map
 
 ls.config.set_config({
   history = true,

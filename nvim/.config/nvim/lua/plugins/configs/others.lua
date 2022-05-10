@@ -1,12 +1,8 @@
 local M = {}
 
 M.autopairs = function()
-  local present1, autopairs = pcall(require, "nvim-autopairs")
-  local present2, cmp = pcall(require, "cmp")
-
-  if not present1 and present2 then
-    return
-  end
+  local autopairs = prequire("nvim-autopairs")
+  local cmp = prequire("cmp")
 
   autopairs.setup({
     fast_wrap = {},
@@ -19,11 +15,7 @@ M.autopairs = function()
 end
 
 M.better_escape = function()
-  local present, escape = pcall(require, "better_escape")
-
-  if not present then
-    return
-  end
+  local escape = prequire("better_escape")
 
   escape.setup({
     mapping = { "jk" }, -- a table with mappings to use
@@ -34,11 +26,7 @@ M.better_escape = function()
 end
 
 M.blankline = function()
-  local present, blankline = pcall(require, "indent_blankline")
-
-  if not present then
-    return
-  end
+  local blankline = prequire("indent_blankline")
 
   local options = {
     indentLine_enabled = 1,
@@ -64,11 +52,7 @@ M.blankline = function()
 end
 
 M.colorizer = function()
-  local present, colorizer = pcall(require, "colorizer")
-
-  if not present then
-    return
-  end
+  local colorizer = prequire("colorizer")
 
   local options = {
     filetypes = {
@@ -94,37 +78,36 @@ M.colorizer = function()
 end
 
 M.comment = function()
-  local present, comment = pcall(require, "Comment")
-
-  if not present then
-    return
-  end
+  local comment = prequire("Comment")
 
   comment.setup({
     pre_hook = function(ctx)
-      local U = require("Comment.utils")
+      -- Only calculate commentstring for tsx filetypes
+      if vim.bo.filetype == "typescriptreact" then
+        local U = require("Comment.utils")
 
-      local location = nil
-      if ctx.ctype == U.ctype.block then
-        location = require("ts_context_commentstring.utils").get_cursor_location()
-      elseif ctx.cmotion == U.cmotion.v or ctx.cmotion == U.cmotion.V then
-        location = require("ts_context_commentstring.utils").get_visual_start_location()
+        -- Determine whether to use linewise or blockwise commentstring
+        local type = ctx.ctype == U.ctype.line and "__default" or "__multiline"
+
+        -- Determine the location where to calculate commentstring from
+        local location = nil
+        if ctx.ctype == U.ctype.block then
+          location = require("ts_context_commentstring.utils").get_cursor_location()
+        elseif ctx.cmotion == U.cmotion.v or ctx.cmotion == U.cmotion.V then
+          location = require("ts_context_commentstring.utils").get_visual_start_location()
+        end
+
+        return require("ts_context_commentstring.internal").calculate_commentstring({
+          key = type,
+          location = location,
+        })
       end
-
-      return require("ts_context_commentstring.internal").calculate_commentstring({
-        key = ctx.ctype == U.ctype.line and "__default" or "__multiline",
-        location = location,
-      })
     end,
   })
 end
 
 M.signature = function()
-  local present, lsp_signature = pcall(require, "lsp_signature")
-
-  if not present then
-    return
-  end
+  local lsp_signature = prequire("lsp_signature")
 
   lsp_signature.setup({
     bind = true,
@@ -199,11 +182,7 @@ M.lsp_handlers = function()
 end
 
 M.gitsigns = function()
-  local present, gitsigns = pcall(require, "gitsigns")
-
-  if not present then
-    return
-  end
+  local gitsigns = prequire("gitsigns")
 
   gitsigns.setup({
     current_line_blame_opts = {
@@ -223,11 +202,7 @@ M.gitsigns = function()
 end
 
 M.project = function()
-  local present, project = pcall(require, "project_nvim")
-
-  if not present then
-    return
-  end
+  local project = prequire("project_nvim")
 
   local options = {
     {
@@ -245,11 +220,7 @@ M.project = function()
 end
 
 M.null_ls = function()
-  local present, null_ls = pcall(require, "null-ls")
-
-  if not present then
-    return
-  end
+  local null_ls = prequire("null-ls")
 
   local b = null_ls.builtins
 
@@ -275,11 +246,7 @@ M.null_ls = function()
 end
 
 M.hop = function()
-  local present, hop = pcall(require, "hop")
-
-  if not present then
-    return
-  end
+  local hop = prequire(require, "hop")
 
   hop.setup({
     keys = "etovxqpdygfblzhckisuran",
@@ -287,11 +254,7 @@ M.hop = function()
 end
 
 M.neorg = function()
-  local present, neorg = pcall(require, "neorg")
-
-  if not present then
-    return
-  end
+  local neorg = prequire("neorg")
 
   local options = {
     load = {
@@ -324,10 +287,7 @@ M.neorg = function()
 end
 
 M.regexplainer = function()
-  local present, regexplainer = pcall(require, "regexplainer")
-  if not present then
-    return
-  end
+  local regexplainer = prequire("regexplainer")
 
   regexplainer.setup({
     auto = true,
@@ -344,6 +304,30 @@ M.regexplainer = function()
       border = {
         padding = { 1, 1 },
         style = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
+      },
+    },
+  })
+end
+
+M.lsp_installer = function()
+  local lsp_installer = prequire("nvim-lsp-installer")
+
+  lsp_installer.setup({
+    automatic_installation = true, -- automatically detect which servers to install (based on which servers are set up via lspconfig)
+    ui = {
+      icons = {
+        server_installed = "",
+        server_pending = "",
+        server_uninstalled = "ﮊ",
+      },
+      keymaps = {
+        toggle_server_expand = "<CR>",
+        install_server = "i",
+        update_server = "u",
+        check_server_version = "c",
+        update_all_servers = "U",
+        check_outdated_servers = "C",
+        uninstall_server = "X",
       },
     },
   })

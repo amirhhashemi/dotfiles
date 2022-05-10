@@ -1,6 +1,3 @@
-local map = require("core.utils").map
-local terminal = require("nvterm.terminal")
-
 local cmd = vim.cmd
 
 -- Don't copy the replaced text after pasting in visual mode
@@ -104,16 +101,13 @@ map("n", "<leader>uu", ":NvChadUpdate <CR>")
 local M = {}
 
 M.nvterm = function()
-  map("t", "JK", function()
-    terminal.hide()
-  end)
+  local terminal = prequire("nvterm.terminal")
 
-  -- terminal mappings
-  map("n", "<Leader>s", function()
-    terminal.new_or_toggle("horizontal")
+  map("n", "<leader>h", function()
+    terminal.toggle("horizontal")
   end)
-  map("n", "<Leader>v", function()
-    terminal.new_or_toggle("vertical")
+  map("n", "<leader>v", function()
+    terminal.toggle("vertical")
   end)
 end
 
@@ -123,13 +117,12 @@ M.bufferline = function()
 end
 
 M.comment = function()
-  map("n", "<C-_>", ":lua require('Comment.api').toggle_current_linewise()<CR>")
-  map("v", "<C-_>", ":lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())<CR>")
+  map("n", "<C-_>", '<CMD>lua require("Comment.api").toggle_current_linewise()<CR>')
+  map("v", "<C-_>", '<ESC><CMD>lua require("Comment.api").toggle_linewise_op(vim.fn.visualmode())<CR>')
 end
 
 M.nvimtree = function()
   map("n", "<C-n>", ":NvimTreeToggle <CR>")
-  map("n", "<leader>e", ":NvimTreeFocus <CR>")
 end
 
 M.telescope = function()
@@ -253,7 +246,7 @@ M.hop = function()
 end
 
 M.neoscroll = function()
-  local neoscroll = require("neoscroll")
+  local neoscroll = prequire("neoscroll")
 
   map("n", "<A-j>", function()
     neoscroll.scroll(15, true, 250)
@@ -267,9 +260,8 @@ M.lspconfig = function(bufnr)
   local buf = vim.lsp.buf
   local d = vim.diagnostic
 
-  local buf_map = function(...)
-    local key, lhs, rhs = ...
-    map(key, lhs, rhs, { buffer = bufnr })
+  local buf_map = function(mode, lhs, rhs)
+    map(mode, lhs, rhs, { buffer = bufnr })
   end
 
   buf_map("n", "<leader>e", function()

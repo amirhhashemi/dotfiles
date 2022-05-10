@@ -1,6 +1,3 @@
-local lsp_installer = require("nvim-lsp-installer")
-lsp_installer.setup()
-
 local lspconfig = require("lspconfig")
 
 require("plugins.configs.others").lsp_handlers()
@@ -24,6 +21,15 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
   },
 }
 
+local on_attach = function(client, bufnr)
+  -- As we use null-ls formatter by default so we disable the inbult lsp formatter
+  client.resolved_capabilities.document_formatting = false
+  client.resolved_capabilities.document_range_formatting = false
+
+  -- Mappings
+  require("core.mappings").lspconfig(bufnr)
+end
+
 local servers = {
   "tsserver",
   "cssls",
@@ -38,23 +44,6 @@ local servers = {
   "gopls",
   "dockerls",
 }
-
-for _, name in pairs(servers) do
-  local server_is_found, server = lsp_installer.get_server(name)
-  if server_is_found and not server:is_installed() then
-    print("Installing " .. name)
-    server:install()
-  end
-end
-
-local on_attach = function(client, bufnr)
-  -- As we use null-ls formatter by default so we disable the inbult lsp formatter
-  client.resolved_capabilities.document_formatting = false
-  client.resolved_capabilities.document_range_formatting = false
-
-  -- Mappings
-  require("core.mappings").lspconfig(bufnr)
-end
 
 for _, server in pairs(servers) do
   local opts = {

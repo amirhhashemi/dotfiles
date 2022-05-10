@@ -1,8 +1,4 @@
-local present, treesitter = pcall(require, "nvim-treesitter.configs")
-
-if not present then
-  return
-end
+local treesitter = prequire("nvim-treesitter.configs")
 
 local parser_configs = require("nvim-treesitter.parsers").get_parser_configs()
 

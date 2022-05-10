@@ -1,8 +1,4 @@
-local present, packer = pcall(require, "plugins.packerInit")
-
-if not present then
-  return false
-end
+local packer = prequire("plugins.packerInit")
 
 local use = packer.use
 
@@ -24,6 +20,12 @@ return require("packer").startup(function()
       require("nvterm").setup({
         horizontal = { location = "rightbelow", split_ratio = 0.3 },
         vertical = { location = "rightbelow", split_ratio = 0.3 },
+        mappings = {
+          toggle = {
+            horizontal = "<leader>h",
+            vertical = "<leader>v",
+          },
+        },
       })
       require("core.mappings").nvterm()
     end,
@@ -100,19 +102,17 @@ return require("packer").startup(function()
   -- git stuff
   use({
     "lewis6991/gitsigns.nvim",
-    opt = true,
     event = "BufRead",
     config = function()
       require("plugins.configs.others").gitsigns()
     end,
     setup = function()
-      require("core.utils").packer_lazy_load("gitsigns.nvim")
+      packer_lazy_load("gitsigns.nvim")
     end,
   })
 
   use({
     "pwntester/octo.nvim",
-    opt = true,
     requires = {
       "nvim-lua/plenary.nvim",
       "nvim-telescope/telescope.nvim",
@@ -122,20 +122,19 @@ return require("packer").startup(function()
       require("octo").setup()
     end,
     setup = function()
-      require("core.utils").packer_lazy_load("octo.nvim")
+      packer_lazy_load("octo.nvim")
     end,
   })
 
   use({
     "sindrets/diffview.nvim",
-    opt = true,
     after = "nvim-web-devicons",
     requires = "nvim-lua/plenary.nvim",
     config = function()
       require("diffview").setup()
     end,
     setup = function()
-      require("core.utils").packer_lazy_load("diffview.nvim")
+      packer_lazy_load("diffview.nvim")
     end,
   })
 
@@ -144,16 +143,17 @@ return require("packer").startup(function()
   use({
     "neovim/nvim-lspconfig",
     module = "lspconfig",
-    opt = true,
+    after = "nvim-lsp-installer",
+    config = function()
+      require("plugins.configs.others").lsp_installer()
+      require("plugins.configs.lspconfig")
+    end,
     setup = function()
-      require("core.utils").packer_lazy_load("nvim-lspconfig")
+      packer_lazy_load("nvim-lspconfig")
       -- reload the current file so lsp actually starts for it
       vim.defer_fn(function()
         vim.cmd('if &ft == "packer" | echo "" | else | silent! e %')
       end, 0)
-    end,
-    config = function()
-      require("plugins.configs.lspconfig")
     end,
   })
 
@@ -183,14 +183,6 @@ return require("packer").startup(function()
   --   end,
   -- })
 
-  -- use({
-  --   "andymass/vim-matchup",
-  --   opt = true,
-  --   setup = function()
-  --     require("core.utils").packer_lazy_load("vim-matchup")
-  --   end,
-  -- })
-
   use({
     "max397574/better-escape.nvim",
     event = "InsertCharPre",
@@ -211,8 +203,12 @@ return require("packer").startup(function()
   use({
     "L3MON4D3/LuaSnip",
     after = "nvim-cmp",
+    event = "BufEnter",
     config = function()
       require("plugins.configs.luasnip")
+    end,
+    setup = function()
+      packer_lazy_load("LuaSnip")
     end,
   })
 
@@ -253,8 +249,6 @@ return require("packer").startup(function()
   use({
     "numToStr/Comment.nvim",
     module = "Comment",
-    keys = { "gcc" },
-
     setup = function()
       require("core.mappings").comment()
     end,
@@ -290,10 +284,10 @@ return require("packer").startup(function()
       require("core.mappings").telescope()
     end,
   })
-  use({ "nvim-telescope/telescope-smart-history.nvim", requires = "nvim-telescope/telescope.nvim" })
   use({ "nvim-telescope/telescope-ui-select.nvim", requires = "nvim-telescope/telescope.nvim" })
   use({ "nvim-telescope/telescope-file-browser.nvim", requires = "nvim-telescope/telescope.nvim" })
   use({ "nvim-telescope/telescope-cheat.nvim", requires = "nvim-telescope/telescope.nvim" })
+  use({ "nvim-telescope/telescope-fzf-native.nvim", requires = "nvim-telescope/telescope.nvim", run = "make" })
 
   use({
     "ur4ltz/surround.nvim",
@@ -304,12 +298,11 @@ return require("packer").startup(function()
 
   use({
     "karb94/neoscroll.nvim",
-    opt = true,
     config = function()
       require("neoscroll").setup()
     end,
     setup = function()
-      require("core.utils").packer_lazy_load("neoscroll.nvim")
+      packer_lazy_load("neoscroll.nvim")
       require("core.mappings").neoscroll()
     end,
   })
@@ -322,19 +315,18 @@ return require("packer").startup(function()
       require("plugins.configs.others").neorg()
     end,
     setup = function()
-      require("core.utils").packer_lazy_load("neorg")
+      packer_lazy_load("neorg")
     end,
   })
 
   use({
     "folke/todo-comments.nvim",
-    opt = true,
     requires = "nvim-lua/plenary.nvim",
     config = function()
       require("todo-comments").setup()
     end,
     setup = function()
-      require("core.utils").packer_lazy_load("todo-comments.nvim")
+      packer_lazy_load("todo-comments.nvim")
     end,
   })
 
@@ -360,9 +352,8 @@ return require("packer").startup(function()
     config = function()
       vim.notify = require("notify")
     end,
-
     setup = function()
-      require("core.utils").packer_lazy_load("nvim-notify")
+      packer_lazy_load("nvim-notify")
     end,
   })
 
@@ -398,15 +389,6 @@ return require("packer").startup(function()
     end,
   })
 
-  -- use({
-  --   "phaazon/hop.nvim",
-  --   branch = "v1",
-  --   config = function()
-  --     require("plugins.configs.others").hop()
-  --     require("core.mappings").hop()
-  --   end,
-  -- })
-
   use({
     "mfussenegger/nvim-dap",
     config = function()
@@ -416,6 +398,4 @@ return require("packer").startup(function()
       require("core.mappings").dap()
     end,
   })
-
-  use("Pocco81/dap-buddy.nvim")
 end)

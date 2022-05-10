@@ -86,7 +86,7 @@ local default = {
 telescope.setup(default)
 
 pcall(function()
-  local extensions = { "smart_history", "ui-select", "notify", "file_browser", "cheat" }
+  local extensions = { "fzf", "ui-select", "notify", "file_browser", "cheat" }
   for _, ext in ipairs(extensions) do
     require("telescope").load_extension(ext)
   end
