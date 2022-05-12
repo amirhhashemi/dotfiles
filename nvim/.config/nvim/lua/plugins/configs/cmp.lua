@@ -2,7 +2,29 @@ local cmp = prequire("cmp")
 
 vim.opt.completeopt = "menuone,noselect"
 
+local function border(hl_name)
+  return {
+    { "╭", hl_name },
+    { "─", hl_name },
+    { "╮", hl_name },
+    { "│", hl_name },
+    { "╯", hl_name },
+    { "─", hl_name },
+    { "╰", hl_name },
+    { "│", hl_name },
+  }
+end
+
 local options = {
+  window = {
+    completion = {
+      border = border("CmpBorder"),
+      winhighlight = "Normal:CmpBg,CursorLine:Visual,Search:None",
+    },
+    documentation = {
+      border = border("CmpDocBorder"),
+    },
+  },
   snippet = {
     expand = function(args)
       require("luasnip").lsp_expand(args.body)

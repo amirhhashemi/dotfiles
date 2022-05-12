@@ -1,7 +1,14 @@
 local cmd = vim.cmd
 
 -- Don't copy the replaced text after pasting in visual mode
-map("v", "p", "p:let @+=@0<CR>")
+map("v", "p", '"_dP')
+map("v", "<leader>p", '"_d"+P')
+
+-- control system cilpboard
+map({ "n", "v" }, "<leader>y", '"+y')
+map({ "n" }, "<leader>Y", '"+y$')
+map({ "n" }, "<leader>p", '"+p')
+map({ "n", "v" }, "<leader>P", '"+P')
 
 -- Allow moving the cursor through wrapped lines with j, k, <Up> and <Down>
 -- http://www.reddit.com/r/vim/comments/2k4cbr/problem_with_gj_and_gk/
@@ -50,10 +57,6 @@ map("n", "<C-j>", "<C-w>j")
 -- quickfix list
 map("n", "<leader>j", ":cnext<CR>")
 map("n", "<leader>k", ":cprev<CR>")
-
--- control system cilpboard
-map("n", "<leader>y", '"+y')
-map("n", "<leader>p", '"+p')
 
 map("n", "<leader>x", function()
   if not vim.bo.buflisted then
@@ -183,7 +186,7 @@ M.navigator = function()
 end
 
 M.dap = function()
-  local dap = require("dap")
+  local dap = prequire("dap")
 
   map("n", "<leader>tt", function()
     dap.toggle_breakpoint()

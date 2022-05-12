@@ -19,11 +19,6 @@ bufferline.setup({
     separator_style = "thin",
     always_show_bufferline = true,
     diagnostics = true,
-    ---@diagnostic disable-next-line: unused-local
-    diagnostics_indicator = function(count, level)
-      local icon = level:match("error") and " " or "f"
-      return " " .. icon
-    end,
     custom_filter = function(buf_number)
       -- Func to filter out our managed/persistent split terms
       local present_type, type = pcall(function()

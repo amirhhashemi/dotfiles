@@ -59,11 +59,11 @@ _G.log = {
   end,
 }
 
-_G.prequire = function(m)
-  local present, required = pcall(require, m)
-  if not present then
-    log.err("Error loading " .. required .. "\n\n" .. required)
+_G.prequire = function(module)
+  local ok, res = pcall(require, module)
+  if not ok then
+    log.err("Error loading " .. module .. "\n\n" .. res)
     return
   end
-  return required
+  return res
 end

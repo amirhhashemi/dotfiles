@@ -16,6 +16,7 @@ g.nvim_tree_show_icons = {
   folders = 1,
   files = 1,
   git = 0,
+  folder_arrows = 1,
 }
 
 g.nvim_tree_icons = {

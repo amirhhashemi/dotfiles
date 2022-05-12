@@ -10,7 +10,7 @@ g.do_filetype_lua = 1
 
 opt.laststatus = 3 -- global statusline
 opt.title = true
--- opt.clipboard = "unnamedplus"
+opt.clipboard = ""
 opt.cmdheight = 1
 opt.cul = true -- cursor line
 

@@ -15,18 +15,19 @@ return require("packer").startup(function()
   use({ "antoinemadec/FixCursorHold.nvim" })
 
   use({
+    "lukas-reineke/indent-blankline.nvim",
+    ft = { "python" },
+    config = function()
+      require("plugins.configs.others").indent_blankline()
+    end,
+  })
+
+  use({
     "NvChad/nvterm",
     config = function()
-      require("nvterm").setup({
-        horizontal = { location = "rightbelow", split_ratio = 0.3 },
-        vertical = { location = "rightbelow", split_ratio = 0.3 },
-        mappings = {
-          toggle = {
-            horizontal = "<leader>h",
-            vertical = "<leader>v",
-          },
-        },
-      })
+      require("plugins.configs.others").nvterm()
+    end,
+    setup = function()
       require("core.mappings").nvterm()
     end,
   })
@@ -39,15 +40,24 @@ return require("packer").startup(function()
       "nvim-treesitter/nvim-treesitter",
       "MunifTanjim/nui.nvim",
     },
+    event = "BufRead",
     config = function()
       require("plugins.configs.others").regexplainer()
     end,
+    setup = function()
+      packer_lazy_load("nvim-regexplainer")
+    end,
   })
+
+  use("nvim-treesitter/playground")
 
   use({
     "kyazdani42/nvim-web-devicons",
     config = function()
       require("plugins.configs.icons")
+    end,
+    setup = function()
+      packer_lazy_load("nvim-web-devicons")
     end,
   })
 

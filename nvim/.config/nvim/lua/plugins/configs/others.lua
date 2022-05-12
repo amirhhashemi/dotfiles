@@ -25,32 +25,6 @@ M.better_escape = function()
   })
 end
 
-M.blankline = function()
-  local blankline = prequire("indent_blankline")
-
-  local options = {
-    indentLine_enabled = 1,
-    char = "▏",
-    filetype_exclude = {
-      "help",
-      "terminal",
-      "alpha",
-      "packer",
-      "lspinfo",
-      "TelescopePrompt",
-      "TelescopeResults",
-      "nvchad_cheatsheet",
-      "lsp-installer",
-      "",
-    },
-    buftype_exclude = { "terminal" },
-    show_trailing_blankline_indent = false,
-    show_first_indent_level = false,
-  }
-
-  blankline.setup(options)
-end
-
 M.colorizer = function()
   local colorizer = prequire("colorizer")
 
@@ -158,10 +132,10 @@ M.lsp_handlers = function()
   local default_publish_handler = vim.lsp.handlers["textDocument/publishDiagnostics"]
   vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, method, result, client_id, bufnr, config)
     default_publish_handler(err, method, result, client_id, bufnr, config)
-    vim.diagnostic.setqflist({
-      open = false,
-      severity = { min = vim.diagnostic.severity.WARN },
-    })
+    -- vim.diagnostic.setqflist({
+    --   open = false,
+    --   severity = { min = vim.diagnostic.severity.WARN },
+    -- })
     -- vim.diagnostic.setloclist({
     --   open = false,
     --   severity = { min = vim.diagnostic.severity.WARN },
@@ -328,6 +302,48 @@ M.lsp_installer = function()
         update_all_servers = "U",
         check_outdated_servers = "C",
         uninstall_server = "X",
+      },
+    },
+  })
+end
+
+M.indent_blankline = function()
+  local indent_blankline = prequire("indent_blankline")
+
+  indent_blankline.setup({
+    indentLine_enabled = 1,
+    char = "▏",
+    context_char = "▏",
+    filetype_exclude = {
+      "help",
+      "terminal",
+      "alpha",
+      "packer",
+      "lspinfo",
+      "TelescopePrompt",
+      "TelescopeResults",
+      "nvchad_cheatsheet",
+      "lsp-installer",
+      "",
+    },
+    buftype_exclude = { "terminal" },
+    show_trailing_blankline_indent = false,
+    show_first_indent_level = false,
+    show_current_context = true,
+    show_current_context_start = false,
+  })
+end
+
+M.nvterm = function()
+  local nvterm = prequire("nvterm")
+
+  nvterm.setup({
+    horizontal = { location = "rightbelow", split_ratio = 0.3 },
+    vertical = { location = "rightbelow", split_ratio = 0.3 },
+    mappings = {
+      toggle = {
+        horizontal = "<leader>h",
+        vertical = "<leader>v",
       },
     },
   })
