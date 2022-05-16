@@ -50,15 +50,15 @@ autocmd("BufReadPost", {
 })
 
 -- File extension specific tabbing
-autocmd("Filetype", {
-  pattern = "python",
-  callback = function()
-    vim.opt_local.expandtab = true
-    vim.opt_local.tabstop = 4
-    vim.opt_local.shiftwidth = 4
-    vim.opt_local.softtabstop = 4
-  end,
-})
+-- autocmd("Filetype", {
+--   pattern = "python",
+--   callback = function()
+--     vim.opt_local.expandtab = true
+--     vim.opt_local.tabstop = 4
+--     vim.opt_local.shiftwidth = 4
+--     vim.opt_local.softtabstop = 4
+--   end,
+-- })
 
 -- uncomment this if you want to open nvim with a dir
 autocmd("BufEnter", {

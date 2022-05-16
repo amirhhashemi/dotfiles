@@ -43,6 +43,7 @@ local servers = {
   "svelte",
   "gopls",
   "dockerls",
+  "pyright",
 }
 
 for _, server in pairs(servers) do

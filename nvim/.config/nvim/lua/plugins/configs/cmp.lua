@@ -16,6 +16,9 @@ local function border(hl_name)
 end
 
 local options = {
+  experimental = {
+    ghost_text = true,
+  },
   window = {
     completion = {
       border = border("CmpBorder"),
@@ -52,7 +55,7 @@ local options = {
     ["<C-Space>"] = cmp.mapping.complete(),
     ["<C-e>"] = cmp.mapping.close(),
     ["<CR>"] = cmp.mapping.confirm({
-      behavior = cmp.ConfirmBehavior.Replace,
+      behavior = cmp.ConfirmBehavior.Insert,
       select = true,
     }),
     ["<Tab>"] = cmp.mapping(function(fallback)

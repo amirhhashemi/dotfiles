@@ -2,16 +2,32 @@ local M = {}
 
 M.autopairs = function()
   local autopairs = prequire("nvim-autopairs")
+  local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+  local ts_utils = prequire("nvim-treesitter.ts_utils")
   local cmp = prequire("cmp")
 
   autopairs.setup({
+    check_ts = true,
+    ts_config = {
+      all = { "string", "comment" },
+    },
     fast_wrap = {},
     disable_filetype = { "TelescopePrompt", "vim" },
   })
 
-  local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+  cmp.event:on("confirm_done", function(evt)
+    local filetypes = { "javascript", "typescript", "javascriptreact", "typescriptreact" }
+    local filetype = vim.api.nvim_buf_get_option(0, "filetype")
 
-  cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+    if vim.tbl_contains(filetypes, filetype) then
+      local node_type = ts_utils.get_node_at_cursor():type()
+      if node_type ~= "named_imports" then
+        cmp_autopairs.on_confirm_done()(evt)
+      end
+    else
+      cmp_autopairs.on_confirm_done()(evt)
+    end
+  end)
 end
 
 M.better_escape = function()
@@ -28,27 +44,20 @@ end
 M.colorizer = function()
   local colorizer = prequire("colorizer")
 
-  local options = {
-    filetypes = {
-      "*",
-    },
-    user_default_options = {
-      RGB = true, -- #RGB hex codes
-      RRGGBB = true, -- #RRGGBB hex codes
-      names = false, -- "Name" codes like Blue
-      RRGGBBAA = false, -- #RRGGBBAA hex codes
-      rgb_fn = false, -- CSS rgb() and rgba() functions
-      hsl_fn = false, -- CSS hsl() and hsla() functions
-      css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
-      css_fn = true, -- Enable all CSS *functions*: rgb_fn, hsl_fn
-
-      -- Available modes: foreground, background
-      mode = "background", -- Set the display mode.
-    },
+  local default = {
+    RGB = true, -- #RGB hex codes
+    RRGGBB = true, -- #RRGGBB hex codes
+    names = false, -- "Name" codes like Blue
+    RRGGBBAA = false, -- #RRGGBBAA hex codes
+    rgb_fn = false, -- CSS rgb() and rgba() functions
+    hsl_fn = false, -- CSS hsl() and hsla() functions
+    css = false, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+    css_fn = false, -- Enable all CSS *functions*: rgb_fn, hsl_fn
+    -- Available modes: foreground, background
+    mode = "background", -- Set the display mode.
   }
 
-  colorizer.setup(options["filetypes"], options["user_default_options"])
-  vim.cmd("ColorizerReloadAllBuffers")
+  colorizer.setup({ "*", css = { css = true, css_fn = true } }, default)
 end
 
 M.comment = function()
@@ -202,6 +211,7 @@ M.null_ls = function()
     b.formatting.prettierd,
     b.formatting.stylua,
     b.formatting.gofmt,
+    b.formatting.black,
     b.formatting.rustfmt.with({
       args = { "--edition=2018" },
     }),
@@ -254,6 +264,8 @@ M.neorg = function()
         },
       },
       ["core.norg.qol.toc"] = {},
+      ["core.export"] = {},
+      ["core.export.markdown"] = {},
     },
   }
 
@@ -264,7 +276,7 @@ M.regexplainer = function()
   local regexplainer = prequire("regexplainer")
 
   regexplainer.setup({
-    auto = true,
+    auto = false,
     filetypes = {},
     mappings = {
       toggle = "gR",
@@ -314,6 +326,7 @@ M.indent_blankline = function()
     indentLine_enabled = 1,
     char = "▏",
     context_char = "▏",
+    -- filetype = { "python" },
     filetype_exclude = {
       "help",
       "terminal",
@@ -329,8 +342,8 @@ M.indent_blankline = function()
     buftype_exclude = { "terminal" },
     show_trailing_blankline_indent = false,
     show_first_indent_level = false,
-    show_current_context = true,
-    show_current_context_start = false,
+    -- show_current_context = true,
+    -- show_current_context_start = false,
   })
 end
 
@@ -346,6 +359,47 @@ M.nvterm = function()
         vertical = "<leader>v",
       },
     },
+  })
+end
+
+M.cinnamon = function()
+  local cinnamon = prequire("cinnamon")
+
+  cinnamon.setup({
+    default_delay = 4,
+    always_scroll = true,
+    extra_keymaps = false,
+    extended_keymaps = false,
+  })
+end
+
+M.indent_o_matic = function()
+  local indent_o_matic = prequire("indent-o-matic")
+  indent_o_matic.setup({
+    max_lines = 2048,
+    standard_widths = { 2, 4, 8 },
+
+    -- Only detect 4 spaces and tabs for Rust files
+    filetype_rust = {
+      standard_widths = { 4 },
+    },
+
+    filetype_python = {
+      standard_widths = { 4 },
+    },
+
+    -- Don't detect 8 spaces indentations inside files without a filetype
+    filetype_ = {
+      standard_widths = { 2, 4 },
+    },
+  })
+end
+
+M.aerial = function()
+  local aerial = prequire("aerial")
+  aerial.setup({
+    max_width = { 40 },
+    on_attach = function(bufnr) end,
   })
 end
 

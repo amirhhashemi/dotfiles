@@ -33,21 +33,6 @@ map("n", "<leader><leader>", "<C-^>")
 -- don't yank text on cut ( X )
 map({ "n", "v" }, "X", '"_x')
 
--- center cursor when moving through serach results
-map("n", "n", "nzzzv")
-map("n", "N", "Nzzzv")
-
--- don't yank text on delete ( dd )
--- map_wrapper({ "n", "v" }, "d", '"_d')
-
--- move cursor within insert mode
-map("i", "<C-h>", "<Left>")
-map("i", "<C-e>", "<End>")
-map("i", "<C-l>", "<Right>")
-map("i", "<C-j>", "<Down>")
-map("i", "<C-k>", "<Up>")
-map("i", "<C-a>", "<ESC>^i")
-
 -- navigation between windows
 map("n", "<C-h>", "<C-w>h")
 map("n", "<C-l>", "<C-w>l")
@@ -337,6 +322,48 @@ M.lspconfig = function(bufnr)
   buf_map("n", "<leader>f", function()
     buf.formatting()
   end)
+end
+
+M.cinnamon = function()
+  -- Paragraph movements:
+  map({ "n", "x" }, "{", "<cmd>lua Scroll('{')<CR>")
+  map({ "n", "x" }, "}", "<cmd>lua Scroll('}')<CR>")
+
+  -- Previous/next search result:
+  map("n", "n", "<cmd>lua Scroll('n', 1)<CR>")
+  map("n", "N", "<cmd>lua Scroll('N', 1)<CR>")
+  map("n", "*", "<cmd>lua Scroll('*', 1)<CR>")
+  map("n", "#", "<cmd>lua Scroll('#', 1)<CR>")
+  map("n", "g*", "<cmd>lua Scroll('g*', 1)<CR>")
+  map("n", "g#", "<cmd>lua Scroll('g#', 1)<CR>")
+
+  -- Previous/next cursor location:
+  map("n", "<C-o>", "<cmd>lua Scroll('<C-o>', 1)<CR>")
+  map("n", "<C-i>", "<cmd>lua Scroll('1<C-i>', 1)<CR>")
+
+  -- Screen scrolling:
+  map("n", "zz", "<cmd>lua Scroll('zz', 0, 1)<CR>")
+  map("n", "zt", "<cmd>lua Scroll('zt', 0, 1)<CR>")
+  map("n", "zb", "<cmd>lua Scroll('zb', 0, 1)<CR>")
+  map("n", "z.", "<cmd>lua Scroll('z.', 0, 1)<CR>")
+  map("n", "z<cR>", "<cmd>lua Scroll('zt^', 0, 1)<CR>")
+  map("n", "z-", "<cmd>lua Scroll('z-', 0, 1)<CR>")
+  map("n", "z^", "<cmd>lua Scroll('z^', 0, 1)<CR>")
+  map("n", "z+", "<cmd>lua Scroll('z+', 0, 1)<CR>")
+  map("n", "<c-y>", "<cmd>lua Scroll('<C-y>', 0, 1)<CR>")
+  map("n", "<c-e>", "<cmd>lua Scroll('<C-e>', 0, 1)<CR>")
+
+  -- Horizontal screen scrolling:
+  map("n", "zH", "<cmd>lua Scroll('zH')<CR>")
+  map("n", "zL", "<cmd>lua Scroll('zL')<CR>")
+  map("n", "zs", "<cmd>lua Scroll('zs')<CR>")
+  map("n", "ze", "<cmd>lua Scroll('ze')<CR>")
+  map("n", "zh", "<cmd>lua Scroll('zh', 0, 1)<CR>")
+  map("n", "zl", "<cmd>lua Scroll('zl', 0, 1)<CR>")
+end
+
+M.aerial = function()
+  map("n", "<leader>sl", "<cmd>AerialToggle<CR>")
 end
 
 return M

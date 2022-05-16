@@ -12,11 +12,24 @@ return require("packer").startup(function()
     event = "VimEnter",
   })
 
-  use({ "antoinemadec/FixCursorHold.nvim" })
+  -- use({
+  --   "rose-pine/neovim",
+  --   as = "rose-pine",
+  --   tag = "v1.*",
+  --   config = function()
+  --     require("rose-pine").setup({
+  --       dark_variant = "moon",
+  --     })
+  --
+  --     vim.cmd("colorscheme rose-pine")
+  --   end,
+  -- })
+
+  use({ "antoinemadec/FixCursorHold.nvim", event = { "BufRead", "BufNewFile" } })
 
   use({
     "lukas-reineke/indent-blankline.nvim",
-    ft = { "python" },
+    event = { "BufRead", "BufNewFile" },
     config = function()
       require("plugins.configs.others").indent_blankline()
     end,
@@ -49,7 +62,7 @@ return require("packer").startup(function()
     end,
   })
 
-  use("nvim-treesitter/playground")
+  use({ "nvim-treesitter/playground", after = "nvim-treesitter" })
 
   use({
     "kyazdani42/nvim-web-devicons",
@@ -81,8 +94,8 @@ return require("packer").startup(function()
   })
 
   use({
-    "NvChad/nvim-colorizer.lua",
-    event = "BufRead",
+    "norcalli/nvim-colorizer.lua",
+    event = { "BufRead", "BufNewFile" },
     config = function()
       require("plugins.configs.others").colorizer()
     end,
@@ -95,19 +108,16 @@ return require("packer").startup(function()
   use({
     "nvim-treesitter/nvim-treesitter",
     event = { "BufRead", "BufNewFile" },
+    run = ":TSUpdate",
     config = function()
       require("plugins.configs.treesitter")
     end,
-    run = ":TSUpdate",
   })
 
-  use({ "JoosepAlviste/nvim-ts-context-commentstring" })
-
-  use({ "windwp/nvim-ts-autotag" })
-
-  use({ "p00f/nvim-ts-rainbow" })
-
-  use({ "nvim-treesitter/nvim-treesitter-textobjects" })
+  use({ "JoosepAlviste/nvim-ts-context-commentstring", after = "nvim-treesitter" })
+  use({ "windwp/nvim-ts-autotag", after = "nvim-treesitter" })
+  use({ "p00f/nvim-ts-rainbow", after = "nvim-treesitter" })
+  use({ "nvim-treesitter/nvim-treesitter-textobjects", after = "nvim-treesitter" })
 
   -- git stuff
   use({
@@ -167,13 +177,22 @@ return require("packer").startup(function()
     end,
   })
 
-  use({ "williamboman/nvim-lsp-installer" })
+  use({
+    "stevearc/aerial.nvim",
+    config = function()
+      require("plugins.configs.others").aerial()
+    end,
+    setup = function()
+      require("core.mappings").aerial()
+    end,
+  })
 
-  use({ "jose-elias-alvarez/nvim-lsp-ts-utils" })
+  use({ "williamboman/nvim-lsp-installer", requires = "nvim-lspconfig" })
+  use({ "jose-elias-alvarez/nvim-lsp-ts-utils", requires = "nvim-lspconfig" })
 
   use({
     "jose-elias-alvarez/null-ls.nvim",
-    after = "nvim-lspconfig",
+    event = { "BufRead", "BufNewFile" },
     config = function()
       require("plugins.configs.others").null_ls()
     end,
@@ -250,7 +269,7 @@ return require("packer").startup(function()
   -- misc plugins
   use({
     "windwp/nvim-autopairs",
-    after = "nvim-cmp",
+    after = { "nvim-cmp", "nvim-treesitter" },
     config = function()
       require("plugins.configs.others").autopairs()
     end,
@@ -294,10 +313,10 @@ return require("packer").startup(function()
       require("core.mappings").telescope()
     end,
   })
-  use({ "nvim-telescope/telescope-ui-select.nvim", requires = "nvim-telescope/telescope.nvim" })
-  use({ "nvim-telescope/telescope-file-browser.nvim", requires = "nvim-telescope/telescope.nvim" })
-  use({ "nvim-telescope/telescope-cheat.nvim", requires = "nvim-telescope/telescope.nvim" })
-  use({ "nvim-telescope/telescope-fzf-native.nvim", requires = "nvim-telescope/telescope.nvim", run = "make" })
+  use({ "nvim-telescope/telescope-ui-select.nvim", after = "telescope.nvim" })
+  use({ "nvim-telescope/telescope-file-browser.nvim", after = "telescope.nvim" })
+  use({ "nvim-telescope/telescope-cheat.nvim", after = "telescope.nvim" })
+  use({ "nvim-telescope/telescope-fzf-native.nvim", after = "telescope.nvim", run = "make" })
 
   use({
     "ur4ltz/surround.nvim",
@@ -307,13 +326,11 @@ return require("packer").startup(function()
   })
 
   use({
-    "karb94/neoscroll.nvim",
+    "declancm/cinnamon.nvim",
+    event = { "BufRead", "BufNewFile" },
     config = function()
-      require("neoscroll").setup()
-    end,
-    setup = function()
-      packer_lazy_load("neoscroll.nvim")
-      require("core.mappings").neoscroll()
+      require("plugins.configs.others").cinnamon()
+      require("core.mappings").cinnamon()
     end,
   })
 
@@ -358,12 +375,9 @@ return require("packer").startup(function()
 
   use({
     "rcarriga/nvim-notify",
-    requires = "nvim-telescope/telescope.nvim",
+    event = "VimEnter",
     config = function()
       vim.notify = require("notify")
-    end,
-    setup = function()
-      packer_lazy_load("nvim-notify")
     end,
   })
 
@@ -374,6 +388,13 @@ return require("packer").startup(function()
     end,
     setup = function()
       require("core.mappings").navigator()
+    end,
+  })
+  use({
+    "Darazaki/indent-o-matic",
+    event = { "BufRead", "BufNewFile" },
+    config = function()
+      require("plugins.configs.others").indent_o_matic()
     end,
   })
 
@@ -388,7 +409,9 @@ return require("packer").startup(function()
     end,
   })
 
-  use({ "folke/tokyonight.nvim" })
+  use({
+    "folke/tokyonight.nvim",
+  })
 
   use({ "tami5/sqlite.lua" })
 
