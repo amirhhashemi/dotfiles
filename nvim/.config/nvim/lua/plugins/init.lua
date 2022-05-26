@@ -25,6 +25,8 @@ return require("packer").startup(function()
   --   end,
   -- })
 
+  use("rktjmp/lush.nvim")
+
   use({ "antoinemadec/FixCursorHold.nvim", event = { "BufRead", "BufNewFile" } })
 
   use({
@@ -82,14 +84,38 @@ return require("packer").startup(function()
     end,
   })
 
+  -- use({
+  --   "akinsho/bufferline.nvim",
+  --   after = "nvim-web-devicons",
+  --   config = function()
+  --     require("plugins.configs.bufferline")
+  --   end,
+  --   setup = function()
+  --     require("core.mappings").bufferline()
+  --   end,
+  -- })
+
   use({
-    "akinsho/bufferline.nvim",
-    after = "nvim-web-devicons",
+    "~/Documents/code/JABS.nvim",
+    -- "matbme/JABS.nvim",
+    -- event = "BufEnter",
     config = function()
-      require("plugins.configs.bufferline")
+      require("plugins.configs.others").jabs()
     end,
     setup = function()
-      require("core.mappings").bufferline()
+      require("core.mappings").jabs()
+    end,
+  })
+
+  use({
+    "kevinhwang91/nvim-bqf",
+    event = "BufEnter",
+    config = function()
+      require("plugins.configs.others").bqf()
+    end,
+
+    setup = function()
+      -- require("core.mappings").jabs()
     end,
   })
 
@@ -111,6 +137,13 @@ return require("packer").startup(function()
     run = ":TSUpdate",
     config = function()
       require("plugins.configs.treesitter")
+    end,
+  })
+
+  use({
+    "SmiteshP/nvim-gps",
+    config = function()
+      require("plugins.configs.others").gps()
     end,
   })
 
@@ -188,6 +221,7 @@ return require("packer").startup(function()
   })
 
   use({ "williamboman/nvim-lsp-installer", requires = "nvim-lspconfig" })
+
   use({ "jose-elias-alvarez/nvim-lsp-ts-utils", requires = "nvim-lspconfig" })
 
   use({
@@ -313,10 +347,14 @@ return require("packer").startup(function()
       require("core.mappings").telescope()
     end,
   })
-  use({ "nvim-telescope/telescope-ui-select.nvim", after = "telescope.nvim" })
-  use({ "nvim-telescope/telescope-file-browser.nvim", after = "telescope.nvim" })
-  use({ "nvim-telescope/telescope-cheat.nvim", after = "telescope.nvim" })
-  use({ "nvim-telescope/telescope-fzf-native.nvim", after = "telescope.nvim", run = "make" })
+
+  use({ "nvim-telescope/telescope-ui-select.nvim", before = "telescope.nvim" })
+
+  use({ "nvim-telescope/telescope-file-browser.nvim", before = "telescope.nvim" })
+
+  use({ "nvim-telescope/telescope-cheat.nvim", before = "telescope.nvim" })
+
+  use({ "nvim-telescope/telescope-fzf-native.nvim", before = "telescope.nvim", run = "make" })
 
   use({
     "ur4ltz/surround.nvim",
@@ -410,7 +448,9 @@ return require("packer").startup(function()
   })
 
   use({
-    "folke/tokyonight.nvim",
+    -- "folke/tokyonight.nvim", -- original
+    "ahhshm/tokyonight.nvim", -- my fork
+    -- "~/Documents/code/tokyonight.nvim",
   })
 
   use({ "tami5/sqlite.lua" })

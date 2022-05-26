@@ -44,11 +44,7 @@ map("n", "<leader>j", ":cnext<CR>")
 map("n", "<leader>k", ":cprev<CR>")
 
 map("n", "<leader>x", function()
-  if not vim.bo.buflisted then
-    cmd(":bd!")
-  else
-    cmd("bd")
-  end
+  close_buffer()
 end)
 
 map("n", "<C-c>", ":%y+ <CR>") -- copy whole file content
@@ -72,17 +68,8 @@ map("n", "<A-h>", ":execute 15 .. 'new +terminal' | let b:term_type = 'hori' | s
 map("n", "<A-v>", ":execute 'vnew +terminal' | let b:term_type = 'vert' | startinsert <CR>")
 map("n", "<leader>w", ":execute 'terminal' | let b:term_type = 'wind' | startinsert <CR>")
 
--- Add Packer commands because we are not loading it at startup
-cmd("silent! command PackerClean lua require 'plugins' require('packer').clean()")
-cmd("silent! command PackerCompile lua require 'plugins' require('packer').compile()")
-cmd("silent! command PackerInstall lua require 'plugins' require('packer').install()")
-cmd("silent! command PackerStatus lua require 'plugins' require('packer').status()")
-cmd("silent! command PackerSync lua require 'plugins' require('packer').sync()")
-cmd("silent! command PackerUpdate lua require 'plugins' require('packer').update()")
-
--- add NvChadUpdate command and mapping
-cmd("silent! command! NvChadUpdate lua require('nvchad').update_nvchad()")
-map("n", "<leader>uu", ":NvChadUpdate <CR>")
+map("c", "<c-j>", "<c-n>")
+map("c", "<c-k>", "<c-p>")
 
 -- plugin related mappings
 
@@ -147,9 +134,9 @@ end
 M.trouble = function()
   map("n", "<leader>dw", "<cmd>Trouble workspace_diagnostics<cr>")
   map("n", "<leader>dd", "<cmd>Trouble document_diagnostics<cr>")
-  map("n", "<leader>dl", "<cmd>Trouble loclist<cr>")
-  map("n", "<leader>dq", "<cmd>Trouble quickfix<cr>")
-  map("n", "gR", "<cmd>Trouble lsp_references<cr>")
+  map("n", "<leader>tl", "<cmd>Trouble loclist<cr>")
+  map("n", "<leader>tq", "<cmd>Trouble quickfix<cr>")
+  -- map("n", "gR", "<cmd>Trouble lsp_references<cr>")
 end
 
 M.navigator = function()
@@ -364,6 +351,10 @@ end
 
 M.aerial = function()
   map("n", "<leader>sl", "<cmd>AerialToggle<CR>")
+end
+
+M.jabs = function()
+  map("n", "<leader>b", "<cmd>JABSOpen<CR>")
 end
 
 return M

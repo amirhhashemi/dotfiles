@@ -21,11 +21,11 @@ local options = {
   },
   window = {
     completion = {
-      border = border("CmpBorder"),
-      winhighlight = "Normal:CmpBg,CursorLine:Visual,Search:None",
+      border = border("CmpDocumentationBorder"),
+      winhighlight = "Normal:Normal,CursorLine:Visual,Search:None",
     },
     documentation = {
-      border = border("CmpDocBorder"),
+      border = border("CmpDocumentationBorder"),
     },
   },
   snippet = {

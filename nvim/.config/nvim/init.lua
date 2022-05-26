@@ -9,7 +9,7 @@ local core_modules = {
   "core.options",
   "core.autocmds",
   "core.mappings",
-  "colors.highlights",
+  "core.commands",
 }
 
 for _, module in ipairs(core_modules) do

@@ -1,10 +1,11 @@
 local present, feline = pcall(require, "feline")
+local gps = require("nvim-gps")
 
 if not present then
   return
 end
 
-local colors = require("colors").get()
+local colors = require("core.colors")
 local lsp = require("feline.providers.lsp")
 local lsp_severity = vim.diagnostic.severity
 
@@ -58,6 +59,7 @@ local components = {
 
 local main_icon = {
   provider = separator_style.main_icon,
+  short_provider = " ",
 
   hl = {
     fg = colors.statusline_bg,
@@ -355,4 +357,68 @@ feline.setup({
     fg = colors.fg,
   },
   components = components,
+})
+
+local winbar_components = {
+  active = {},
+}
+
+local winbar_filename = {
+  provider = {
+    name = "file_info",
+    opts = {
+      type = "relative",
+    },
+    -- update = { "BufFilePost", "BufWinEnter" },
+  },
+  short_provider = {
+    name = "file_info",
+  },
+  hl = {
+    fg = colors.white,
+    bg = colors.black,
+  },
+  -- left_sep = "  ",
+}
+
+local winbar_context = {
+  provider = function()
+    return gps.get_location()
+  end,
+  enabled = function()
+    return gps.is_available()
+  end,
+  left_sep = {
+    str = " > ",
+    hl = {
+      fg = colors.white,
+    },
+  },
+}
+
+local winbar_left = {}
+
+add_table(winbar_left, winbar_filename)
+add_table(winbar_left, winbar_context)
+
+winbar_components.active[1] = winbar_left
+
+feline.winbar.setup({
+  disable = {
+    filetypes = {
+      "^help$",
+      "^startify$",
+      "^dashboard$",
+      "^packer$",
+      "^neogitstatus$",
+      "^NvimTree$",
+      "^Trouble$",
+      "^alpha$",
+      "^lir$",
+      "^Outline$",
+      "^spectre_panel$",
+      "^toggleterm$",
+    },
+  },
+  components = winbar_components,
 })

@@ -7,7 +7,10 @@ local group_spellcheck = vim.api.nvim_create_augroup("_spellcheck", { clear = tr
 -- Format before save
 autocmd("BufWritePre", {
   callback = function()
-    vim.lsp.buf.formatting_sync()
+    -- vim.lsp.buf.formatting_sync()
+    vim.lsp.buf.format({
+      async = false,
+    })
   end,
   group = group_lsp,
 })
@@ -49,17 +52,6 @@ autocmd("BufReadPost", {
   end,
 })
 
--- File extension specific tabbing
--- autocmd("Filetype", {
---   pattern = "python",
---   callback = function()
---     vim.opt_local.expandtab = true
---     vim.opt_local.tabstop = 4
---     vim.opt_local.shiftwidth = 4
---     vim.opt_local.softtabstop = 4
---   end,
--- })
-
 -- uncomment this if you want to open nvim with a dir
 autocmd("BufEnter", {
   callback = function()
@@ -80,6 +72,29 @@ autocmd("InsertLeave", {
     vim.opt.relativenumber = true
   end,
 })
+
+-- autocmd({ "FileType" }, {
+-- callback = function()
+--   local winbar_filetype_exclude = {
+--     "help",
+--     "startify",
+--     "dashboard",
+--     "packer",
+--     "neogitstatus",
+--     "NvimTree",
+--     "Trouble",
+--     "alpha",
+--     "lir",
+--     "Outline",
+--     "spectre_panel",
+--     "toggleterm",
+--   }
+--
+--   if vim.tbl_contains(winbar_filetype_exclude, vim.bo.filetype) then
+--     vim.opt_local.winbar = nil
+--   end
+-- end,
+-- })
 
 -- -- underline the word under cursor
 -- autocmd("VimEnter", {

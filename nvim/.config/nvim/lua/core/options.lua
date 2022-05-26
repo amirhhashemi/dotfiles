@@ -8,6 +8,8 @@ vim.cmd("colorscheme tokyonight")
 g.did_load_filetypes = 0
 g.do_filetype_lua = 1
 
+-- vim.opt.winbar = "true"
+
 opt.laststatus = 3 -- global statusline
 opt.title = true
 opt.clipboard = ""

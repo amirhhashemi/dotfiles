@@ -1,6 +1,6 @@
 local devicons = prequire("nvim-web-devicons")
 
-local colors = require("colors").get()
+local colors = require("core.colors")
 
 local icons = {
   c = {

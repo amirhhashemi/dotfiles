@@ -18,10 +18,14 @@ M.autopairs = function()
   cmp.event:on("confirm_done", function(evt)
     local filetypes = { "javascript", "typescript", "javascriptreact", "typescriptreact" }
     local filetype = vim.api.nvim_buf_get_option(0, "filetype")
+    local node_type = ts_utils.get_node_at_cursor():type()
 
     if vim.tbl_contains(filetypes, filetype) then
-      local node_type = ts_utils.get_node_at_cursor():type()
       if node_type ~= "named_imports" then
+        cmp_autopairs.on_confirm_done()(evt)
+      end
+    elseif filetype == "rust" then
+      if node_type ~= "use_list" then
         cmp_autopairs.on_confirm_done()(evt)
       end
     else
@@ -401,6 +405,51 @@ M.aerial = function()
     max_width = { 40 },
     on_attach = function(bufnr) end,
   })
+end
+
+M.gps = function()
+  local gps = prequire("nvim-gps")
+
+  gps.setup({
+    icons = {
+
+      ["class-name"] = "%#CmpItemKindClass#  %*",
+      ["function-name"] = "%#CmpItemKindFunction# %*",
+      ["method-name"] = "%#CmpItemKindMethod# %*",
+      ["container-name"] = "%#CmpItemKindProperty#ﮅ %*",
+      ["tag-name"] = "%#CmpItemKindKeyword#炙%*",
+    },
+  })
+end
+
+M.jabs = function()
+  local jabs = prequire("jabs")
+
+  jabs.setup({
+    position = "center",
+    width = 60,
+    height = 15,
+    border = "single",
+    preview = {
+      position = "top",
+    },
+    hl = {
+      current = "ErrorMsg",
+      split = "StatusLine",
+      alternate = "WarningMsg",
+      hidden = "ModeMsg",
+      -- locked = c.hl and c.hl.locked,
+      -- read_only = c.hl and c.hl.read_only,
+      -- changed = c.hl and c.hl.changed,
+      -- terminal = c.hl and c.hl.terminal,
+    },
+  })
+end
+
+M.bqf = function()
+  local bqf = prequire("bqf")
+
+  bqf.setup({})
 end
 
 return M

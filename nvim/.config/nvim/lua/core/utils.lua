@@ -1,3 +1,11 @@
+_G.close_buffer = function()
+  if not vim.bo.buflisted then
+    vim.cmd(":bd!")
+  else
+    vim.cmd("bd")
+  end
+end
+
 _G.map = function(mode, lhs, rhs, opt)
   local options = { silent = true }
   if opt then
