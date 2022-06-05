@@ -28,6 +28,7 @@ local on_attach = function(client, bufnr)
 
   -- Mappings
   require("core.mappings").lspconfig(bufnr)
+  require("aerial").on_attach(client, bufnr)
 end
 
 local servers = {
@@ -44,6 +45,7 @@ local servers = {
   "gopls",
   "dockerls",
   "pyright",
+  -- "taplo",
 }
 
 for _, server in pairs(servers) do
@@ -65,6 +67,11 @@ for _, server in pairs(servers) do
   if server == "sumneko_lua" then
     local sumneko_opts = require("plugins.configs.lsp.sumneko")
     opts = vim.tbl_deep_extend("keep", sumneko_opts, opts)
+  end
+
+  if server == "tailwindcss" then
+    local tailwind_opts = require("plugins.configs.lsp.tailwindcss")
+    opts = vim.tbl_deep_extend("keep", tailwind_opts, opts)
   end
 
   lspconfig[server].setup(opts)

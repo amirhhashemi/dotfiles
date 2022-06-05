@@ -14,7 +14,7 @@ dap.adapters.lldb = {
 dap.adapters.node2 = {
   type = "executable",
   command = "node",
-  args = { os.getenv("HOME") .. "/dev/microsoft/vscode-node-debug2/out/src/nodeDebug.js" },
+  args = { os.getenv("HOME") .. "/vscode-node-debug2/out/src/nodeDebug.js" },
 }
 
 dap.configurations.cpp = {
@@ -75,4 +75,6 @@ dap.configurations.javascript = {
   },
 }
 
+dap.configurations.javascriptreact = dap.configurations.javascript
 dap.configurations.typescript = dap.configurations.javascript
+dap.configurations.typescriptreact = dap.configurations.javascript

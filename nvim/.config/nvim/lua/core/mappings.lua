@@ -1,5 +1,3 @@
-local cmd = vim.cmd
-
 -- Don't copy the replaced text after pasting in visual mode
 map("v", "p", '"_dP')
 map("v", "<leader>p", '"_d"+P')
@@ -60,36 +58,12 @@ map("x", "K", ":move '<-2<CR>gv-gv")
 map("x", "<A-j>", ":move '>+1<CR>gv-gv")
 map("x", "<A-k>", ":move '<-2<CR>gv-gv")
 
--- get out of terminal mode
-map("t", "jk", "<C-\\><C-n>")
-
--- spawns terminals
-map("n", "<A-h>", ":execute 15 .. 'new +terminal' | let b:term_type = 'hori' | startinsert <CR>")
-map("n", "<A-v>", ":execute 'vnew +terminal' | let b:term_type = 'vert' | startinsert <CR>")
-map("n", "<leader>w", ":execute 'terminal' | let b:term_type = 'wind' | startinsert <CR>")
-
-map("c", "<c-j>", "<c-n>")
-map("c", "<c-k>", "<c-p>")
+map("c", "<C-j>", "<C-n>")
+map("c", "<C-k>", "<C-p>")
 
 -- plugin related mappings
 
 local M = {}
-
-M.nvterm = function()
-  local terminal = prequire("nvterm.terminal")
-
-  map("n", "<leader>h", function()
-    terminal.toggle("horizontal")
-  end)
-  map("n", "<leader>v", function()
-    terminal.toggle("vertical")
-  end)
-end
-
-M.bufferline = function()
-  map("n", "<S-l>", ":BufferLineCycleNext <CR>")
-  map("n", "<S-h>", ":BufferLineCyclePrev <CR>")
-end
 
 M.comment = function()
   map("n", "<C-_>", '<CMD>lua require("Comment.api").toggle_current_linewise()<CR>')
@@ -102,17 +76,10 @@ end
 
 M.telescope = function()
   map("n", "<leader>fb", ":Telescope buffers <CR>")
-  map("n", "<leader>ff", ":Telescope find_files <CR>")
-  map("n", "<leader>fa", ":Telescope find_files follow=true no_ignore=true hidden=true <CR>")
-  map("n", "<leader>cm", ":Telescope git_commits <CR>")
+  map("n", "<leader>ff", ":Telescope find_files hidden=true no_ignore=true <CR>")
   map("n", "<leader>gt", ":Telescope git_status <CR>")
-  map("n", "<leader>fh", ":Telescope help_tags <CR>")
   map("n", "<leader>fw", ":Telescope live_grep <CR>")
-  map("n", "<leader>fo", ":Telescope oldfiles <CR>")
-  map("n", "<leader>th", ":Telescope themes <CR>")
   map("n", "<leader>cc", ":Telescope<CR>")
-
-  map("n", "<leader>fd", ":Telescope file_browser<CR>")
 end
 
 M.gitsigns = function()
@@ -178,56 +145,6 @@ M.dap = function()
 
   map("n", "<leader>dq", function()
     dap.close()
-  end)
-end
-
-M.hop = function()
-  local hop = require("hop")
-
-  map("n", "f", function()
-    hop.hint_char1({ direction = require("hop.hint").HintDirection.AFTER_CURSOR, current_line_only = true })
-  end)
-  map("n", "F", function()
-    hop.hint_char1({
-      direction = require("hop.hint").HintDirection.BEFORE_CURSOR,
-      current_line_only = true,
-    })
-  end)
-  map("o", "f", function()
-    hop.hint_char1({
-      direction = require("hop.hint").HintDirection.AFTER_CURSOR,
-      current_line_only = true,
-      inclusive_jump = true,
-    })
-  end)
-  map("o", "F", function()
-    hop.hint_char1({
-      direction = require("hop.hint").HintDirection.BEFORE_CURSOR,
-      current_line_only = true,
-      inclusive_jump = true,
-    })
-  end)
-  map("", "t", function()
-    hop.hint_char1({ direction = require("hop.hint").HintDirection.AFTER_CURSOR, current_line_only = true })
-  end)
-  map("", "T", function()
-    hop.hint_char1({
-      direction = require("hop.hint").HintDirection.BEFORE_CURSOR,
-      current_line_only = true,
-    })
-  end)
-  map("n", "<leader>gl", ":HopLineStart<CR>")
-  map("n", "<leader>gw", ":HopWord<CR>")
-end
-
-M.neoscroll = function()
-  local neoscroll = prequire("neoscroll")
-
-  map("n", "<A-j>", function()
-    neoscroll.scroll(15, true, 250)
-  end)
-  map("n", "<A-k>", function()
-    neoscroll.scroll(-15, true, 250)
   end)
 end
 
@@ -349,12 +266,19 @@ M.cinnamon = function()
   map("n", "zl", "<cmd>lua Scroll('zl', 0, 1)<CR>")
 end
 
-M.aerial = function()
-  map("n", "<leader>sl", "<cmd>AerialToggle<CR>")
-end
-
-M.jabs = function()
-  map("n", "<leader>b", "<cmd>JABSOpen<CR>")
+M.harpoon = function()
+  map("n", "<leader>m", function()
+    require("harpoon.mark").add_file()
+  end)
+  map("n", "<leader>b", function()
+    require("harpoon.ui").toggle_quick_menu()
+  end)
+  map("n", "<leader>tm", function()
+    require("harpoon.tmux").gotoTerminal(1)
+  end)
+  map("n", "<C-f>", function()
+    require("harpoon.tmux").sendCommand(1, "tmux-sessionizer")
+  end)
 end
 
 return M

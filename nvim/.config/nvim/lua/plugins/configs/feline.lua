@@ -359,26 +359,10 @@ feline.setup({
   components = components,
 })
 
+hl("WinBar", { fg = colors.white })
+
 local winbar_components = {
   active = {},
-}
-
-local winbar_filename = {
-  provider = {
-    name = "file_info",
-    opts = {
-      type = "relative",
-    },
-    -- update = { "BufFilePost", "BufWinEnter" },
-  },
-  short_provider = {
-    name = "file_info",
-  },
-  hl = {
-    fg = colors.white,
-    bg = colors.black,
-  },
-  -- left_sep = "  ",
 }
 
 local winbar_context = {
@@ -394,6 +378,23 @@ local winbar_context = {
       fg = colors.white,
     },
   },
+}
+
+local winbar_filename = {
+  provider = {
+    name = "file_info",
+    opts = {
+      type = "relative",
+    },
+  },
+  short_provider = {
+    name = "file_info",
+  },
+  hl = {
+    fg = colors.white,
+    bg = colors.black,
+  },
+  left_sep = " ",
 }
 
 local winbar_left = {}
@@ -422,3 +423,25 @@ feline.winbar.setup({
   },
   components = winbar_components,
 })
+
+-- local the_component = {
+--   provider = "%#CmpItemKindClass# normal %* bold",
+-- }
+-- feline.setup({
+--   components = {
+--     active = {
+--       {
+--         the_component,
+--       },
+--     },
+--   },
+-- })
+-- feline.winbar.setup({
+--   components = {
+--     active = {
+--       {
+--         the_component,
+--       },
+--     },
+--   },
+-- })

@@ -69,6 +69,7 @@ M.comment = function()
 
   comment.setup({
     pre_hook = function(ctx)
+      -- return require("Comment.jsx").calculate(ctx)
       -- Only calculate commentstring for tsx filetypes
       if vim.bo.filetype == "typescriptreact" then
         local U = require("Comment.utils")
@@ -90,28 +91,6 @@ M.comment = function()
         })
       end
     end,
-  })
-end
-
-M.signature = function()
-  local lsp_signature = prequire("lsp_signature")
-
-  lsp_signature.setup({
-    bind = true,
-    doc_lines = 0,
-    floating_window = false,
-    fix_pos = true,
-    hint_enable = true,
-    hint_prefix = " ",
-    hint_scheme = "String",
-    hi_parameter = "Search",
-    max_height = 22,
-    max_width = 120, -- max_width of signature floating_window, line will be wrapped if exceed max_width
-    handler_opts = {
-      border = "single", -- double, single, shadow, none
-    },
-    zindex = 200, -- by default it will be on top of all floating windows, set to 50 send it to bottom
-    padding = "", -- character to pad on left and right of signature can be ' ', or '|'  etc
   })
 end
 
@@ -233,14 +212,6 @@ M.null_ls = function()
   })
 end
 
-M.hop = function()
-  local hop = prequire(require, "hop")
-
-  hop.setup({
-    keys = "etovxqpdygfblzhckisuran",
-  })
-end
-
 M.neorg = function()
   local neorg = prequire("neorg")
 
@@ -274,29 +245,6 @@ M.neorg = function()
   }
 
   neorg.setup(options)
-end
-
-M.regexplainer = function()
-  local regexplainer = prequire("regexplainer")
-
-  regexplainer.setup({
-    auto = false,
-    filetypes = {},
-    mappings = {
-      toggle = "gR",
-      -- examples, not defaults:
-      -- show = 'gS',
-      hide = "gH",
-      -- show_split = 'gP',
-      -- show_popup = 'gU',
-    },
-    popup = {
-      border = {
-        padding = { 1, 1 },
-        style = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
-      },
-    },
-  })
 end
 
 M.lsp_installer = function()
@@ -351,21 +299,6 @@ M.indent_blankline = function()
   })
 end
 
-M.nvterm = function()
-  local nvterm = prequire("nvterm")
-
-  nvterm.setup({
-    horizontal = { location = "rightbelow", split_ratio = 0.3 },
-    vertical = { location = "rightbelow", split_ratio = 0.3 },
-    mappings = {
-      toggle = {
-        horizontal = "<leader>h",
-        vertical = "<leader>v",
-      },
-    },
-  })
-end
-
 M.cinnamon = function()
   local cinnamon = prequire("cinnamon")
 
@@ -403,7 +336,19 @@ M.aerial = function()
   local aerial = prequire("aerial")
   aerial.setup({
     max_width = { 40 },
-    on_attach = function(bufnr) end,
+    on_attach = function(bufnr)
+      local buf_map = function(mode, lhs, rhs)
+        map(mode, lhs, rhs, { buffer = bufnr })
+      end
+      -- Toggle the aerial window with <leader>a
+      buf_map("n", "<leader>a", "<cmd>AerialToggle!<CR>")
+      -- Jump forwards/backwards with '{' and '}'
+      buf_map("n", "{", "<cmd>AerialPrev<CR>")
+      buf_map("n", "}", "<cmd>AerialNext<CR>")
+      -- Jump up the tree with '[[' or ']]'
+      buf_map("n", "[[", "<cmd>AerialPrevUp<CR>")
+      buf_map("n", "]]", "<cmd>AerialNextUp<CR>")
+    end,
   })
 end
 
@@ -412,36 +357,12 @@ M.gps = function()
 
   gps.setup({
     icons = {
-
       ["class-name"] = "%#CmpItemKindClass#  %*",
       ["function-name"] = "%#CmpItemKindFunction# %*",
       ["method-name"] = "%#CmpItemKindMethod# %*",
       ["container-name"] = "%#CmpItemKindProperty#ﮅ %*",
       ["tag-name"] = "%#CmpItemKindKeyword#炙%*",
-    },
-  })
-end
-
-M.jabs = function()
-  local jabs = prequire("jabs")
-
-  jabs.setup({
-    position = "center",
-    width = 60,
-    height = 15,
-    border = "single",
-    preview = {
-      position = "top",
-    },
-    hl = {
-      current = "ErrorMsg",
-      split = "StatusLine",
-      alternate = "WarningMsg",
-      hidden = "ModeMsg",
-      -- locked = c.hl and c.hl.locked,
-      -- read_only = c.hl and c.hl.read_only,
-      -- changed = c.hl and c.hl.changed,
-      -- terminal = c.hl and c.hl.terminal,
+      ["hook-name"] = "%#CmpItemKindFunction#ﯠ %*",
     },
   })
 end
@@ -449,7 +370,26 @@ end
 M.bqf = function()
   local bqf = prequire("bqf")
 
-  bqf.setup({})
+  bqf.setup()
+end
+
+M.harpoon = function()
+  require("harpoon").setup({
+    global_settings = {
+      -- sets the marks upon calling `toggle` on the ui, instead of require `:w`.
+      save_on_toggle = true,
+      -- saves the harpoon file upon every change. disabling is unrecommended.
+      save_on_change = true,
+      -- sets harpoon to run the command immediately as it's passed to the terminal when calling `sendCommand`.
+      enter_on_sendcmd = true,
+      -- closes any tmux windows harpoon that harpoon creates when you close Neovim.
+      tmux_autoclose_windows = false,
+      -- filetypes that you want to prevent from adding to the harpoon list menu.
+      excluded_filetypes = { "harpoon" },
+      -- set marks specific to each git branch inside git repository
+      mark_branch = false,
+    },
+  })
 end
 
 return M

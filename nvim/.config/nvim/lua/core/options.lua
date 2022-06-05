@@ -1,14 +1,15 @@
 local opt = vim.opt
 local g = vim.g
 
-vim.g.tokyonight_style = "night"
-vim.cmd("colorscheme tokyonight")
+vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
+vim.cmd([[colorscheme catppuccin]])
+
+-- vim.g.tokyonight_style = "night"
+-- vim.cmd("colorscheme tokyonight")
 
 -- use filetype.lua instead of filetype.vim
 g.did_load_filetypes = 0
 g.do_filetype_lua = 1
-
--- vim.opt.winbar = "true"
 
 opt.laststatus = 3 -- global statusline
 opt.title = true
