@@ -352,21 +352,6 @@ M.aerial = function()
   })
 end
 
-M.gps = function()
-  local gps = prequire("nvim-gps")
-
-  gps.setup({
-    icons = {
-      ["class-name"] = "%#CmpItemKindClass#  %*",
-      ["function-name"] = "%#CmpItemKindFunction# %*",
-      ["method-name"] = "%#CmpItemKindMethod# %*",
-      ["container-name"] = "%#CmpItemKindProperty#ﮅ %*",
-      ["tag-name"] = "%#CmpItemKindKeyword#炙%*",
-      ["hook-name"] = "%#CmpItemKindFunction#ﯠ %*",
-    },
-  })
-end
-
 M.bqf = function()
   local bqf = prequire("bqf")
 
@@ -389,6 +374,41 @@ M.harpoon = function()
       -- set marks specific to each git branch inside git repository
       mark_branch = false,
     },
+  })
+end
+
+M.navic = function()
+  local navic = prequire("nvim-navic")
+
+  hl("NavicIconsFile", { link = "CmpItemKindFile" })
+  hl("NavicIconsModule", { link = "CmpItemKindModule" })
+  hl("NavicIconsNamespace", { link = "CmpItemKindNamespace" })
+  hl("NavicIconsPackage", { link = "CmpItemKindPackage" })
+  hl("NavicIconsClass", { link = "CmpItemKindClass" })
+  hl("NavicIconsMethod", { link = "CmpItemKindMethod" })
+  hl("NavicIconsProperty", { link = "CmpItemKindProperty" })
+  hl("NavicIconsField", { link = "CmpItemKindField" })
+  hl("NavicIconsConstructor", { link = "CmpItemKindConstructor" })
+  hl("NavicIconsEnum", { link = "CmpItemKindEnum" })
+  hl("NavicIconsInterface", { link = "CmpItemKindInterface" })
+  hl("NavicIconsFunction", { link = "CmpItemKindFunction" })
+  hl("NavicIconsVariable", { link = "CmpItemKindVariable" })
+  hl("NavicIconsConstant", { link = "CmpItemKindConstant" })
+  hl("NavicIconsString", { link = "CmpItemKindString" })
+  hl("NavicIconsNumber", { link = "CmpItemKindNumber" })
+  hl("NavicIconsBoolean", { link = "CmpItemKindBoolean" })
+  hl("NavicIconsArray", { link = "CmpItemKindArray" })
+  hl("NavicIconsObject", { link = "CmpItemKindObject" })
+  hl("NavicIconsKey", { link = "CmpItemKindKey" })
+  hl("NavicIconsNull", { link = "CmpItemKindNull" })
+  hl("NavicIconsEnumMember", { link = "CmpItemKindEnumMember" })
+  hl("NavicIconsStruct", { link = "CmpItemKindStruct" })
+  hl("NavicIconsEvent", { link = "CmpItemKindEvent" })
+  hl("NavicIconsOperator", { link = "CmpItemKindOperator" })
+  hl("NavicIconsTypeParameter", { link = "CmpItemKindTypeParameter" })
+
+  navic.setup({
+    highlight = true,
   })
 end
 

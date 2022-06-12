@@ -1,5 +1,5 @@
 local present, feline = pcall(require, "feline")
-local gps = require("nvim-gps")
+local navic = require("nvim-navic")
 
 if not present then
   return
@@ -367,10 +367,10 @@ local winbar_components = {
 
 local winbar_context = {
   provider = function()
-    return gps.get_location()
+    return navic.get_location()
   end,
   enabled = function()
-    return gps.is_available()
+    return navic.is_available()
   end,
   left_sep = {
     str = " > ",
@@ -423,25 +423,3 @@ feline.winbar.setup({
   },
   components = winbar_components,
 })
-
--- local the_component = {
---   provider = "%#CmpItemKindClass# normal %* bold",
--- }
--- feline.setup({
---   components = {
---     active = {
---       {
---         the_component,
---       },
---     },
---   },
--- })
--- feline.winbar.setup({
---   components = {
---     active = {
---       {
---         the_component,
---       },
---     },
---   },
--- })

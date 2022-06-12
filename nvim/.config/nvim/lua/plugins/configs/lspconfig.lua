@@ -1,4 +1,5 @@
 local lspconfig = require("lspconfig")
+local navic = require("nvim-navic")
 
 require("plugins.configs.others").lsp_handlers()
 
@@ -25,6 +26,8 @@ local on_attach = function(client, bufnr)
   -- As we use null-ls formatter by default so we disable the inbult lsp formatter
   client.server_capabilities.documentFormattingProvider = false
   client.server_capabilities.documentRangeFormattingProvider = false
+
+  navic.attach(client, bufnr)
 
   -- Mappings
   require("core.mappings").lspconfig(bufnr)

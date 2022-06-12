@@ -43,6 +43,15 @@ local options = {
     enable = true,
   },
   textobjects = {
+    swap = {
+      enable = true,
+      swap_next = {
+        ["<leader>s"] = "@parameter.inner",
+      },
+      swap_previous = {
+        ["<leader>S"] = "@parameter.inner",
+      },
+    },
     select = {
       enable = true,
       lookahead = true,

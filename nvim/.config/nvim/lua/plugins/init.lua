@@ -316,9 +316,9 @@ return require("packer").startup(function()
   use({ "b0o/schemastore.nvim" })
 
   use({
-    "SmiteshP/nvim-gps",
+    "SmiteshP/nvim-navic",
     config = function()
-      require("plugins.configs.others").gps()
+      require("plugins.configs.others").navic()
     end,
   })
 
