@@ -1,20 +1,20 @@
 local opt = vim.opt
 local g = vim.g
 
-vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
-vim.cmd([[colorscheme catppuccin]])
+-- vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
+-- vim.cmd([[colorscheme catppuccin]])
 
--- vim.g.tokyonight_style = "night"
--- vim.cmd("colorscheme tokyonight")
+vim.g.tokyonight_style = "night"
+vim.cmd("colorscheme tokyonight")
 
 -- use filetype.lua instead of filetype.vim
 g.did_load_filetypes = 0
 g.do_filetype_lua = 1
 
+opt.cmdheight = 0
 opt.laststatus = 3 -- global statusline
 opt.title = true
 opt.clipboard = ""
-opt.cmdheight = 1
 opt.cul = true -- cursor line
 
 -- Indentline

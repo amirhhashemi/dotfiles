@@ -21,13 +21,19 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
     "additionalTextEdits",
   },
 }
+capabilities.textDocument.foldingRange = {
+  dynamicRegistration = false,
+  lineFoldingOnly = true,
+}
 
 local on_attach = function(client, bufnr)
   -- As we use null-ls formatter by default so we disable the inbult lsp formatter
   client.server_capabilities.documentFormattingProvider = false
   client.server_capabilities.documentRangeFormattingProvider = false
 
-  navic.attach(client, bufnr)
+  -- if client.server_capabilities.documentSymbolProvider then
+  --   navic.attach(client, bufnr)
+  -- end
 
   -- Mappings
   require("core.mappings").lspconfig(bufnr)
@@ -59,12 +65,12 @@ for _, server in pairs(servers) do
 
   if server == "tsserver" then
     local tsserver_opts = require("plugins.configs.lsp.tsserver")
-    opts = vim.tbl_deep_extend("force", opts, tsserver_opts)
+    opts = vim.tbl_deep_extend("keep", tsserver_opts, opts)
   end
 
   if server == "jsonls" then
     local tsserver_opts = require("plugins.configs.lsp.jsonls")
-    opts = vim.tbl_deep_extend("force", opts, tsserver_opts)
+    opts = vim.tbl_deep_extend("keep", tsserver_opts, opts)
   end
 
   if server == "sumneko_lua" then

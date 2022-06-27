@@ -12,8 +12,6 @@ return require("packer").startup(function()
     event = "VimEnter",
   })
 
-  use({ "antoinemadec/FixCursorHold.nvim", event = { "BufRead", "BufNewFile" } })
-
   -- colorschemes
 
   use({
@@ -29,13 +27,43 @@ return require("packer").startup(function()
     end,
   })
 
-  -- use({
-  --   -- "folke/tokyonight.nvim", -- original
-  --   "ahhshm/tokyonight.nvim", -- my fork
-  --   -- "~/Documents/code/tokyonight.nvim",
-  -- })
+  use({
+    -- "folke/tokyonight.nvim", -- original
+    "ahhshm/tokyonight.nvim", -- my fork
+    -- "~/Documents/code/tokyonight.nvim",
+  })
 
   -- misc plugins
+
+  use({ "antoinemadec/FixCursorHold.nvim", event = { "BufRead", "BufNewFile" } })
+
+  use({ "vimpostor/vim-tpipeline" })
+
+  -- use({
+  --   "chentoast/marks.nvim",
+  --   event = { "BufRead", "BufNewFile" },
+  --   config = function()
+  --     require("plugins.configs.others").marks()
+  --   end,
+  -- })
+
+  -- use({
+  --   "kevinhwang91/nvim-ufo",
+  --   requires = "kevinhwang91/promise-async",
+  --   event = { "BufRead", "BufNewFile" },
+  --   config = function()
+  --     require("plugins.configs.others").ufo()
+  --   end,
+  -- })
+
+  use({
+    "anuvyklack/hydra.nvim",
+    requires = "anuvyklack/keymap-layer.nvim", -- needed only for pink hydras
+    event = { "BufRead", "BufNewFile" },
+    config = function()
+      require("plugins.configs.others").hydra()
+    end,
+  })
 
   use({ "stevearc/dressing.nvim", event = "VimEnter" })
 
@@ -98,9 +126,18 @@ return require("packer").startup(function()
   })
 
   use({
-    "folke/todo-comments.nvim",
+    -- "folke/todo-comments.nvim",
+    "ahhshm/todo-comments.nvim",
     config = function()
       require("todo-comments").setup()
+    end,
+  })
+
+  use({
+    "petertriho/nvim-scrollbar",
+    event = { "BufRead", "BufNewFile" },
+    config = function()
+      require("plugins.configs.others").scrollbar()
     end,
   })
 
@@ -250,6 +287,14 @@ return require("packer").startup(function()
 
   use({ "nvim-treesitter/playground", after = "nvim-treesitter" })
 
+  -- use({
+  --   "lewis6991/spellsitter.nvim",
+  --   after = "nvim-treesitter",
+  --   config = function()
+  --     require("spellsitter").setup()
+  --   end,
+  -- })
+
   use({ "JoosepAlviste/nvim-ts-context-commentstring", after = "nvim-treesitter" })
 
   use({ "windwp/nvim-ts-autotag", after = "nvim-treesitter" })
@@ -261,8 +306,16 @@ return require("packer").startup(function()
   -- git integration
 
   use({
+    "TimUntersberger/neogit",
+    event = { "BufRead", "BufNewFile" },
+    config = function()
+      require("plugins.configs.others").neogit()
+    end,
+  })
+
+  use({
     "lewis6991/gitsigns.nvim",
-    event = "BufRead",
+    event = { "BufRead", "BufNewFile" },
     config = function()
       require("plugins.configs.others").gitsigns()
     end,
@@ -393,7 +446,12 @@ return require("packer").startup(function()
     end,
   })
 
-  use({ "nvim-telescope/telescope-fzf-native.nvim", before = "telescope.nvim", run = "make" })
+  use({
+    "nvim-telescope/telescope-fzf-native.nvim",
+    before = "telescope.nvim",
+    run = "make",
+    cond = vim.fn.executable("make") == 1,
+  })
 
   -- DAP
 

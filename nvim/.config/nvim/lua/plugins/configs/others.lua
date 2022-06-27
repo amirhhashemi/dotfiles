@@ -69,27 +69,27 @@ M.comment = function()
 
   comment.setup({
     pre_hook = function(ctx)
-      -- return require("Comment.jsx").calculate(ctx)
+      return require("Comment.jsx").calculate(ctx)
       -- Only calculate commentstring for tsx filetypes
-      if vim.bo.filetype == "typescriptreact" then
-        local U = require("Comment.utils")
-
-        -- Determine whether to use linewise or blockwise commentstring
-        local type = ctx.ctype == U.ctype.line and "__default" or "__multiline"
-
-        -- Determine the location where to calculate commentstring from
-        local location = nil
-        if ctx.ctype == U.ctype.block then
-          location = require("ts_context_commentstring.utils").get_cursor_location()
-        elseif ctx.cmotion == U.cmotion.v or ctx.cmotion == U.cmotion.V then
-          location = require("ts_context_commentstring.utils").get_visual_start_location()
-        end
-
-        return require("ts_context_commentstring.internal").calculate_commentstring({
-          key = type,
-          location = location,
-        })
-      end
+      -- if vim.bo.filetype == "typescriptreact" then
+      --   local U = require("Comment.utils")
+      --
+      --   -- Determine whether to use linewise or blockwise commentstring
+      --   local type = ctx.ctype == U.ctype.line and "__default" or "__multiline"
+      --
+      --   -- Determine the location where to calculate commentstring from
+      --   local location = nil
+      --   if ctx.ctype == U.ctype.block then
+      --     location = require("ts_context_commentstring.utils").get_cursor_location()
+      --   elseif ctx.cmotion == U.cmotion.v or ctx.cmotion == U.cmotion.V then
+      --     location = require("ts_context_commentstring.utils").get_visual_start_location()
+      --   end
+      --
+      --   return require("ts_context_commentstring.internal").calculate_commentstring({
+      --     key = type,
+      --     location = location,
+      --   })
+      -- end
     end,
   })
 end
@@ -408,8 +408,140 @@ M.navic = function()
   hl("NavicIconsTypeParameter", { link = "CmpItemKindTypeParameter" })
 
   navic.setup({
+    icons = {
+      Text = " ",
+      Method = " ",
+      Function = " ",
+      Constructor = " ",
+      Field = "ﰠ ",
+      Variable = " ",
+      Class = "ﴯ ",
+      Interface = " ",
+      Module = " ",
+      Property = "ﰠ ",
+      Unit = "塞 ",
+      Value = " ",
+      Enum = " ",
+      Keyword = " ",
+      Snippet = " ",
+      Color = " ",
+      File = " ",
+      Reference = " ",
+      Folder = " ",
+      EnumMember = " ",
+      Constant = " ",
+      Struct = "פּ ",
+      Event = " ",
+      Operator = " ",
+      TypeParameter = " ",
+    },
     highlight = true,
   })
+end
+
+M.scrollbar = function()
+  local scrollbar = require("scrollbar")
+
+  scrollbar.setup({
+    handle = {
+      highlight = "CursorLine",
+    },
+    marks = {
+      Error = {
+        highlight = "DiagnosticError",
+      },
+      Warn = {
+        highlight = "DiagnosticWarn",
+      },
+      Info = {
+        highlight = "DiagnosticInfo",
+      },
+      Hint = {
+        highlight = "DiagnosticHint",
+      },
+    },
+    excluded_buftypes = {
+      "terminal",
+    },
+    excluded_filetypes = {
+      "packer",
+      "prompt",
+      "TelescopePrompt",
+      "NvimTree",
+    },
+  })
+end
+
+M.marks = function()
+  require("marks").setup({
+    default_mappings = true,
+    -- which builtin marks to show. default {}
+    -- builtin_marks = { ".", "<", ">", "^" },
+    -- whether movements cycle back to the beginning/end of buffer. default true
+    cyclic = true,
+    -- whether the shada file is updated after modifying uppercase marks. default false
+    force_write_shada = false,
+    -- how often (in ms) to redraw signs/recompute mark positions.
+    -- higher values will have better performance but may cause visual lag,
+    -- while lower values may cause performance penalties. default 150.
+    refresh_interval = 250,
+    -- sign priorities for each type of mark - builtin marks, uppercase marks, lowercase
+    -- marks, and bookmarks.
+    -- can be either a table with all/none of the keys, or a single number, in which case
+    -- the priority applies to all marks.
+    -- default 10.
+    sign_priority = { lower = 10, upper = 15, builtin = 8, bookmark = 20 },
+    -- disables mark tracking for specific filetypes. default {}
+    excluded_filetypes = {},
+    -- marks.nvim allows you to configure up to 10 bookmark groups, each with its own
+    -- sign/virttext. Bookmarks can be used to group together positions and quickly move
+    -- across multiple buffers. default sign is '!@#$%^&*()' (from 0 to 9), and
+    -- default virt_text is "".
+    bookmark_0 = {
+      sign = "⚑",
+      virt_text = "hello world",
+    },
+    mappings = {},
+  })
+end
+
+M.ufo = function()
+  vim.opt.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
+  vim.wo.foldcolumn = "1"
+  vim.wo.foldlevel = 99 -- feel free to decrease the value
+  vim.wo.foldenable = true
+  require("ufo").setup()
+end
+
+M.hydra = function()
+  local Hydra = require("hydra")
+
+  Hydra({
+    name = "Side scroll",
+    mode = "n",
+    body = "z",
+    heads = {
+      { "h", "5zh" },
+      { "l", "5zl", { desc = "←/→" } },
+      { "H", "zH" },
+      { "L", "zL", { desc = "half screen ←/→" } },
+    },
+  })
+
+  --   Hydra({
+  --     name = "Move through diagnostics",
+  --     mode = "n",
+  --     body = "<leader>d",
+  --     heads = {
+  --       { "j", ":lua vim.diagnostic.goto_next()" },
+  --       { "k", ":lua vim.diagnostic.goto_prev()" },
+  --       { "q", nil, { exit = true } },
+  --     },
+  --   })
+end
+
+M.neogit = function()
+  local neogit = require("neogit")
 end
 
 return M

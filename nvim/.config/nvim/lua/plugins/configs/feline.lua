@@ -326,7 +326,7 @@ local right = {}
 -- left
 add_table(left, main_icon)
 add_table(left, file_name)
-add_table(left, dir_name)
+-- add_table(left, dir_name)
 add_table(left, diff.add)
 add_table(left, diff.change)
 add_table(left, diff.remove)
@@ -358,8 +358,6 @@ feline.setup({
   },
   components = components,
 })
-
-hl("WinBar", { fg = colors.white })
 
 local winbar_components = {
   active = {},

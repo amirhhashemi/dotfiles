@@ -61,6 +61,10 @@ map("x", "<A-k>", ":move '<-2<CR>gv-gv")
 map("c", "<C-j>", "<C-n>")
 map("c", "<C-k>", "<C-p>")
 
+-- Remap for dealing with word wrap
+-- map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
+-- map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true })
+
 -- plugin related mappings
 
 local M = {}
@@ -83,6 +87,28 @@ M.telescope = function()
 end
 
 M.gitsigns = function()
+  local gitsigns = prequire("gitsigns")
+  -- Navigation
+  map("n", "]c", function()
+    if vim.wo.diff then
+      return "]c"
+    end
+    vim.schedule(function()
+      gitsigns.next_hunk()
+    end)
+    return "<Ignore>"
+  end, { expr = true })
+
+  map("n", "[c", function()
+    if vim.wo.diff then
+      return "[c"
+    end
+    vim.schedule(function()
+      gitsigns.prev_hunk()
+    end)
+    return "<Ignore>"
+  end, { expr = true })
+
   map({ "n", "v" }, "<leader>cs", ":Gitsigns stage_hunk<CR>")
   map({ "n", "v" }, "<leader>cr", ":Gitsigns reset_hunk<CR>")
   map("n", "<leader>cS", "<cmd>Gitsigns stage_buffer<CR>")
@@ -270,7 +296,7 @@ M.harpoon = function()
   map("n", "<leader>m", function()
     require("harpoon.mark").add_file()
   end)
-  map("n", "<leader>b", function()
+  map("n", "<leader>h", function()
     require("harpoon.ui").toggle_quick_menu()
   end)
   map("n", "<leader>tm", function()

@@ -28,6 +28,9 @@ local options = {
       error = "",
     },
   },
+  filesystem_watchers = {
+    enable = true,
+  },
   renderer = {
     add_trailing = false,
     highlight_git = false,
@@ -90,8 +93,9 @@ local options = {
     timeout = 500,
   },
   view = {
-    width = 35,
-    height = 30,
+    adaptive_size = true,
+    -- width = 35,
+    -- height = 30,
     hide_root_folder = false,
     preserve_window_proportions = true,
     side = "left",

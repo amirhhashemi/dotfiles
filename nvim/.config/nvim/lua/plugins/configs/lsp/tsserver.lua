@@ -6,13 +6,18 @@ return {
     client.server_capabilities.documentFormattingProvider = false
     client.server_capabilities.documentRangeFormattingProvider = false
 
+    local navic = require("nvim-navic")
+
+    navic.attach(client, bufnr)
+
     local ts_utils = require("nvim-lsp-ts-utils")
+
     -- defaults
     ts_utils.setup({
       debug = false,
       disable_commands = false,
       document_formatting = false,
-      enable_import_on_completion = false,
+      enable_import_on_completion = true,
 
       -- import all
       import_all_timeout = 5000, -- ms
