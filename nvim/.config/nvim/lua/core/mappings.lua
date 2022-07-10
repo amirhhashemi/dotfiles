@@ -45,7 +45,7 @@ map("n", "<leader>x", function()
   close_buffer()
 end)
 
-map("n", "<C-c>", ":%y+ <CR>") -- copy whole file content
+-- map("n", "<C-c>", ":%y+ <CR>") -- copy whole file content
 map("n", "<S-t>", ":enew <CR>") -- new buffer
 map("n", "<C-t>b", ":tabnew <CR>") -- new tabs
 map("n", "<leader>n", ":set nu! <CR>")
@@ -305,6 +305,11 @@ M.harpoon = function()
   map("n", "<C-f>", function()
     require("harpoon.tmux").sendCommand(1, "tmux-sessionizer")
   end)
+end
+
+M.color_picker = function()
+  map("n", "<C-c>", "<CMD>PickColor<CR>")
+  map("i", "<C-c>", "<CMD>PickColorInsert<CR>")
 end
 
 return M

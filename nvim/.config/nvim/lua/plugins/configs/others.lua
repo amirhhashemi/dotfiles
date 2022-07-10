@@ -525,23 +525,37 @@ M.hydra = function()
       { "l", "5zl", { desc = "←/→" } },
       { "H", "zH" },
       { "L", "zL", { desc = "half screen ←/→" } },
+      { "q", nil, { exit = true } },
     },
   })
 
-  --   Hydra({
-  --     name = "Move through diagnostics",
-  --     mode = "n",
-  --     body = "<leader>d",
-  --     heads = {
-  --       { "j", ":lua vim.diagnostic.goto_next()" },
-  --       { "k", ":lua vim.diagnostic.goto_prev()" },
-  --       { "q", nil, { exit = true } },
-  --     },
-  --   })
+  -- Hydra({
+  --   name = "Move through diagnostics",
+  --   mode = "n",
+  --   body = "<leader>d",
+  --   heads = {
+  --     { "j", ":lua vim.diagnostic.goto_next()" },
+  --     { "k", ":lua vim.diagnostic.goto_prev()" },
+  --     { "q", nil, { exit = true } },
+  --   },
+  -- })
 end
 
 M.neogit = function()
   local neogit = require("neogit")
+end
+
+M.surround = function()
+  local surround = require("nvim-surround")
+
+  surround.setup({
+    keymaps = {
+      insert = "sa",
+      visual = "S",
+      delete = "sd",
+      change = "sr",
+    },
+  })
 end
 
 return M

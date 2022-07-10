@@ -65,12 +65,23 @@ return require("packer").startup(function()
     end,
   })
 
+  use({
+    "ziontee113/color-picker.nvim",
+    -- event = { "BufRead", "BufNewFile" },
+    config = function()
+      require("color-picker").setup()
+    end,
+    setup = function()
+      require("core.mappings").color_picker()
+    end,
+  })
+
   use({ "stevearc/dressing.nvim", event = "VimEnter" })
 
   use({
-    "ur4ltz/surround.nvim",
+    "kylechui/nvim-surround",
     config = function()
-      require("surround").setup({ mappings_style = "sandwich" })
+      require("plugins.configs.others").surround()
     end,
   })
 
