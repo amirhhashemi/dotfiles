@@ -247,29 +247,29 @@ M.neorg = function()
   neorg.setup(options)
 end
 
-M.lsp_installer = function()
-  local lsp_installer = prequire("nvim-lsp-installer")
-
-  lsp_installer.setup({
-    automatic_installation = true, -- automatically detect which servers to install (based on which servers are set up via lspconfig)
-    ui = {
-      icons = {
-        server_installed = "",
-        server_pending = "",
-        server_uninstalled = "ﮊ",
-      },
-      keymaps = {
-        toggle_server_expand = "<CR>",
-        install_server = "i",
-        update_server = "u",
-        check_server_version = "c",
-        update_all_servers = "U",
-        check_outdated_servers = "C",
-        uninstall_server = "X",
-      },
-    },
-  })
-end
+-- M.lsp_installer = function()
+--   local lsp_installer = prequire("nvim-lsp-installer")
+--
+--   lsp_installer.setup({
+--     automatic_installation = true, -- automatically detect which servers to install (based on which servers are set up via lspconfig)
+--     ui = {
+--       icons = {
+--         server_installed = "",
+--         server_pending = "",
+--         server_uninstalled = "ﮊ",
+--       },
+--       keymaps = {
+--         toggle_server_expand = "<CR>",
+--         install_server = "i",
+--         update_server = "u",
+--         check_server_version = "c",
+--         update_all_servers = "U",
+--         check_outdated_servers = "C",
+--         uninstall_server = "X",
+--       },
+--     },
+--   })
+-- end
 
 M.indent_blankline = function()
   local indent_blankline = prequire("indent_blankline")
@@ -529,16 +529,16 @@ M.hydra = function()
     },
   })
 
-  -- Hydra({
-  --   name = "Move through diagnostics",
-  --   mode = "n",
-  --   body = "<leader>d",
-  --   heads = {
-  --     { "j", ":lua vim.diagnostic.goto_next()" },
-  --     { "k", ":lua vim.diagnostic.goto_prev()" },
-  --     { "q", nil, { exit = true } },
-  --   },
-  -- })
+  Hydra({
+    name = "Move through diagnostics",
+    mode = "n",
+    body = "<leader>d",
+    heads = {
+      { "j", ":lua vim.diagnostic.goto_next()" },
+      { "k", ":lua vim.diagnostic.goto_prev()" },
+      { "q", nil, { exit = true } },
+    },
+  })
 end
 
 M.neogit = function()
@@ -549,11 +549,47 @@ M.surround = function()
   local surround = require("nvim-surround")
 
   surround.setup({
+    move_cursor = false,
     keymaps = {
-      insert = "sa",
+      normal = "sa",
       visual = "S",
       delete = "sd",
       change = "sr",
+    },
+  })
+end
+
+M.rust_tools = function()
+  local rust_tools = require("rust-tools")
+
+  rust_tools.setup({
+    tools = {
+      executor = require("rust-tools/executors").termopen,
+    },
+
+    -- all the opts to send to nvim-lspconfig
+    -- these override the defaults set by rust-tools.nvim
+    -- see https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#rust_analyzer
+    server = {
+      settings = {
+        -- to enable rust-analyzer settings visit:
+        -- https://github.com/rust-analyzer/rust-analyzer/blob/master/docs/user/generated_config.adoc
+        ["rust-analyzer"] = {
+          checkOnSave = {
+            command = "clippy",
+          },
+          procMacro = { enable = false },
+        },
+      },
+    }, -- rust-analyer options
+
+    -- debugging stuff
+    dap = {
+      adapter = {
+        type = "executable",
+        command = "lldb-vscode",
+        name = "rt_lldb",
+      },
     },
   })
 end

@@ -1,8 +1,8 @@
-local packer = prequire("plugins.packerInit")
+vim.cmd("packadd packer.nvim")
 
-local use = packer.use
+return require("packer").startup(function(use)
+  -- use({ "~/Documents/code/test-oxi" })
 
-return require("packer").startup(function()
   use({ "nvim-lua/plenary.nvim" })
 
   use({ "lewis6991/impatient.nvim" })
@@ -13,19 +13,6 @@ return require("packer").startup(function()
   })
 
   -- colorschemes
-
-  use({
-    "catppuccin/nvim",
-    as = "catppuccin",
-    config = function()
-      local catppuccin = require("catppuccin")
-      catppuccin.setup({
-        integrations = {
-          ts_rainbow = true,
-        },
-      })
-    end,
-  })
 
   use({
     -- "folke/tokyonight.nvim", -- original
@@ -57,8 +44,15 @@ return require("packer").startup(function()
   -- })
 
   use({
+    "rmagatti/auto-session",
+    config = function()
+      require("auto-session").setup()
+    end,
+  })
+
+  use({
     "anuvyklack/hydra.nvim",
-    requires = "anuvyklack/keymap-layer.nvim", -- needed only for pink hydras
+    requires = "anuvyklack/keymap-layer.nvim",
     event = { "BufRead", "BufNewFile" },
     config = function()
       require("plugins.configs.others").hydra()
@@ -67,7 +61,7 @@ return require("packer").startup(function()
 
   use({
     "ziontee113/color-picker.nvim",
-    -- event = { "BufRead", "BufNewFile" },
+    event = { "BufRead", "BufNewFile" },
     config = function()
       require("color-picker").setup()
     end,
@@ -80,6 +74,7 @@ return require("packer").startup(function()
 
   use({
     "kylechui/nvim-surround",
+    event = { "BufRead", "BufNewFile" },
     config = function()
       require("plugins.configs.others").surround()
     end,
@@ -137,14 +132,6 @@ return require("packer").startup(function()
   })
 
   use({
-    -- "folke/todo-comments.nvim",
-    "ahhshm/todo-comments.nvim",
-    config = function()
-      require("todo-comments").setup()
-    end,
-  })
-
-  use({
     "petertriho/nvim-scrollbar",
     event = { "BufRead", "BufNewFile" },
     config = function()
@@ -164,14 +151,6 @@ return require("packer").startup(function()
     event = "BufRead Cargo.toml",
     config = function()
       require("crates").setup()
-    end,
-  })
-
-  use({
-    "rcarriga/nvim-notify",
-    event = "VimEnter",
-    config = function()
-      vim.notify = require("notify")
     end,
   })
 
@@ -298,14 +277,6 @@ return require("packer").startup(function()
 
   use({ "nvim-treesitter/playground", after = "nvim-treesitter" })
 
-  -- use({
-  --   "lewis6991/spellsitter.nvim",
-  --   after = "nvim-treesitter",
-  --   config = function()
-  --     require("spellsitter").setup()
-  --   end,
-  -- })
-
   use({ "JoosepAlviste/nvim-ts-context-commentstring", after = "nvim-treesitter" })
 
   use({ "windwp/nvim-ts-autotag", after = "nvim-treesitter" })
@@ -336,16 +307,6 @@ return require("packer").startup(function()
   })
 
   use({
-    "pwntester/octo.nvim",
-    config = function()
-      require("octo").setup()
-    end,
-    setup = function()
-      packer_lazy_load("octo.nvim")
-    end,
-  })
-
-  use({
     "sindrets/diffview.nvim",
     after = "nvim-web-devicons",
     config = function()
@@ -361,9 +322,11 @@ return require("packer").startup(function()
   use({
     "neovim/nvim-lspconfig",
     module = "lspconfig",
-    after = "nvim-lsp-installer",
+    after = "mason-lspconfig.nvim",
     config = function()
-      require("plugins.configs.others").lsp_installer()
+      require("mason-lspconfig").setup({
+        automatic_installation = true,
+      })
       require("plugins.configs.lspconfig")
     end,
     setup = function()
@@ -375,7 +338,40 @@ return require("packer").startup(function()
     end,
   })
 
-  use({ "williamboman/nvim-lsp-installer" })
+  use({
+    "williamboman/mason.nvim",
+    config = function()
+      require("mason").setup({
+        ui = {
+          icons = {
+            package_installed = "",
+            package_pending = "",
+            package_uninstalled = "ﮊ",
+          },
+        },
+      })
+    end,
+  })
+
+  use({
+    "williamboman/mason-lspconfig.nvim",
+  })
+
+  use({
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    config = function()
+      require("mason-tool-installer").setup({
+        ensure_installed = {
+          "stylua",
+          "black",
+          "prettierd",
+          "node-debug2-adapter",
+        },
+        auto_update = false,
+        run_on_start = true,
+      })
+    end,
+  })
 
   use({ "b0o/schemastore.nvim" })
 
@@ -400,13 +396,6 @@ return require("packer").startup(function()
     "j-hui/fidget.nvim",
     config = function()
       require("fidget").setup({})
-    end,
-  })
-
-  use({
-    "stevearc/aerial.nvim",
-    config = function()
-      require("plugins.configs.others").aerial()
     end,
   })
 
@@ -449,6 +438,7 @@ return require("packer").startup(function()
   use({
     "nvim-telescope/telescope.nvim",
     module = "telescope",
+    cmd = "Telescope",
     config = function()
       require("plugins.configs.telescope")
     end,

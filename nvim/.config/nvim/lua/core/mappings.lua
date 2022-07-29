@@ -207,6 +207,7 @@ M.lspconfig = function(bufnr)
 
   buf_map("n", "gd", function()
     buf.definition()
+    -- require("trouble").open("lsp_definitions")
   end)
 
   buf_map("n", "K", function()
@@ -235,6 +236,7 @@ M.lspconfig = function(bufnr)
 
   buf_map("n", "<leader>D", function()
     buf.type_definition()
+    -- require("trouble").open("lsp_type_definitions")
   end)
 
   buf_map("n", "<leader>rn", function()
@@ -247,6 +249,7 @@ M.lspconfig = function(bufnr)
 
   buf_map("n", "gr", function()
     buf.references()
+    -- require("trouble").open("lsp_references")
   end)
 
   buf_map("n", "<leader>f", function()

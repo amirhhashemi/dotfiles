@@ -6,10 +6,10 @@ end
 
 local core_modules = {
   "core.utils",
+  "core.commands",
   "core.options",
   "core.autocmds",
   "core.mappings",
-  "core.commands",
 }
 
 for _, module in ipairs(core_modules) do

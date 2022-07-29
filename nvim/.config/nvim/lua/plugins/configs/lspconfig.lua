@@ -31,14 +31,15 @@ local on_attach = function(client, bufnr)
   client.server_capabilities.documentFormattingProvider = false
   client.server_capabilities.documentRangeFormattingProvider = false
 
-  -- if client.server_capabilities.documentSymbolProvider then
-  --   navic.attach(client, bufnr)
-  -- end
+  if client.server_capabilities.documentSymbolProvider then
+    navic.attach(client, bufnr)
+  end
 
   -- Mappings
   require("core.mappings").lspconfig(bufnr)
-  require("aerial").on_attach(client, bufnr)
 end
+
+local servers = {}
 
 local servers = {
   "tsserver",
@@ -54,7 +55,7 @@ local servers = {
   "gopls",
   "dockerls",
   "pyright",
-  -- "taplo",
+  "taplo",
 }
 
 for _, server in pairs(servers) do
@@ -81,6 +82,11 @@ for _, server in pairs(servers) do
   if server == "tailwindcss" then
     local tailwind_opts = require("plugins.configs.lsp.tailwindcss")
     opts = vim.tbl_deep_extend("keep", tailwind_opts, opts)
+  end
+
+  if server == "rust_analyzer" then
+    local rust_analyzer_opts = require("plugins.configs.lsp.rust_analyzer")
+    opts = vim.tbl_deep_extend("keep", rust_analyzer_opts, opts)
   end
 
   lspconfig[server].setup(opts)
