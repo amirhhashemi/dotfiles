@@ -4,9 +4,11 @@ if not present then
   return
 end
 
-local actions = require("telescope.actions")
+vim.g.theme_switcher_loaded = true
 
-local default = {
+require("base46").load_highlight "telescope"
+
+local options = {
   defaults = {
     vimgrep_arguments = {
       "rg",
@@ -24,12 +26,6 @@ local default = {
     selection_strategy = "reset",
     sorting_strategy = "ascending",
     layout_strategy = "horizontal",
-    mappings = {
-      i = {
-        ["<C-j>"] = actions.move_selection_next,
-        ["<C-k>"] = actions.move_selection_previous,
-      },
-    },
     layout_config = {
       horizontal = {
         prompt_position = "top",
@@ -43,51 +39,35 @@ local default = {
       height = 0.80,
       preview_cutoff = 120,
     },
-    history = {
-      path = "~/.local/share/nvim/databases/telescope_history.sqlite3",
-      -- path = "~/.config/nvim/telescope_history.sqlite3",
-      limit = 100,
-    },
     file_sorter = require("telescope.sorters").get_fuzzy_file,
-    file_ignore_patterns = { "node_modules", ".git" },
+    file_ignore_patterns = { "node_modules" },
     generic_sorter = require("telescope.sorters").get_generic_fuzzy_sorter,
     path_display = { "truncate" },
     winblend = 0,
     border = {},
     borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
     color_devicons = true,
-    use_less = true,
     set_env = { ["COLORTERM"] = "truecolor" }, -- default = nil,
     file_previewer = require("telescope.previewers").vim_buffer_cat.new,
     grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
     qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
     -- Developer configurations: Not meant for general override
     buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
-  },
-  extensions = {
-    file_browser = {
-      mappings = {
-        ["i"] = {
-          -- your custom insert mode mappings
-        },
-        ["n"] = {
-          -- your custom normal mode mappings
-        },
-      },
-    },
-    ["ui-select"] = {
-      require("telescope.themes").get_dropdown({
-        -- even more opts
-      }),
+    mappings = {
+      n = { ["q"] = require("telescope.actions").close },
     },
   },
+
+  extensions_list = { "themes", "terms" },
 }
 
-telescope.setup(default)
+-- check for any override
+options = require("core.utils").load_override(options, "nvim-telescope/telescope.nvim")
+telescope.setup(options)
 
+-- load extensions
 pcall(function()
-  local extensions = { "fzf" }
-  for _, ext in ipairs(extensions) do
-    require("telescope").load_extension(ext)
+  for _, ext in ipairs(options.extensions_list) do
+    telescope.load_extension(ext)
   end
 end)

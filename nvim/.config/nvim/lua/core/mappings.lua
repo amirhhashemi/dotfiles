@@ -1,318 +1,404 @@
--- Don't copy the replaced text after pasting in visual mode
-map("v", "p", '"_dP')
-map("v", "<leader>p", '"_d"+P')
+-- n, v, i, t = mode names
 
--- control system cilpboard
-map({ "n", "v" }, "<leader>y", '"+y')
-map({ "n" }, "<leader>Y", '"+y$')
-map({ "n" }, "<leader>p", '"+p')
-map({ "n", "v" }, "<leader>P", '"+P')
-
--- Allow moving the cursor through wrapped lines with j, k, <Up> and <Down>
--- http://www.reddit.com/r/vim/comments/2k4cbr/problem_with_gj_and_gk/
--- empty mode is same as using :map
--- also don't use g[j|k] when in operator pending mode, so it doesn't alter d, y or c behaviour
-map({ "n", "x", "o" }, "j", 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', { expr = true })
-map({ "n", "x", "o" }, "k", 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', { expr = true })
-map("", "<Down>", 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', { expr = true })
-map("", "<Up>", 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', { expr = true })
-
-map("n", "'", "`")
-
--- use ESC to turn off search highlighting
-map("n", "<Esc>", ":noh <CR>")
-
--- remove search highlights
-map("n", "<leader>l", ":noh<CR>")
-
--- go to the last buffer
-map("n", "<leader><leader>", "<C-^>")
-
--- don't yank text on cut ( X )
-map({ "n", "v" }, "X", '"_x')
-
--- navigation between windows
-map("n", "<C-h>", "<C-w>h")
-map("n", "<C-l>", "<C-w>l")
-map("n", "<C-k>", "<C-w>k")
-map("n", "<C-j>", "<C-w>j")
-
--- quickfix list
-map("n", "<leader>j", ":cnext<CR>")
-map("n", "<leader>k", ":cprev<CR>")
-
-map("n", "<leader>x", function()
-  close_buffer()
-end)
-
--- map("n", "<C-c>", ":%y+ <CR>") -- copy whole file content
-map("n", "<S-t>", ":enew <CR>") -- new buffer
-map("n", "<C-t>b", ":tabnew <CR>") -- new tabs
-map("n", "<leader>n", ":set nu! <CR>")
-map("n", "<leader>tn", ":set rnu! <CR>") -- relative line numbers
-map("n", "<C-s>", ":w <CR>") -- ctrl + s to save file
-
--- move selected line up/down with K/J or Alt-k/Alt-j
-map("x", "J", ":move '>+1<CR>gv-gv")
-map("x", "K", ":move '<-2<CR>gv-gv")
-map("x", "<A-j>", ":move '>+1<CR>gv-gv")
-map("x", "<A-k>", ":move '<-2<CR>gv-gv")
-
-map("c", "<C-j>", "<C-n>")
-map("c", "<C-k>", "<C-p>")
-
--- Remap for dealing with word wrap
--- map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
--- map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true })
-
--- plugin related mappings
+local function termcodes(str)
+  return vim.api.nvim_replace_termcodes(str, true, true, true)
+end
 
 local M = {}
 
-M.comment = function()
-  map("n", "<C-_>", '<CMD>lua require("Comment.api").toggle_current_linewise()<CR>')
-  map("v", "<C-_>", '<ESC><CMD>lua require("Comment.api").toggle_linewise_op(vim.fn.visualmode())<CR>')
-end
+M.general = {
+  i = {
+    -- go to  beginning and end
+    ["<C-b>"] = { "<ESC>^i", "beginning of line" },
+    ["<C-e>"] = { "<End>", "end of line" },
 
-M.nvimtree = function()
-  map("n", "<C-n>", ":NvimTreeToggle <CR>")
-end
+    -- navigate within insert mode
+    ["<C-h>"] = { "<Left>", "move left" },
+    ["<C-l>"] = { "<Right>", "move right" },
+    ["<C-j>"] = { "<Down>", "move down" },
+    ["<C-k>"] = { "<Up>", "move up" },
+  },
 
-M.telescope = function()
-  map("n", "<leader>fb", ":Telescope buffers <CR>")
-  map("n", "<leader>ff", ":Telescope find_files hidden=true <CR>")
-  map("n", "<leader>gt", ":Telescope git_status <CR>")
-  map("n", "<leader>fw", ":Telescope live_grep <CR>")
-  map("n", "<leader>cc", ":Telescope<CR>")
-end
+  n = {
+    ["<ESC>"] = { "<cmd> noh <CR>", "no highlight" },
 
-M.gitsigns = function()
-  local gitsigns = prequire("gitsigns")
-  -- Navigation
-  map("n", "]c", function()
-    if vim.wo.diff then
-      return "]c"
-    end
-    vim.schedule(function()
-      gitsigns.next_hunk()
-    end)
-    return "<Ignore>"
-  end, { expr = true })
+    -- switch between windows
+    ["<C-h>"] = { "<C-w>h", "window left" },
+    ["<C-l>"] = { "<C-w>l", "window right" },
+    ["<C-j>"] = { "<C-w>j", "window down" },
+    ["<C-k>"] = { "<C-w>k", "window up" },
 
-  map("n", "[c", function()
-    if vim.wo.diff then
-      return "[c"
-    end
-    vim.schedule(function()
-      gitsigns.prev_hunk()
-    end)
-    return "<Ignore>"
-  end, { expr = true })
+    -- save
+    ["<C-s>"] = { "<cmd> w <CR>", "save file" },
 
-  map({ "n", "v" }, "<leader>cs", ":Gitsigns stage_hunk<CR>")
-  map({ "n", "v" }, "<leader>cr", ":Gitsigns reset_hunk<CR>")
-  map("n", "<leader>cS", "<cmd>Gitsigns stage_buffer<CR>")
-  map("n", "<leader>cu", "<cmd>Gitsigns undo_stage_hunk<CR>")
-  map("n", "<leader>cR", "<cmd>Gitsigns reset_buffer<CR>")
-  map("n", "<leader>cp", "<cmd>Gitsigns preview_hunk<CR>")
-  map("n", "<leader>cb", '<cmd>lua require"gitsigns".blame_line{full=true}<CR>')
-  map("n", "<leader>tb", "<cmd>Gitsigns toggle_current_line_blame<CR>")
-  map("n", "<leader>dt", "<cmd>Gitsigns diffthis<CR>")
-  map("n", "<leader>td", "<cmd>Gitsigns toggle_deleted<CR>")
+    -- Copy all
+    ["<C-c>"] = { "<cmd> %y+ <CR>", "copy whole file" },
 
-  -- Text object
-  map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
-end
+    -- line numbers
+    ["<leader>n"] = { "<cmd> set nu! <CR>", "toggle line number" },
+    ["<leader>rn"] = { "<cmd> set rnu! <CR>", "toggle relative number" },
 
-M.trouble = function()
-  map("n", "<leader>dw", "<cmd>Trouble workspace_diagnostics<cr>")
-  map("n", "<leader>dd", "<cmd>Trouble document_diagnostics<cr>")
-  map("n", "<leader>tl", "<cmd>Trouble loclist<cr>")
-  map("n", "<leader>tq", "<cmd>Trouble quickfix<cr>")
-  -- map("n", "gR", "<cmd>Trouble lsp_references<cr>")
-end
+    -- update nvchad
+    ["<leader>uu"] = { "<cmd> :NvChadUpdate <CR>", "update nvchad" },
 
-M.navigator = function()
-  map("n", "<C-h>", function()
-    require("Navigator").left()
-  end)
+    ["<leader>tt"] = {
+      function()
+        require("base46").toggle_theme()
+      end,
+      "toggle theme",
+    },
 
-  map("n", "<C-k>", function()
-    require("Navigator").up()
-  end)
+    -- Allow moving the cursor through wrapped lines with j, k, <Up> and <Down>
+    -- http://www.reddit.com/r/vim/comments/2k4cbr/problem_with_gj_and_gk/
+    -- empty mode is same as using <cmd> :map
+    -- also don't use g[j|k] when in operator pending mode, so it doesn't alter d, y or c behaviour
+    ["j"] = { 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', opts = { expr = true } },
+    ["k"] = { 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', opts = { expr = true } },
+    ["<Up>"] = { 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', opts = { expr = true } },
+    ["<Down>"] = { 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', opts = { expr = true } },
 
-  map("n", "<C-l>", function()
-    require("Navigator").right()
-  end)
+    -- new buffer
+    ["<S-b>"] = { "<cmd> enew <CR>", "new buffer" },
 
-  map("n", "<C-j>", function()
-    require("Navigator").down()
-  end)
-end
+    -- close buffer + hide terminal buffer
+    ["<leader>x"] = {
+      function()
+        require("core.utils").close_buffer()
+      end,
+      "close buffer",
+    },
+  },
 
-M.dap = function()
-  local dap = prequire("dap")
+  t = { ["<C-x>"] = { termcodes "<C-\\><C-N>", "escape terminal mode" } },
 
-  map("n", "<leader>tt", function()
-    dap.toggle_breakpoint()
-  end)
+  v = {
+    ["j"] = { 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', opts = { expr = true } },
+    ["k"] = { 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', opts = { expr = true } },
+    ["<Up>"] = { 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', opts = { expr = true } },
+    ["<Down>"] = { 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', opts = { expr = true } },
+    -- Don't copy the replaced text after pasting in visual mode
+    -- https://vim.fandom.com/wiki/Replace_a_word_with_yanked_text#Alternative_mapping_for_paste
+    ["p"] = { 'p:let @+=@0<CR>:let @"=@0<CR>', opts = { silent = true } },
+  },
+}
 
-  map("n", "<leader>dc", function()
-    dap.continue()
-  end)
+M.tabufline = {
+  plugin = true,
 
-  map("n", "<leader>db", function()
-    dap.step_back()
-  end)
+  n = {
+    -- cycle through buffers
+    ["<TAB>"] = {
+      function()
+        require("core.utils").tabuflineNext()
+      end,
+      "goto next buffer",
+    },
 
-  map("n", "<leader>dr", function()
-    dap.repl.toggle()
-  end)
+    ["<S-Tab>"] = {
+      function()
+        require("core.utils").tabuflinePrev()
+      end,
+      "goto prev buffer",
+    },
 
-  map("n", "<leader>dq", function()
-    dap.close()
-  end)
-end
+    -- pick buffers via numbers
+    ["<Bslash>"] = { "<cmd> TbufPick <CR>", "Pick buffer" },
+  },
+}
 
-M.lspconfig = function(bufnr)
-  local buf = vim.lsp.buf
-  local d = vim.diagnostic
+M.comment = {
+  plugin = true,
 
-  local buf_map = function(mode, lhs, rhs)
-    map(mode, lhs, rhs, { buffer = bufnr })
-  end
+  -- toggle comment in both modes
+  n = {
+    ["<leader>/"] = {
+      function()
+        require("Comment.api").toggle_current_linewise()
+      end,
+      "toggle comment",
+    },
+  },
 
-  buf_map("n", "<leader>e", function()
-    d.open_float()
-  end)
+  v = {
+    ["<leader>/"] = {
+      "<ESC><cmd>lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())<CR>",
+      "toggle comment",
+    },
+  },
+}
 
-  buf_map("n", "[d", function()
-    d.goto_prev()
-  end)
+M.lspconfig = {
+  plugin = true,
 
-  buf_map("n", "]d", function()
-    d.goto_next()
-  end)
+  -- See `<cmd> :help vim.lsp.*` for documentation on any of the below functions
 
-  buf_map("n", "<leader>q", function()
-    d.setloclist({
-      open = false,
-      severity = { min = vim.diagnostic.severity.WARN },
-    })
-  end)
+  n = {
+    ["gD"] = {
+      function()
+        vim.lsp.buf.declaration()
+      end,
+      "lsp declaration",
+    },
 
-  buf_map("n", "gD", function()
-    buf.declaration()
-  end)
+    ["gd"] = {
+      function()
+        vim.lsp.buf.definition()
+      end,
+      "lsp definition",
+    },
 
-  buf_map("n", "gd", function()
-    buf.definition()
-    -- require("trouble").open("lsp_definitions")
-  end)
+    ["K"] = {
+      function()
+        vim.lsp.buf.hover()
+      end,
+      "lsp hover",
+    },
 
-  buf_map("n", "K", function()
-    buf.hover()
-  end)
+    ["gi"] = {
+      function()
+        vim.lsp.buf.implementation()
+      end,
+      "lsp implementation",
+    },
 
-  buf_map("n", "gi", function()
-    buf.implementation()
-  end)
+    ["<leader>ls"] = {
+      function()
+        vim.lsp.buf.signature_help()
+      end,
+      "lsp signature_help",
+    },
 
-  buf_map("n", "<C-k>", function()
-    buf.signature_help()
-  end)
+    ["<leader>D"] = {
+      function()
+        vim.lsp.buf.type_definition()
+      end,
+      "lsp definition type",
+    },
 
-  buf_map("n", "<leader>wa", function()
-    buf.add_workspace_folder()
-  end)
+    ["<leader>ra"] = {
+      function()
+        require("nvchad_ui.renamer").open()
+      end,
+      "lsp rename",
+    },
 
-  buf_map("n", "<leader>wr", function()
-    buf.remove_workspace_folder()
-  end)
+    ["<leader>ca"] = {
+      function()
+        vim.lsp.buf.code_action()
+      end,
+      "lsp code_action",
+    },
 
-  buf_map("n", "<leader>wl", function()
-    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-  end)
+    ["gr"] = {
+      function()
+        vim.lsp.buf.references()
+      end,
+      "lsp references",
+    },
 
-  buf_map("n", "<leader>D", function()
-    buf.type_definition()
-    -- require("trouble").open("lsp_type_definitions")
-  end)
+    ["<leader>f"] = {
+      function()
+        vim.diagnostic.open_float()
+      end,
+      "floating diagnostic",
+    },
 
-  buf_map("n", "<leader>rn", function()
-    buf.rename()
-  end)
+    ["[d"] = {
+      function()
+        vim.diagnostic.goto_prev()
+      end,
+      "goto prev",
+    },
 
-  buf_map("n", "<leader>ca", function()
-    buf.code_action()
-  end)
+    ["d]"] = {
+      function()
+        vim.diagnostic.goto_next()
+      end,
+      "goto_next",
+    },
 
-  buf_map("n", "gr", function()
-    buf.references()
-    -- require("trouble").open("lsp_references")
-  end)
+    ["<leader>q"] = {
+      function()
+        vim.diagnostic.setloclist()
+      end,
+      "diagnostic setloclist",
+    },
 
-  buf_map("n", "<leader>f", function()
-    buf.formatting()
-  end)
-end
+    ["<leader>fm"] = {
+      function()
+        vim.lsp.buf.formatting {}
+      end,
+      "lsp formatting",
+    },
 
-M.cinnamon = function()
-  -- Paragraph movements:
-  map({ "n", "x" }, "{", "<cmd>lua Scroll('{')<CR>")
-  map({ "n", "x" }, "}", "<cmd>lua Scroll('}')<CR>")
+    ["<leader>wa"] = {
+      function()
+        vim.lsp.buf.add_workspace_folder()
+      end,
+      "add workspace folder",
+    },
 
-  -- Previous/next search result:
-  map("n", "n", "<cmd>lua Scroll('n', 1)<CR>")
-  map("n", "N", "<cmd>lua Scroll('N', 1)<CR>")
-  map("n", "*", "<cmd>lua Scroll('*', 1)<CR>")
-  map("n", "#", "<cmd>lua Scroll('#', 1)<CR>")
-  map("n", "g*", "<cmd>lua Scroll('g*', 1)<CR>")
-  map("n", "g#", "<cmd>lua Scroll('g#', 1)<CR>")
+    ["<leader>wr"] = {
+      function()
+        vim.lsp.buf.remove_workspace_folder()
+      end,
+      "remove workspace folder",
+    },
 
-  -- Previous/next cursor location:
-  map("n", "<C-o>", "<cmd>lua Scroll('<C-o>', 1)<CR>")
-  map("n", "<C-i>", "<cmd>lua Scroll('1<C-i>', 1)<CR>")
+    ["<leader>wl"] = {
+      function()
+        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+      end,
+      "list workspace folders",
+    },
+  },
+}
 
-  -- Screen scrolling:
-  map("n", "zz", "<cmd>lua Scroll('zz', 0, 1)<CR>")
-  map("n", "zt", "<cmd>lua Scroll('zt', 0, 1)<CR>")
-  map("n", "zb", "<cmd>lua Scroll('zb', 0, 1)<CR>")
-  map("n", "z.", "<cmd>lua Scroll('z.', 0, 1)<CR>")
-  map("n", "z<cR>", "<cmd>lua Scroll('zt^', 0, 1)<CR>")
-  map("n", "z-", "<cmd>lua Scroll('z-', 0, 1)<CR>")
-  map("n", "z^", "<cmd>lua Scroll('z^', 0, 1)<CR>")
-  map("n", "z+", "<cmd>lua Scroll('z+', 0, 1)<CR>")
-  map("n", "<c-y>", "<cmd>lua Scroll('<C-y>', 0, 1)<CR>")
-  map("n", "<c-e>", "<cmd>lua Scroll('<C-e>', 0, 1)<CR>")
+M.nvimtree = {
+  plugin = true,
 
-  -- Horizontal screen scrolling:
-  map("n", "zH", "<cmd>lua Scroll('zH')<CR>")
-  map("n", "zL", "<cmd>lua Scroll('zL')<CR>")
-  map("n", "zs", "<cmd>lua Scroll('zs')<CR>")
-  map("n", "ze", "<cmd>lua Scroll('ze')<CR>")
-  map("n", "zh", "<cmd>lua Scroll('zh', 0, 1)<CR>")
-  map("n", "zl", "<cmd>lua Scroll('zl', 0, 1)<CR>")
-end
+  n = {
+    -- toggle
+    ["<C-n>"] = { "<cmd> NvimTreeToggle <CR>", "toggle nvimtree" },
 
-M.harpoon = function()
-  map("n", "<leader>m", function()
-    require("harpoon.mark").add_file()
-  end)
-  map("n", "<leader>h", function()
-    require("harpoon.ui").toggle_quick_menu()
-  end)
-  map("n", "<leader>tm", function()
-    require("harpoon.tmux").gotoTerminal(1)
-  end)
-  map("n", "<C-f>", function()
-    require("harpoon.tmux").sendCommand(1, "tmux-sessionizer")
-  end)
-end
+    -- focus
+    ["<leader>e"] = { "<cmd> NvimTreeFocus <CR>", "focus nvimtree" },
+  },
+}
 
-M.color_picker = function()
-  map("n", "<C-c>", "<CMD>PickColor<CR>")
-  map("i", "<C-c>", "<CMD>PickColorInsert<CR>")
-end
+M.telescope = {
+  plugin = true,
+
+  n = {
+    -- find
+    ["<leader>ff"] = { "<cmd> Telescope find_files <CR>", "find files" },
+    ["<leader>fa"] = { "<cmd> Telescope find_files follow=true no_ignore=true hidden=true <CR>", "find all" },
+    ["<leader>fw"] = { "<cmd> Telescope live_grep <CR>", "live grep" },
+    ["<leader>fb"] = { "<cmd> Telescope buffers <CR>", "find buffers" },
+    ["<leader>fh"] = { "<cmd> Telescope help_tags <CR>", "help page" },
+    ["<leader>fo"] = { "<cmd> Telescope oldfiles <CR>", "find oldfiles" },
+    ["<leader>tk"] = { "<cmd> Telescope keymaps <CR>", "show keys" },
+
+    -- git
+    ["<leader>cm"] = { "<cmd> Telescope git_commits <CR>", "git commits" },
+    ["<leader>gt"] = { "<cmd> Telescope git_status <CR>", "git status" },
+
+    -- pick a hidden term
+    ["<leader>pt"] = { "<cmd> Telescope terms <CR>", "pick hidden term" },
+
+    -- theme switcher
+    ["<leader>th"] = { "<cmd> Telescope themes <CR>", "nvchad themes" },
+  },
+}
+
+M.nvterm = {
+  plugin = true,
+
+  t = {
+    -- toggle in terminal mode
+    ["<A-i>"] = {
+      function()
+        require("nvterm.terminal").toggle "float"
+      end,
+      "toggle floating term",
+    },
+
+    ["<A-h>"] = {
+      function()
+        require("nvterm.terminal").toggle "horizontal"
+      end,
+      "toggle horizontal term",
+    },
+
+    ["<A-v>"] = {
+      function()
+        require("nvterm.terminal").toggle "vertical"
+      end,
+      "toggle vertical term",
+    },
+  },
+
+  n = {
+    -- toggle in normal mode
+    ["<A-i>"] = {
+      function()
+        require("nvterm.terminal").toggle "float"
+      end,
+      "toggle floating term",
+    },
+
+    ["<A-h>"] = {
+      function()
+        require("nvterm.terminal").toggle "horizontal"
+      end,
+      "toggle horizontal term",
+    },
+
+    ["<A-v>"] = {
+      function()
+        require("nvterm.terminal").toggle "vertical"
+      end,
+      "toggle vertical term",
+    },
+
+    -- new
+
+    ["<leader>h"] = {
+      function()
+        require("nvterm.terminal").new "horizontal"
+      end,
+      "new horizontal term",
+    },
+
+    ["<leader>v"] = {
+      function()
+        require("nvterm.terminal").new "vertical"
+      end,
+      "new vertical term",
+    },
+  },
+}
+
+M.whichkey = {
+  plugin = true,
+
+  n = {
+    ["<leader>wK"] = {
+      function()
+        vim.cmd "WhichKey"
+      end,
+      "which-key all keymaps",
+    },
+    ["<leader>wk"] = {
+      function()
+        local input = vim.fn.input "WhichKey: "
+        vim.cmd("WhichKey " .. input)
+      end,
+      "which-key query lookup",
+    },
+  },
+}
+
+M.blankline = {
+  plugin = true,
+
+  n = {
+    ["<leader>bc"] = {
+      function()
+        local ok, start = require("indent_blankline.utils").get_current_context(
+          vim.g.indent_blankline_context_patterns,
+          vim.g.indent_blankline_use_treesitter_scope
+        )
+
+        if ok then
+          vim.api.nvim_win_set_cursor(vim.api.nvim_get_current_win(), { start, 0 })
+          vim.cmd [[normal! _]]
+        end
+      end,
+
+      "Jump to current_context",
+    },
+  },
+}
 
 return M

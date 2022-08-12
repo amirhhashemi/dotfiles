@@ -8,9 +8,9 @@ local group_spellcheck = vim.api.nvim_create_augroup("_spellcheck", { clear = tr
 autocmd("BufWritePre", {
   callback = function()
     -- vim.lsp.buf.formatting_sync()
-    vim.lsp.buf.format({
+    vim.lsp.buf.format {
       async = false,
-    })
+    }
   end,
   group = group_lsp,
 })
@@ -19,7 +19,7 @@ autocmd("BufWritePre", {
 autocmd("FileType", {
   callback = function()
     vim.opt_local.spell = true
-    hl("SpellCap", {})
+    vim.api.nvim_set_hl(0, "SpellCap", {})
   end,
   pattern = { "gitcommit", "markdown" },
   group = group_spellcheck,
@@ -28,7 +28,7 @@ autocmd("FileType", {
 -- Highlight yanked text
 autocmd("TextYankPost", {
   callback = function()
-    vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
+    vim.highlight.on_yank { higroup = "Visual", timeout = 200 }
   end,
 })
 
@@ -38,16 +38,16 @@ autocmd("TermOpen", {
   callback = function()
     vim.opt_local.number = false
     vim.opt_local.relativenumber = false
-    vim.cmd([[ setfiletype terminal ]])
+    vim.cmd [[ setfiletype terminal ]]
   end,
 })
 
 -- Open a file from its last left off position
 autocmd("BufReadPost", {
   callback = function()
-    if not fn.expand("%:p"):match("m/.git/") and fn.line("'\"") > 1 and fn.line("'\"") <= fn.line("$") then
-      vim.cmd("normal! g'\"")
-      vim.cmd("normal zz")
+    if not fn.expand("%:p"):match "m/.git/" and fn.line "'\"" > 1 and fn.line "'\"" <= fn.line "$" then
+      vim.cmd "normal! g'\""
+      vim.cmd "normal zz"
     end
   end,
 })
@@ -58,44 +58,9 @@ autocmd("InsertEnter", {
     vim.opt.relativenumber = false
   end,
 })
+
 autocmd("InsertLeave", {
   callback = function()
     vim.opt.relativenumber = true
   end,
 })
-
--- autocmd({ "FileType" }, {
--- callback = function()
---   local winbar_filetype_exclude = {
---     "help",
---     "startify",
---     "dashboard",
---     "packer",
---     "neogitstatus",
---     "NvimTree",
---     "Trouble",
---     "alpha",
---     "lir",
---     "Outline",
---     "spectre_panel",
---     "toggleterm",
---   }
---
---   if vim.tbl_contains(winbar_filetype_exclude, vim.bo.filetype) then
---     vim.opt_local.winbar = nil
---   end
--- end,
--- })
-
--- -- underline the word under cursor
--- autocmd("VimEnter", {
---   callback = function()
---     hl("CursorWord", { underline = true })
---     match_cursorword()
---   end,
--- })
--- autocmd({ "CursorMoved", "CursorMovedI" }, {
---   callback = function()
---     match_cursorword()
---   end,
--- })

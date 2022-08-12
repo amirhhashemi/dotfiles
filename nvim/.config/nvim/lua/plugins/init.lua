@@ -1,468 +1,219 @@
-vim.cmd("packadd packer.nvim")
+vim.cmd "packadd packer.nvim"
 
-return require("packer").startup(function(use)
-  -- use({ "~/Documents/code/test-oxi" })
+local plugins = {
 
-  use({ "nvim-lua/plenary.nvim" })
-
-  use({ "lewis6991/impatient.nvim" })
-
-  use({
-    "wbthomason/packer.nvim",
-    event = "VimEnter",
-  })
-
-  -- colorschemes
-
-  use({
-    -- "folke/tokyonight.nvim", -- original
-    "ahhshm/tokyonight.nvim", -- my fork
-    -- "~/Documents/code/tokyonight.nvim",
-  })
-
-  -- misc plugins
-
-  use({ "antoinemadec/FixCursorHold.nvim", event = { "BufRead", "BufNewFile" } })
-
-  use({ "vimpostor/vim-tpipeline" })
-
-  -- use({
-  --   "chentoast/marks.nvim",
-  --   event = { "BufRead", "BufNewFile" },
-  --   config = function()
-  --     require("plugins.configs.others").marks()
-  --   end,
-  -- })
-
-  -- use({
-  --   "kevinhwang91/nvim-ufo",
-  --   requires = "kevinhwang91/promise-async",
-  --   event = { "BufRead", "BufNewFile" },
-  --   config = function()
-  --     require("plugins.configs.others").ufo()
-  --   end,
-  -- })
-
-  use({
-    "rmagatti/auto-session",
+  ["nvim-lua/plenary.nvim"] = { module = "plenary" },
+  ["wbthomason/packer.nvim"] = {
+    cmd = require("core.lazy_load").packer_cmds,
     config = function()
-      require("auto-session").setup()
+      require "plugins"
     end,
-  })
+  },
+  ["NvChad/extensions"] = { module = { "telescope", "nvchad" } },
 
-  use({
-    "anuvyklack/hydra.nvim",
-    requires = "anuvyklack/keymap-layer.nvim",
-    event = { "BufRead", "BufNewFile" },
+  ["NvChad/base46"] = {
     config = function()
-      require("plugins.configs.others").hydra()
+      local ok, base46 = pcall(require, "base46")
+
+      if ok then
+        base46.load_theme()
+      end
     end,
-  })
+  },
 
-  use({
-    "ziontee113/color-picker.nvim",
-    event = { "BufRead", "BufNewFile" },
+  ["NvChad/ui"] = {
+    after = "base46",
     config = function()
-      require("color-picker").setup()
+      require("plugins.configs.others").nvchad_ui()
+    end,
+  },
+
+  ["NvChad/nvterm"] = {
+    module = "nvterm",
+    config = function()
+      require "plugins.configs.nvterm"
     end,
     setup = function()
-      require("core.mappings").color_picker()
+      require("core.utils").load_mappings "nvterm"
     end,
-  })
+  },
 
-  use({ "stevearc/dressing.nvim", event = "VimEnter" })
-
-  use({
-    "kylechui/nvim-surround",
-    event = { "BufRead", "BufNewFile" },
+  ["kyazdani42/nvim-web-devicons"] = {
+    after = "ui",
+    module = "nvim-web-devicons",
     config = function()
-      require("plugins.configs.others").surround()
+      require("plugins.configs.others").devicons()
     end,
-  })
+  },
 
-  use({
-    "windwp/nvim-autopairs",
-    after = { "nvim-cmp", "nvim-treesitter" },
+  ["lukas-reineke/indent-blankline.nvim"] = {
+    opt = true,
+    setup = function()
+      require("core.lazy_load").on_file_open "indent-blankline.nvim"
+      require("core.utils").load_mappings "blankline"
+    end,
+    config = function()
+      require("plugins.configs.others").blankline()
+    end,
+  },
+
+  ["NvChad/nvim-colorizer.lua"] = {
+    opt = true,
+    setup = function()
+      require("core.lazy_load").on_file_open "nvim-colorizer.lua"
+    end,
+    config = function()
+      require("plugins.configs.others").colorizer()
+    end,
+  },
+
+  ["nvim-treesitter/nvim-treesitter"] = {
+    module = "nvim-treesitter",
+    setup = function()
+      require("core.lazy_load").on_file_open "nvim-treesitter"
+    end,
+    cmd = require("core.lazy_load").treesitter_cmds,
+    run = ":TSUpdate",
+    config = function()
+      require "plugins.configs.treesitter"
+    end,
+  },
+
+  -- git stuff
+  ["lewis6991/gitsigns.nvim"] = {
+    ft = "gitcommit",
+    setup = function()
+      require("core.lazy_load").gitsigns()
+    end,
+    config = function()
+      require("plugins.configs.others").gitsigns()
+    end,
+  },
+
+  -- lsp stuff
+
+  ["williamboman/mason.nvim"] = {
+    cmd = require("core.lazy_load").mason_cmds,
+    config = function()
+      require "plugins.configs.mason"
+    end,
+  },
+
+  ["neovim/nvim-lspconfig"] = {
+    opt = true,
+    setup = function()
+      require("core.lazy_load").on_file_open "nvim-lspconfig"
+    end,
+    config = function()
+      require "plugins.configs.lspconfig"
+    end,
+  },
+
+  -- load luasnips + cmp related in insert mode only
+
+  ["rafamadriz/friendly-snippets"] = {
+    module = { "cmp", "cmp_nvim_lsp" },
+    event = "InsertEnter",
+  },
+
+  ["hrsh7th/nvim-cmp"] = {
+    after = "friendly-snippets",
+    config = function()
+      require "plugins.configs.cmp"
+    end,
+  },
+
+  ["L3MON4D3/LuaSnip"] = {
+    wants = "friendly-snippets",
+    after = "nvim-cmp",
+    config = function()
+      require("plugins.configs.others").luasnip()
+    end,
+  },
+
+  ["saadparwaiz1/cmp_luasnip"] = {
+    after = "LuaSnip",
+  },
+
+  ["hrsh7th/cmp-nvim-lua"] = {
+    after = "cmp_luasnip",
+  },
+
+  ["hrsh7th/cmp-nvim-lsp"] = {
+    after = "cmp-nvim-lua",
+  },
+
+  ["hrsh7th/cmp-buffer"] = {
+    after = "cmp-nvim-lsp",
+  },
+
+  ["hrsh7th/cmp-path"] = {
+    after = "cmp-buffer",
+  },
+
+  -- misc plugins
+  ["windwp/nvim-autopairs"] = {
+    after = "nvim-cmp",
     config = function()
       require("plugins.configs.others").autopairs()
     end,
-  })
+  },
 
-  use({
-    "numToStr/Comment.nvim",
+  ["goolord/alpha-nvim"] = {
+    after = "base46",
+    disable = true,
+    config = function()
+      require "plugins.configs.alpha"
+    end,
+  },
+
+  ["numToStr/Comment.nvim"] = {
     module = "Comment",
-    branch = "jsx",
+    keys = { "gc", "gb" },
     config = function()
       require("plugins.configs.others").comment()
     end,
     setup = function()
-      require("core.mappings").comment()
+      require("core.utils").load_mappings "comment"
     end,
-  })
+  },
 
-  use({
-    "kyazdani42/nvim-tree.lua",
+  -- file managing , picker etc
+  ["kyazdani42/nvim-tree.lua"] = {
+    ft = "alpha",
+    cmd = { "NvimTreeToggle", "NvimTreeFocus" },
     config = function()
-      require("plugins.configs.nvimtree")
+      require "plugins.configs.nvimtree"
     end,
     setup = function()
-      require("core.mappings").nvimtree()
+      require("core.utils").load_mappings "nvimtree"
     end,
-  })
+  },
 
-  use({
-    "declancm/cinnamon.nvim",
-    event = { "BufRead", "BufNewFile" },
-    config = function()
-      require("plugins.configs.others").cinnamon()
-      require("core.mappings").cinnamon()
-    end,
-  })
-
-  use({
-    "nvim-neorg/neorg",
-    ft = "norg",
-    after = "nvim-treesitter",
-    config = function()
-      require("plugins.configs.others").neorg()
-    end,
-    setup = function()
-      packer_lazy_load("neorg")
-    end,
-  })
-
-  use({
-    "petertriho/nvim-scrollbar",
-    event = { "BufRead", "BufNewFile" },
-    config = function()
-      require("plugins.configs.others").scrollbar()
-    end,
-  })
-
-  use({
-    "luukvbaal/stabilize.nvim",
-    config = function()
-      require("stabilize").setup()
-    end,
-  })
-
-  use({
-    "saecki/crates.nvim",
-    event = "BufRead Cargo.toml",
-    config = function()
-      require("crates").setup()
-    end,
-  })
-
-  use({
-    "numToStr/Navigator.nvim",
-    config = function()
-      require("Navigator").setup()
-    end,
-    setup = function()
-      require("core.mappings").navigator()
-    end,
-  })
-
-  use({
-    "Darazaki/indent-o-matic",
-    event = { "BufRead", "BufNewFile" },
-    config = function()
-      require("plugins.configs.others").indent_o_matic()
-    end,
-  })
-
-  use({
-    "folke/trouble.nvim",
-    requires = "kyazdani42/nvim-web-devicons",
-    config = function()
-      require("trouble").setup()
-    end,
-    setup = function()
-      require("core.mappings").trouble()
-    end,
-  })
-
-  use({
-    "ahmedkhalf/project.nvim",
-    config = function()
-      require("plugins.configs.others").project()
-    end,
-  })
-
-  use({
-    "ThePrimeagen/harpoon",
-    config = function()
-      require("plugins.configs.others").harpoon()
-    end,
-    setup = function()
-      require("core.mappings").harpoon()
-    end,
-  })
-
-  use({
-    "lukas-reineke/indent-blankline.nvim",
-    event = { "BufRead", "BufNewFile" },
-    config = function()
-      require("plugins.configs.others").indent_blankline()
-    end,
-  })
-
-  use({
-    "kyazdani42/nvim-web-devicons",
-    config = function()
-      require("plugins.configs.icons")
-    end,
-    setup = function()
-      packer_lazy_load("nvim-web-devicons")
-    end,
-  })
-
-  use({
-    "feline-nvim/feline.nvim",
-    after = "nvim-web-devicons",
-    config = function()
-      require("plugins.configs.feline")
-    end,
-  })
-
-  use({
-    "kevinhwang91/nvim-bqf",
-    event = "BufEnter",
-    config = function()
-      require("plugins.configs.others").bqf()
-    end,
-  })
-
-  use({
-    "norcalli/nvim-colorizer.lua",
-    event = { "BufRead", "BufNewFile" },
-    config = function()
-      require("plugins.configs.others").colorizer()
-    end,
-  })
-
-  use({ "mattn/emmet-vim", event = { "BufRead", "BufEnter" } })
-
-  use({
-    "max397574/better-escape.nvim",
-    event = "InsertCharPre",
-    config = function()
-      require("plugins.configs.others").better_escape()
-    end,
-  })
-
-  use({
-    "L3MON4D3/LuaSnip",
-    after = "nvim-cmp",
-    event = "BufEnter",
-    config = function()
-      require("plugins.configs.luasnip")
-    end,
-    setup = function()
-      packer_lazy_load("LuaSnip")
-    end,
-  })
-
-  -- Treesitter
-
-  use({
-    "nvim-treesitter/nvim-treesitter",
-    event = { "BufRead", "BufNewFile" },
-    run = ":TSUpdate",
-    config = function()
-      require("plugins.configs.treesitter")
-    end,
-  })
-
-  use({ "nvim-treesitter/playground", after = "nvim-treesitter" })
-
-  use({ "JoosepAlviste/nvim-ts-context-commentstring", after = "nvim-treesitter" })
-
-  use({ "windwp/nvim-ts-autotag", after = "nvim-treesitter" })
-
-  use({ "p00f/nvim-ts-rainbow", after = "nvim-treesitter" })
-
-  use({ "nvim-treesitter/nvim-treesitter-textobjects", after = "nvim-treesitter" })
-
-  -- git integration
-
-  use({
-    "TimUntersberger/neogit",
-    event = { "BufRead", "BufNewFile" },
-    config = function()
-      require("plugins.configs.others").neogit()
-    end,
-  })
-
-  use({
-    "lewis6991/gitsigns.nvim",
-    event = { "BufRead", "BufNewFile" },
-    config = function()
-      require("plugins.configs.others").gitsigns()
-    end,
-    setup = function()
-      packer_lazy_load("gitsigns.nvim")
-    end,
-  })
-
-  use({
-    "sindrets/diffview.nvim",
-    after = "nvim-web-devicons",
-    config = function()
-      require("diffview").setup()
-    end,
-    setup = function()
-      packer_lazy_load("diffview.nvim")
-    end,
-  })
-
-  -- LSP
-
-  use({
-    "neovim/nvim-lspconfig",
-    module = "lspconfig",
-    after = "mason-lspconfig.nvim",
-    config = function()
-      require("mason-lspconfig").setup({
-        automatic_installation = true,
-      })
-      require("plugins.configs.lspconfig")
-    end,
-    setup = function()
-      packer_lazy_load("nvim-lspconfig")
-      -- reload the current file so lsp actually starts for it
-      vim.defer_fn(function()
-        vim.cmd('if &ft == "packer" | echo "" | else | silent! e %')
-      end, 0)
-    end,
-  })
-
-  use({
-    "williamboman/mason.nvim",
-    config = function()
-      require("mason").setup({
-        ui = {
-          icons = {
-            package_installed = "",
-            package_pending = "",
-            package_uninstalled = "ﮊ",
-          },
-        },
-      })
-    end,
-  })
-
-  use({
-    "williamboman/mason-lspconfig.nvim",
-  })
-
-  use({
-    "WhoIsSethDaniel/mason-tool-installer.nvim",
-    config = function()
-      require("mason-tool-installer").setup({
-        ensure_installed = {
-          "stylua",
-          "black",
-          "prettierd",
-          "node-debug2-adapter",
-        },
-        auto_update = false,
-        run_on_start = true,
-      })
-    end,
-  })
-
-  use({ "b0o/schemastore.nvim" })
-
-  use({
-    "SmiteshP/nvim-navic",
-    config = function()
-      require("plugins.configs.others").navic()
-    end,
-  })
-
-  use({ "jose-elias-alvarez/nvim-lsp-ts-utils", before = "nvim-lspconfig" })
-
-  use({
-    "jose-elias-alvarez/null-ls.nvim",
-    event = { "BufRead", "BufNewFile" },
-    config = function()
-      require("plugins.configs.others").null_ls()
-    end,
-  })
-
-  use({
-    "j-hui/fidget.nvim",
-    config = function()
-      require("fidget").setup({})
-    end,
-  })
-
-  -- cmp
-
-  use({
-    "hrsh7th/nvim-cmp",
-    config = function()
-      require("plugins.configs.cmp")
-    end,
-  })
-
-  use({
-    "saadparwaiz1/cmp_luasnip",
-    after = "LuaSnip",
-  })
-
-  use({
-    "hrsh7th/cmp-nvim-lua",
-    after = "cmp_luasnip",
-  })
-
-  use({
-    "hrsh7th/cmp-nvim-lsp",
-    after = "cmp-nvim-lua",
-  })
-
-  use({
-    "hrsh7th/cmp-buffer",
-    after = "cmp-nvim-lsp",
-  })
-
-  use({
-    "hrsh7th/cmp-path",
-    after = "cmp-buffer",
-  })
-
-  -- Telescope
-
-  use({
-    "nvim-telescope/telescope.nvim",
-    module = "telescope",
+  ["nvim-telescope/telescope.nvim"] = {
     cmd = "Telescope",
     config = function()
-      require("plugins.configs.telescope")
+      require "plugins.configs.telescope"
     end,
     setup = function()
-      require("core.mappings").telescope()
+      require("core.utils").load_mappings "telescope"
     end,
-  })
+  },
 
-  use({
-    "nvim-telescope/telescope-fzf-native.nvim",
-    before = "telescope.nvim",
-    run = "make",
-    cond = vim.fn.executable("make") == 1,
-  })
-
-  -- DAP
-
-  use({
-    "mfussenegger/nvim-dap",
+  -- Only load whichkey after all the gui
+  ["folke/which-key.nvim"] = {
+    disable = true,
+    module = "which-key",
     config = function()
-      require("plugins.configs.dap")
+      require "plugins.configs.whichkey"
     end,
     setup = function()
-      require("core.mappings").dap()
+      require("core.utils").load_mappings "whichkey"
     end,
-  })
-end)
+  },
+
+  -- Speed up deffered plugins
+  ["lewis6991/impatient.nvim"] = { module = "impatient" },
+}
+
+require("core.packer").run(plugins)
