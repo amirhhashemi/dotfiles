@@ -44,14 +44,14 @@ M.comment = {
   n = {
     ["<C-_>"] = {
       function()
-        require("Comment.api").toggle_current_linewise()
+        require("Comment.api").toggle.linewise.current()
       end,
     },
   },
 
   v = {
     ["<C-_>"] = {
-      "<ESC><cmd>lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())<CR>",
+      "<ESC><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>",
     },
   },
 }
@@ -73,6 +73,8 @@ M.lspconfig = {
 }
 
 M.navigator = {
+  -- plugin = true,
+
   n = {
     ["<C-h>"] = {
       "<cmd> NavigatorLeft <CR>",
@@ -90,6 +92,8 @@ M.navigator = {
 }
 
 M.harpoon = {
+  -- plugin = true,
+
   n = {
     ["<leader>m"] = {
       function()
@@ -105,6 +109,8 @@ M.harpoon = {
 }
 
 M.gitsigns = {
+  plugin = true,
+
   n = {
     ["]c"] = {
       function()
@@ -154,6 +160,8 @@ M.gitsigns = {
 }
 
 M.luasnip = {
+  plugin = true,
+
   i = {
     ["<C-l>"] = {
       function()

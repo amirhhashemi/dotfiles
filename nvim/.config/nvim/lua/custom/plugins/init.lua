@@ -1,10 +1,6 @@
 return {
   -- Overrides
 
-  -- ["hrsh7th/nvim-cmp"] = {
-  --   after = "",
-  -- },
-
   ["neovim/nvim-lspconfig"] = {
     config = function()
       require "plugins.configs.lspconfig"
@@ -32,6 +28,12 @@ return {
   },
 
   -- Misc
+
+  ["rebelot/kanagawa.nvim"] = {
+    config = function()
+      vim.cmd "colorscheme kanagawa"
+    end,
+  },
 
   ["numToStr/Navigator.nvim"] = {
     opt = true,
@@ -172,11 +174,16 @@ return {
   ["sindrets/diffview.nvim"] = {
     opt = true,
     cmd = { "DiffviewOpen" },
-    setup = function()
-      require("core.lazy_load").on_file_open "diffview.nvim"
-    end,
     config = function()
       require("diffview").setup()
+    end,
+  },
+
+  ["TimUntersberger/neogit"] = {
+    opt = true,
+    cmd = { "Neogit" },
+    config = function()
+      require("plugins.configs.others").neogit()
     end,
   },
 

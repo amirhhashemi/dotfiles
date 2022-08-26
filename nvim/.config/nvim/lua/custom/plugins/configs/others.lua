@@ -121,7 +121,13 @@ M.scrollbar = function()
 end
 
 M.neogit = function()
-  local neogit = require "neogit"
+  local present, neogit = pcall(require, "neogit")
+
+  if not present then
+    return
+  end
+
+  neogit.setup()
 end
 
 M.surround = function()
@@ -139,6 +145,51 @@ M.surround = function()
       delete = "sd",
       change = "sr",
     },
+    surrounds = {
+      ["f"] = {
+        delete = "^([%w_]+%()().-(%))()$",
+      },
+    },
+  }
+
+  surround.buffer_setup {
+    surrounds = {
+      ["l"] = {
+        add = function()
+          local clipboard = vim.fn.getreg("+"):gsub("\n", "")
+          return {
+            { "[" },
+            { "](" .. clipboard .. ")" },
+          }
+        end,
+        find = "%b[]%b()",
+        delete = "^(%[)().-(%]%b())()$",
+        change = {
+          target = "^()()%b[]%((.-)()%)$",
+          replacement = function()
+            local clipboard = vim.fn.getreg("+"):gsub("\n", "")
+            return {
+              { "" },
+              { clipboard },
+            }
+          end,
+        },
+      },
+    },
+  }
+end
+
+M.image = function()
+  local present, image = pcall(require, "image")
+
+  if not present then
+    return
+  end
+
+  image.setup {
+    min_padding = 5,
+    show_label = true,
+    render_using_dither = true,
   }
 end
 

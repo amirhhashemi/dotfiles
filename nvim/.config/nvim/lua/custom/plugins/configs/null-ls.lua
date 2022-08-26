@@ -6,8 +6,10 @@ end
 
 local b = null_ls.builtins
 
-  local sources = {
-  b.formatting.prettierd,
+local sources = {
+  b.formatting.prettierd.with {
+    extra_filetypes = { "astro" },
+  },
   b.formatting.stylua,
   b.formatting.gofmt,
   b.formatting.black,

@@ -18,6 +18,7 @@ local servers = {
   "dockerls",
   "pyright",
   "taplo",
+  "astro",
 }
 
 local present, typescript = pcall(require, "typescript")

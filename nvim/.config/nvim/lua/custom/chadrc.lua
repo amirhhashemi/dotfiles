@@ -1,7 +1,7 @@
 local M = {}
 
 M.ui = {
-  theme = "yoru",
+  theme = "kanagawa",
   hl_add = {
     Winbar = { bg = "NONE", sp = "none" },
   },

@@ -64,3 +64,10 @@ autocmd("InsertLeave", {
     vim.opt.relativenumber = true
   end,
 })
+
+autocmd({ "BufRead", "BufEnter" }, {
+  pattern = "*.astro",
+  callback = function()
+    vim.opt_local.filetype = "astro"
+  end,
+})
