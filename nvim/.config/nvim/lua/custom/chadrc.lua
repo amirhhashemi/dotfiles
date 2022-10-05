@@ -1,18 +1,16 @@
 local M = {}
 
 M.ui = {
-  theme = "kanagawa",
-  hl_add = {
-    Winbar = { bg = "NONE", sp = "none" },
-  },
+  theme = "tokyonight",
 }
 
 M.mappings = require "custom.mappings"
 
-M.plugins = {
-  user = require "custom.plugins",
-  remove = require "custom.plugins.remove",
-  override = require "custom.plugins.override",
-}
+M.plugins = require("custom.plugins") 
+-- {
+--  --  user = require "custom.plugins",
+--  -- remove = require "custom.plugins.remove",
+--  -- override = require "custom.plugins.override",
+-- }
 
 return M

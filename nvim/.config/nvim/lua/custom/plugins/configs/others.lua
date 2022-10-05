@@ -83,43 +83,6 @@ M.harpoon = function()
   }
 end
 
-M.scrollbar = function()
-  local present, scrollbar = pcall(require, "scrollbar")
-
-  if not present then
-    return
-  end
-
-  scrollbar.setup {
-    handle = {
-      highlight = "CursorLine",
-    },
-    marks = {
-      Error = {
-        highlight = "DiagnosticError",
-      },
-      Warn = {
-        highlight = "DiagnosticWarn",
-      },
-      Info = {
-        highlight = "DiagnosticInfo",
-      },
-      Hint = {
-        highlight = "DiagnosticHint",
-      },
-    },
-    excluded_buftypes = {
-      "terminal",
-    },
-    excluded_filetypes = {
-      "packer",
-      "prompt",
-      "TelescopePrompt",
-      "NvimTree",
-    },
-  }
-end
-
 M.neogit = function()
   local present, neogit = pcall(require, "neogit")
 
@@ -179,17 +142,31 @@ M.surround = function()
   }
 end
 
-M.image = function()
-  local present, image = pcall(require, "image")
+M.satellite = function()
+  local present, satellite = pcall(require, "satellite")
 
   if not present then
     return
   end
 
-  image.setup {
-    min_padding = 5,
-    show_label = true,
-    render_using_dither = true,
+  satellite.setup {
+    handlers = {
+      gitsigns = {
+        enable = false,
+      },
+    },
+  }
+end
+
+M.auto_session = function()
+  local present, auto_session = pcall(require, "auto-session")
+
+  if not present then
+    return
+  end
+
+  auto_session.setup {
+    log_level = "error",
   }
 end
 

@@ -22,6 +22,22 @@ local function get_file_name(include_path)
   return file_path .. file_name
 end
 
+local function get_file_modified_symbol()
+  local modified_str
+
+  if vim.bo.modified then
+    modified_str = "●"
+
+    if modified_str ~= "" then
+      modified_str = modified_str .. " "
+    end
+  else
+    modified_str = ""
+  end
+
+  return modified_str
+end
+
 local function config_winbar()
   local exclude = {
     ["teminal"] = true,
@@ -39,7 +55,7 @@ local function config_winbar()
       sym = lspsaga.get_symbol_node()
     end
     local win_val = ""
-    win_val = get_file_name(true) -- set to true to include path
+    win_val = get_file_modified_symbol() .. get_file_name(true) -- set to true to include path
     if sym ~= nil then
       win_val = win_val .. sym
     end

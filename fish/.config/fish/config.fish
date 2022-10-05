@@ -16,6 +16,7 @@ abbr --add gsp git stash pop
 abbr --add gsu git stash -u
 abbr --add gdc git diff-tree --no-commit-id --name-status -r
 abbr --add gvv git branch -vv
+abbr --add pn pnpm
 abbr --add c clear
 abbr --add yd yarn dev
 abbr --add yt yarn test
@@ -24,10 +25,16 @@ abbr --add .. cd ..
 abbr --add ... cd ../..
 abbr --add .... cd ../../..
 
+if status is-interactive
+and not set -q TMUX
+    exec tmux
+end
+
+starship init fish | source
 
 # TokyoNight Color Palette
 set -l foreground c0caf5
-set -l selection 33467C
+set -l selection 33467c
 set -l comment 565f89
 set -l red f7768e
 set -l orange ff9e64
@@ -58,10 +65,4 @@ set -g fish_pager_color_progress $comment
 set -g fish_pager_color_prefix $cyan
 set -g fish_pager_color_completion $foreground
 set -g fish_pager_color_description $comment
-  
-if status is-interactive
-and not set -q TMUX
-    exec tmux
-end
-
-starship init fish | source
+set -g fish_pager_color_selected_background --background=$selection
