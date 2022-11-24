@@ -17,6 +17,21 @@ return {
     },
   },
 
+  ["mbbill/undotree"] = {
+    opt = true,
+    cmd = { "UndotreeToggle" },
+  },
+
+  ["echasnovski/mini.ai"] = {
+    opt = true,
+    setup = function()
+      require("core.lazy_load").on_file_open "mini.ai"
+    end,
+    config = function()
+      require("mini.ai").setup()
+    end,
+  },
+
   ["williamboman/mason.nvim"] = {
     override_options = {
       ensure_installed = {
@@ -46,6 +61,11 @@ return {
       local telescope_actions = require "telescope.actions"
 
       return {
+        pickers = {
+          find_files = {
+            find_command = { "rg", "--files", "--hidden", "--glob", "!.git/*" },
+          },
+        },
         defaults = {
           mappings = {
             i = {
@@ -198,6 +218,12 @@ return {
       vim.cmd "colorscheme tokyonight"
     end,
   },
+
+  -- ["Yazeed1s/oh-lucy.nvim"] = {
+  --   config = function()
+  --     vim.cmd [[colorscheme oh-lucy]]
+  --   end,
+  -- },
 
   ["lewis6991/satellite.nvim"] = {
     opt = true,
@@ -363,5 +389,10 @@ return {
 
   ["windwp/nvim-ts-autotag"] = {
     after = "nvim-treesitter",
+  },
+
+  ["nvim-treesitter/playground"] = {
+    opt = true,
+    cmd = { "TSPlaygroundToggle" },
   },
 }

@@ -6,11 +6,6 @@ M.ui = {
 
 M.mappings = require "custom.mappings"
 
-M.plugins = require("custom.plugins") 
--- {
---  --  user = require "custom.plugins",
---  -- remove = require "custom.plugins.remove",
---  -- override = require "custom.plugins.override",
--- }
+M.plugins = require "custom.plugins"
 
 return M

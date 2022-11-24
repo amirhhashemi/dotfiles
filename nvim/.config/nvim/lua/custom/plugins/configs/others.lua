@@ -26,7 +26,18 @@ M.project = function()
     {
       manual_mode = false,
       detection_methods = { "lsp", "pattern" },
-      patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json", "Cargo.toml" },
+      patterns = {
+        ".git",
+        "_darcs",
+        ".hg",
+        ".bzr",
+        ".svn",
+        "Makefile",
+        "package.json",
+        "Cargo.toml",
+        ".stylua.toml",
+        "LICENSE",
+      },
       ignore_lsp = {},
       exclude_dirs = {},
       show_hidden = true,
@@ -114,32 +125,6 @@ M.surround = function()
       },
     },
   }
-
-  surround.buffer_setup {
-    surrounds = {
-      ["l"] = {
-        add = function()
-          local clipboard = vim.fn.getreg("+"):gsub("\n", "")
-          return {
-            { "[" },
-            { "](" .. clipboard .. ")" },
-          }
-        end,
-        find = "%b[]%b()",
-        delete = "^(%[)().-(%]%b())()$",
-        change = {
-          target = "^()()%b[]%((.-)()%)$",
-          replacement = function()
-            local clipboard = vim.fn.getreg("+"):gsub("\n", "")
-            return {
-              { "" },
-              { clipboard },
-            }
-          end,
-        },
-      },
-    },
-  }
 end
 
 M.satellite = function()
@@ -154,6 +139,15 @@ M.satellite = function()
       gitsigns = {
         enable = false,
       },
+      marks = {
+        enable = false,
+      },
+    },
+    excluded_filetypes = {
+      "NvimTree",
+      "teminal",
+      "toggleterm",
+      "prompt",
     },
   }
 end
