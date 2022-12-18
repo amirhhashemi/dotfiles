@@ -35,23 +35,22 @@ return {
   ["williamboman/mason.nvim"] = {
     override_options = {
       ensure_installed = {
+        "astro-language-server",
         "lua-language-server",
         "stylua",
         "rust-analyzer",
         "svelte-language-server",
         "tailwindcss-language-server",
         "dockerfile-language-server",
-        "gopls",
-        "black",
         "prettierd",
         "prisma-language-server",
-        "pyright",
         "taplo",
         "yaml-language-server",
         "css-lsp",
         "html-lsp",
         "typescript-language-server",
         "json-lsp",
+        "eslint-lsp",
       },
     },
   },
@@ -101,6 +100,7 @@ return {
       tabufline = {
         enabled = false,
       },
+
       statusline = {
         overriden_modules = function()
           return {
@@ -119,6 +119,14 @@ return {
       context_char = "▏",
       show_current_context = false,
       show_current_context_start = false,
+      filetype_exclude = {
+        "lspinfo",
+        "packer",
+        "checkhealth",
+        "help",
+        "man",
+        "noice",
+      },
     },
   },
 
@@ -175,6 +183,15 @@ return {
     },
   },
 
+  ["nvim-treesitter/nvim-treesitter-context"] = {
+    setup = function()
+      require("core.lazy_load").on_file_open "nvim-treesitter-context"
+    end,
+    config = function()
+      require("treesitter-context").setup()
+    end,
+  },
+
   ["neovim/nvim-lspconfig"] = {
     config = function()
       require "plugins.configs.lspconfig"
@@ -186,6 +203,15 @@ return {
     config = function()
       require "custom.plugins.configs.luasnip"
       require("core.utils").load_mappings "luasnip"
+    end,
+  },
+
+  ["smjonas/inc-rename.nvim"] = {
+    setup = function()
+      require("core.lazy_load").on_file_open "inc-rename.nvim"
+    end,
+    config = function()
+      require("inc_rename").setup()
     end,
   },
 
@@ -219,11 +245,14 @@ return {
     end,
   },
 
-  -- ["Yazeed1s/oh-lucy.nvim"] = {
-  --   config = function()
-  --     vim.cmd [[colorscheme oh-lucy]]
-  --   end,
-  -- },
+  ["folke/noice.nvim"] = {
+    config = function()
+      require "custom.plugins.configs.noice"
+    end,
+    requires = {
+      "MunifTanjim/nui.nvim",
+    },
+  },
 
   ["lewis6991/satellite.nvim"] = {
     opt = true,
@@ -238,8 +267,8 @@ return {
   ["numToStr/Navigator.nvim"] = {
     opt = true,
     setup = function()
-      require("core.lazy_load").on_file_open "Navigator.nvim"
       require("core.utils").load_mappings "navigator"
+      require("core.lazy_load").on_file_open "Navigator.nvim"
     end,
     config = function()
       require("Navigator").setup {
@@ -331,11 +360,11 @@ return {
 
   -- LSP
 
-  ["j-hui/fidget.nvim"] = {
-    config = function()
-      require("fidget").setup {}
-    end,
-  },
+  -- ["j-hui/fidget.nvim"] = {
+  --   config = function()
+  --     require("fidget").setup {}
+  --   end,
+  -- },
 
   ["glepnir/lspsaga.nvim"] = {
     after = "nvim-lspconfig",

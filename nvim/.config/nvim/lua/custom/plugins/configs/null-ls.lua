@@ -8,7 +8,7 @@ local b = null_ls.builtins
 
 local sources = {
   b.formatting.prettierd.with {
-    extra_filetypes = { "astro" },
+    extra_filetypes = { "astro", "svelte" },
   },
   b.formatting.stylua,
   b.formatting.gofmt,

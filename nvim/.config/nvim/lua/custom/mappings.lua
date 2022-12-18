@@ -23,7 +23,14 @@ M.general = {
 
     ["X"] = { '"_x' },
 
+    ["J"] = { "mzJ`z" },
+
     ["<leader>l"] = { "<cmd> noh <CR>" },
+
+    ["<C-d>"] = { "<C-d>zz" },
+    ["<C-u>"] = { "<C-u>zz" },
+    ["n"] = { "nzzzv" },
+    ["N"] = { "Nzzzv" },
   },
 
   v = {
@@ -32,6 +39,9 @@ M.general = {
     ["<leader>p"] = { '"_d"+P', opts = { silent = true } },
 
     ["X"] = { '"_x' },
+
+    ["J"] = { ":m '>+1<CR>gv=gv", opts = { silent = true } },
+    ["K"] = { ":m '<-2<CR>gv=gv", opts = { silent = true } },
   },
 
   c = {
@@ -64,9 +74,7 @@ M.lspconfig = {
       end,
     },
     ["<leader>rn"] = {
-      function()
-        require("nvchad_ui.renamer").open()
-      end,
+      ":IncRename ",
     },
     ["<leader>tr"] = { "<cmd> set rnu! <CR>" },
   },

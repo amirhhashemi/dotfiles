@@ -59,7 +59,6 @@ M.indent_o_matic = function()
     max_lines = 2048,
     standard_widths = { 2, 4, 8 },
 
-    -- Only detect 4 spaces and tabs for Rust files
     filetype_rust = {
       standard_widths = { 4 },
     },
@@ -68,7 +67,6 @@ M.indent_o_matic = function()
       standard_widths = { 4 },
     },
 
-    -- Don't detect 8 spaces indentations inside files without a filetype
     filetype_ = {
       standard_widths = { 2, 4 },
     },

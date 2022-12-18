@@ -7,7 +7,6 @@ local group_spellcheck = vim.api.nvim_create_augroup("_spellcheck", { clear = tr
 -- Format before save
 autocmd("BufWritePre", {
   callback = function()
-    -- vim.lsp.buf.formatting_sync()
     vim.lsp.buf.format {
       async = false,
     }
@@ -62,12 +61,5 @@ autocmd("InsertEnter", {
 autocmd("InsertLeave", {
   callback = function()
     vim.opt.relativenumber = true
-  end,
-})
-
-autocmd({ "BufRead", "BufEnter" }, {
-  pattern = "*.astro",
-  callback = function()
-    vim.opt_local.filetype = "astro"
   end,
 })
