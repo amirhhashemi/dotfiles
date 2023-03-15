@@ -31,13 +31,17 @@ M.general = {
     ["<C-u>"] = { "<C-u>zz" },
     ["n"] = { "nzzzv" },
     ["N"] = { "Nzzzv" },
+
+    -- Add empty lines before and after cursor line
+    ["gO"] = { "<Cmd>call append(line('.') - 1, repeat([''], v:count1))<CR>" },
+    ["go"] = { "<Cmd>call append(line('.'),     repeat([''], v:count1))<CR>" },
   },
 
   v = {
     ["<leader>y"] = { '"+y', opts = { silent = true } },
     ["<leader>P"] = { '"+P', opts = { silent = true } },
-    ["<leader>p"] = { '"_d"+P', opts = { silent = true } },
 
+    ["<leader>p"] = { '"_d"+P', opts = { silent = true } },
     ["X"] = { '"_x' },
 
     ["J"] = { ":m '>+1<CR>gv=gv", opts = { silent = true } },
@@ -47,6 +51,10 @@ M.general = {
   c = {
     ["<C-j>"] = { "<C-n>" },
     ["<C-k>"] = { "<C-p>" },
+  },
+
+  x = {
+    ["g/"] = { "<esc>/\\%V", opts = { silent = false } },
   },
 }
 
@@ -142,28 +150,28 @@ M.gitsigns = {
         return "<Ignore>"
       end,
     },
-    ["<leader>hs"] = { ":Gitsigns stage_hunk<CR>" },
-    ["<leader>hr"] = { ":Gitsigns reset_hunk<CR>" },
-    ["<leader>hS"] = { "<cmd> Gitsigns stage_buffer <CR>" },
-    ["<leader>hu"] = { "<cmd> Gitsigns undo_stage_hunk <CR>" },
-    ["<leader>hR"] = { "<cmd> Gitsigns reset_buffer <CR>" },
-    ["<leader>hp"] = { "<cmd> Gitsigns preview_hunk <CR>" },
-    ["<leader>hb"] = { '<cmd> lua require"gitsigns".blame_line{full=true} <CR>' },
-    ["<leader>tb"] = { "<cmd> Gitsigns toggle_current_line_blame <CR>" },
-    ["<leader>dt"] = { "<cmd> Gitsigns diffthis <CR>" },
-    ["<leader>td"] = { "<cmd> Gitsigns toggle_deleted <CR>" },
+    ["<leader>hs"] = { ":Gitsigns stage_hunk<CR>", opts = { silent = true } },
+    ["<leader>hr"] = { ":Gitsigns reset_hunk<CR>", opts = { silent = true } },
+    ["<leader>hS"] = { "<cmd> Gitsigns stage_buffer <CR>", opts = { silent = true } },
+    ["<leader>hu"] = { "<cmd> Gitsigns undo_stage_hunk <CR>", opts = { silent = true } },
+    ["<leader>hR"] = { "<cmd> Gitsigns reset_buffer <CR>", opts = { silent = true } },
+    ["<leader>hp"] = { "<cmd> Gitsigns preview_hunk <CR>", opts = { silent = true } },
+    ["<leader>hb"] = { '<cmd> lua require"gitsigns".blame_line{full=true} <CR>', opts = { silent = true } },
+    ["<leader>tb"] = { "<cmd> Gitsigns toggle_current_line_blame <CR>", opts = { silent = true } },
+    ["<leader>dt"] = { "<cmd> Gitsigns diffthis <CR>", opts = { silent = true } },
+    ["<leader>td"] = { "<cmd> Gitsigns toggle_deleted <CR>", opts = { silent = true } },
   },
 
   o = {
-    ["ih"] = { ":<C-U>Gitsigns select_hunk <CR>" },
+    ["ih"] = { ":<C-U>Gitsigns select_hunk <CR>", opts = { silent = true } },
   },
 
   x = {
-    ["ih"] = { ":<C-U>Gitsigns select_hunk <CR>" },
+    ["ih"] = { ":<C-U>Gitsigns select_hunk <CR>", opts = { silent = true } },
   },
 
   v = {
-    ["<leader>hr"] = { ":Gitsigns reset_hunk<CR>" },
+    ["<leader>hr"] = { ":Gitsigns reset_hunk<CR>", opts = { silent = true } },
   },
 }
 
@@ -211,7 +219,5 @@ M.luasnip = {
     },
   },
 }
-
-M.lspsaga = {}
 
 return M

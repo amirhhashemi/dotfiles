@@ -32,6 +32,16 @@ return {
     end,
   },
 
+  ["echasnovski/mini.move"] = {
+    opt = true,
+    setup = function()
+      require("core.lazy_load").on_file_open "mini.move"
+    end,
+    config = function()
+      require("mini.move").setup()
+    end,
+  },
+
   ["williamboman/mason.nvim"] = {
     override_options = {
       ensure_installed = {
@@ -54,7 +64,6 @@ return {
       },
     },
   },
-
   ["nvim-telescope/telescope.nvim"] = {
     override_options = function()
       local telescope_actions = require "telescope.actions"
@@ -90,6 +99,14 @@ return {
             behavior = cmp.ConfirmBehavior.Insert,
             select = true,
           },
+        },
+        sources = {
+          -- { name = "copilot" },
+          { name = "luasnip" },
+          { name = "nvim_lsp" },
+          { name = "buffer" },
+          { name = "nvim_lua" },
+          { name = "path" },
         },
       }
     end,
@@ -135,51 +152,51 @@ return {
       ensure_installed = "all",
       sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
       ignore_install = { "jsonc", "fusion" }, -- List of parsers to ignore installing
-      autopairs = {
-        enable = true,
-      },
+      -- autopairs = {
+      --   enable = true,
+      -- },
       highlight = {
         enable = true, -- false will disable the whole extension
         disable = {}, -- list of language that will be disabled
         additional_vim_regex_highlighting = false,
         use_languagetree = true,
       },
-      indent = { enable = true, disable = { "yaml" } },
-      context_commentstring = {
-        enable = true,
-        enable_autocmd = false,
-      },
-      rainbow = {
-        enable = true,
-        extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-      },
+      -- indent = { enable = true, disable = { "yaml" } },
+      -- context_commentstring = {
+      --   enable = true,
+      --   enable_autocmd = false,
+      -- },
+      -- rainbow = {
+      --   enable = true,
+      --   extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+      -- },
       autotag = {
         enable = true,
       },
-      textobjects = {
-        swap = {
-          enable = true,
-          swap_next = {
-            ["<leader>s"] = "@parameter.inner",
-          },
-          swap_previous = {
-            ["<leader>S"] = "@parameter.inner",
-          },
-        },
-        select = {
-          enable = true,
-          lookahead = true,
-          keymaps = {
-            ["af"] = "@function.outer",
-            ["if"] = "@function.inner",
-            ["ac"] = "@call.outer",
-            ["ic"] = "@comment.outer",
-            ["ib"] = "@block.inner",
-            ["ab"] = "@block.outer",
-            ["as"] = "@statement.outer",
-          },
-        },
-      },
+      -- textobjects = {
+      --   swap = {
+      --     enable = true,
+      --     swap_next = {
+      --       ["<leader>s"] = "@parameter.inner",
+      --     },
+      --     swap_previous = {
+      --       ["<leader>S"] = "@parameter.inner",
+      --     },
+      --   },
+      --   select = {
+      --     enable = true,
+      --     lookahead = true,
+      --     keymaps = {
+      --       ["af"] = "@function.outer",
+      --       ["if"] = "@function.inner",
+      --       ["ac"] = "@call.outer",
+      --       ["ic"] = "@comment.outer",
+      --       ["ib"] = "@block.inner",
+      --       ["ab"] = "@block.outer",
+      --       ["as"] = "@statement.outer",
+      --     },
+      --   },
+      -- },
     },
   },
 
@@ -233,17 +250,30 @@ return {
       current_line_blame_opts = {
         delay = 0,
       },
+      sign_priority = 0,
     },
   },
 
-  ["folke/tokyonight.nvim"] = {
+  ["rebelot/kanagawa.nvim"] = {
     config = function()
-      require("tokyonight").setup {
-        style = "storm",
+      require("kanagawa").setup {
+        commentStyle = { italic = false },
+        keywordStyle = { italic = false },
+        statementStyle = { bold = false },
+        variablebuiltinStyle = { italic = false },
       }
-      vim.cmd "colorscheme tokyonight"
+      vim.cmd "colorscheme kanagawa"
     end,
   },
+
+  -- ["folke/tokyonight.nvim"] = {
+  --   config = function()
+  --     require("tokyonight").setup {
+  --       style = "storm",
+  --     }
+  --     vim.cmd "colorscheme tokyonight"
+  --   end,
+  -- },
 
   ["folke/noice.nvim"] = {
     config = function()
@@ -360,19 +390,6 @@ return {
 
   -- LSP
 
-  -- ["j-hui/fidget.nvim"] = {
-  --   config = function()
-  --     require("fidget").setup {}
-  --   end,
-  -- },
-
-  ["glepnir/lspsaga.nvim"] = {
-    after = "nvim-lspconfig",
-    config = function()
-      require "custom.plugins.configs.lspsaga"
-    end,
-  },
-
   ["jose-elias-alvarez/typescript.nvim"] = {
     before = "nvim-lspconfig",
   },
@@ -387,6 +404,22 @@ return {
       require "custom.plugins.configs.null-ls"
     end,
   },
+
+  -- ["zbirenbaum/copilot.lua"] = {
+  --   setup = function()
+  --   require("core.lazy_load").on_file_open "copilot.lua"
+  --   end,
+  --   config = function()
+  --     require("copilot").setup()
+  --   end,
+  -- },
+
+  -- ["zbirenbaum/copilot-cmp"] = {
+  --   after = { "copilot.lua" },
+  --   config = function()
+  --     require("copilot_cmp").setup()
+  --   end,
+  -- },
 
   -- Git
 
@@ -408,13 +441,13 @@ return {
 
   -- Treesitter
 
-  ["p00f/nvim-ts-rainbow"] = {
-    after = "nvim-treesitter",
-  },
+  -- ["mrjones2014/nvim-ts-rainbow"] = {
+  --   after = "nvim-treesitter",
+  -- },
 
-  ["nvim-treesitter/nvim-treesitter-textobjects"] = {
-    after = "nvim-treesitter",
-  },
+  -- ["nvim-treesitter/nvim-treesitter-textobjects"] = {
+  --   after = "nvim-treesitter",
+  -- },
 
   ["windwp/nvim-ts-autotag"] = {
     after = "nvim-treesitter",

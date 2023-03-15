@@ -1,65 +1,124 @@
-local fn = vim.fn
 local autocmd = vim.api.nvim_create_autocmd
 
-local group_lsp = vim.api.nvim_create_augroup("_lsp", { clear = true })
-local group_spellcheck = vim.api.nvim_create_augroup("_spellcheck", { clear = true })
+-- Check if we need to reload the file when it changed
+autocmd({ "FocusGained", "TermClose", "TermLeave" }, { command = "checktime" })
 
--- Format before save
-autocmd("BufWritePre", {
-  callback = function()
-    vim.lsp.buf.format {
-      async = false,
-    }
+-- Close some filetypes with <q>
+autocmd("FileType", {
+  pattern = {
+    "qf",
+    "help",
+    "man",
+    "notify",
+    "lspinfo",
+    "spectre_panel",
+    "startuptime",
+    "tsplayground",
+    "PlenaryTestPopup",
+  },
+  callback = function(event)
+    vim.bo[event.buf].buflisted = false
+    vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
   end,
-  group = group_lsp,
 })
 
 -- Enable spellcheck in markdown and gitcommit files
+-- Remove SpellCap highlight in markdown and gitcommit files because it's annoying
 autocmd("FileType", {
+  pattern = { "gitcommit", "markdown" },
   callback = function()
     vim.opt_local.spell = true
     vim.api.nvim_set_hl(0, "SpellCap", {})
   end,
-  pattern = { "gitcommit", "markdown" },
-  group = group_spellcheck,
 })
 
 -- Highlight yanked text
 autocmd("TextYankPost", {
   callback = function()
-    vim.highlight.on_yank { higroup = "Visual", timeout = 200 }
+    vim.highlight.on_yank()
   end,
 })
 
 -- Don't show any numbers inside terminals
+-- Start builtin terminal in Insert mode
 autocmd("TermOpen", {
   pattern = "term://*",
   callback = function()
     vim.opt_local.number = false
     vim.opt_local.relativenumber = false
     vim.cmd [[ setfiletype terminal ]]
+
+    vim.cmd [[ startinsert ]]
   end,
 })
 
--- Open a file from its last left off position
+-- go to last loc when opening a buffer
 autocmd("BufReadPost", {
   callback = function()
-    if not fn.expand("%:p"):match "m/.git/" and fn.line "'\"" > 1 and fn.line "'\"" <= fn.line "$" then
-      vim.cmd "normal! g'\""
-      vim.cmd "normal zz"
+    local mark = vim.api.nvim_buf_get_mark(0, '"')
+    local lcount = vim.api.nvim_buf_line_count(0)
+    if mark[1] > 0 and mark[1] <= lcount then
+      pcall(vim.api.nvim_win_set_cursor, 0, mark)
     end
   end,
 })
 
--- Use relative & absolute line numbers in 'n' & 'i' modes respectively
-autocmd("InsertEnter", {
-  callback = function()
-    vim.opt.relativenumber = false
-  end,
-})
+local function get_file_name(include_path)
+  local file_name = string.gsub(vim.fn.expand "%:t", "%%", "")
 
-autocmd("InsertLeave", {
+  local ok, devicons = pcall(require, "nvim-web-devicons")
+  local f_icon = ""
+  local f_hl = ""
+  if ok then
+    f_icon, f_hl = devicons.get_icon_by_filetype(vim.bo.filetype)
+  end
+
+  f_icon = f_icon == nil and "" or (f_icon .. " ")
+  f_hl = f_hl == nil and "" or f_hl
+  local file_name_with_icon = "%#" .. f_hl .. "#" .. f_icon .. "%*%#File#" .. file_name .. "%*"
+
+  if vim.fn.bufname "%" == "" then
+    return ""
+  end
+
+  if include_path == false then
+    return file_name_with_icon
+  end
+
+  local sep = vim.loop.os_uname().sysname == "Windows" and "\\" or "/"
+  local path_list = vim.split(string.gsub(vim.fn.expand "%:~:.:h", "%%", ""), sep)
+  local file_path = ""
+  for _, cur in ipairs(path_list) do
+    file_path = (cur == "." or cur == "~") and "" or file_path .. cur .. " > "
+  end
+
+  return file_path .. file_name_with_icon
+end
+
+local function get_file_modified_symbol()
+  return vim.bo.modified and "● " or ""
+end
+
+local function config_winbar()
+  local exclude = {
+    ["teminal"] = true,
+    ["toggleterm"] = true,
+    ["prompt"] = true,
+    ["NvimTree"] = true,
+    ["help"] = true,
+    ["noice"] = true,
+  } -- Ignore float windows and exclude filetype
+  if vim.api.nvim_win_get_config(0).zindex or exclude[vim.bo.filetype] then
+    vim.wo.winbar = ""
+  else
+    local win_val = get_file_modified_symbol() .. get_file_name(true)
+    vim.wo.winbar = win_val
+  end
+end
+
+autocmd({ "BufEnter", "BufWinEnter", "CursorMoved" }, {
+  pattern = "*",
   callback = function()
-    vim.opt.relativenumber = true
+    config_winbar()
   end,
 })

@@ -11,3 +11,6 @@ opt.sidescrolloff = 8
 opt.relativenumber = true
 
 opt.whichwrap = ""
+
+-- opt.signcolumn = "yes:2"
+-- opt.statuscolumn = "%s%=%{v:relnum?v:relnum:v:lnum} "

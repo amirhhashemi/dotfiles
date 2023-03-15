@@ -146,6 +146,7 @@ M.satellite = function()
       "teminal",
       "toggleterm",
       "prompt",
+      "noice",
     },
   }
 end
