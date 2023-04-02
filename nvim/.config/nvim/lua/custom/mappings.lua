@@ -1,3 +1,4 @@
+---@type MappingsTable
 local M = {}
 
 M.disabled = {
@@ -6,7 +7,20 @@ M.disabled = {
     ["<C-k>"] = "",
   },
   n = {
+    -- lspconfig
     ["<leader>ra"] = "",
+    -- nvimtree
+    ["<leader>e"] = "",
+    -- gitsigns
+    ["<leader>rh"] = "",
+    ["<leader>ph"] = "",
+    ["<leader>gb"] = "",
+    -- comment
+    ["<leader>/"] = "",
+  },
+  v = {
+    -- comment
+    ["<leader>/"] = "",
   },
 }
 
@@ -16,10 +30,9 @@ M.general = {
 
     ["<leader><leader>"] = { "<C-^>" },
 
-    ["<leader>Y"] = { '"+y$', opts = { silent = true } },
-    ["<leader>p"] = { '"+p', opts = { silent = true } },
-    ["<leader>y"] = { '"+y', opts = { silent = true } },
-    ["<leader>P"] = { '"+P', opts = { silent = true } },
+    ["gy"] = { '"+y', opts = { silent = true } },
+    ["gp"] = { '"+p', opts = { silent = true } },
+    ["gP"] = { '"+P', opts = { silent = true } },
 
     ["X"] = { '"_x' },
 
@@ -38,14 +51,11 @@ M.general = {
   },
 
   v = {
-    ["<leader>y"] = { '"+y', opts = { silent = true } },
-    ["<leader>P"] = { '"+P', opts = { silent = true } },
+    ["gy"] = { '"+y', opts = { silent = true } },
+    ["gp"] = { '"_d"+P', opts = { silent = true } },
+    ["gP"] = { '"+P', opts = { silent = true } },
 
-    ["<leader>p"] = { '"_d"+P', opts = { silent = true } },
     ["X"] = { '"_x' },
-
-    ["J"] = { ":m '>+1<CR>gv=gv", opts = { silent = true } },
-    ["K"] = { ":m '<-2<CR>gv=gv", opts = { silent = true } },
   },
 
   c = {
@@ -58,164 +68,91 @@ M.general = {
   },
 }
 
-M.comment = {
-  n = {
-    ["<C-_>"] = {
-      function()
-        require("Comment.api").toggle.linewise.current()
-      end,
-    },
-  },
-
-  v = {
-    ["<C-_>"] = {
-      "<ESC><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>",
-    },
-  },
-}
-
 M.lspconfig = {
   n = {
     ["<leader>e"] = {
       function()
-        vim.diagnostic.open_float()
-      end,
-    },
-    ["<leader>rn"] = {
-      ":IncRename ",
-    },
-    ["<leader>tr"] = { "<cmd> set rnu! <CR>" },
-  },
-}
-
-M.navigator = {
-  -- plugin = true,
-
-  n = {
-    ["<C-h>"] = {
-      "<cmd> NavigatorLeft <CR>",
-    },
-    ["<C-l>"] = {
-      "<cmd> NavigatorRight <CR>",
-    },
-    ["<C-j>"] = {
-      "<cmd> NavigatorDown <CR>",
-    },
-    ["<C-k>"] = {
-      "<cmd> NavigatorUp <CR>",
-    },
-  },
-}
-
-M.harpoon = {
-  -- plugin = true,
-
-  n = {
-    ["<leader>m"] = {
-      function()
-        require("harpoon.mark").add_file()
-      end,
-    },
-    ["<leader>h"] = {
-      function()
-        require("harpoon.ui").toggle_quick_menu()
+        vim.diagnostic.open_float { border = "rounded" }
       end,
     },
   },
 }
 
 M.gitsigns = {
-  plugin = true,
-
   n = {
-    ["]c"] = {
+    ["<leader>tD"] = {
       function()
-        if vim.wo.diff then
-          return "]c"
-        end
-        vim.schedule(function()
-          require("gitsigns").next_hunk()
-        end)
-        return "<Ignore>"
+        require("gitsigns").diffthis "~"
       end,
+      "Blame line",
     },
-    ["[c"] = {
+    ["<leader>tb"] = {
       function()
-        if vim.wo.diff then
-          return "[c"
-        end
-        vim.schedule(function()
-          require("gitsigns").prev_hunk()
-        end)
-        return "<Ignore>"
+        require("gitsigns").toggle_current_line_blame()
       end,
+      "Blame line",
     },
-    ["<leader>hs"] = { ":Gitsigns stage_hunk<CR>", opts = { silent = true } },
-    ["<leader>hr"] = { ":Gitsigns reset_hunk<CR>", opts = { silent = true } },
-    ["<leader>hS"] = { "<cmd> Gitsigns stage_buffer <CR>", opts = { silent = true } },
-    ["<leader>hu"] = { "<cmd> Gitsigns undo_stage_hunk <CR>", opts = { silent = true } },
-    ["<leader>hR"] = { "<cmd> Gitsigns reset_buffer <CR>", opts = { silent = true } },
-    ["<leader>hp"] = { "<cmd> Gitsigns preview_hunk <CR>", opts = { silent = true } },
-    ["<leader>hb"] = { '<cmd> lua require"gitsigns".blame_line{full=true} <CR>', opts = { silent = true } },
-    ["<leader>tb"] = { "<cmd> Gitsigns toggle_current_line_blame <CR>", opts = { silent = true } },
-    ["<leader>dt"] = { "<cmd> Gitsigns diffthis <CR>", opts = { silent = true } },
-    ["<leader>td"] = { "<cmd> Gitsigns toggle_deleted <CR>", opts = { silent = true } },
-  },
-
-  o = {
-    ["ih"] = { ":<C-U>Gitsigns select_hunk <CR>", opts = { silent = true } },
-  },
-
-  x = {
-    ["ih"] = { ":<C-U>Gitsigns select_hunk <CR>", opts = { silent = true } },
+    ["<leader>hs"] = {
+      function()
+        require("gitsigns").stage_hunk()
+      end,
+      "Preview hunk",
+    },
+    ["<leader>hu"] = {
+      function()
+        require("gitsigns").undo_stage_hunk()
+      end,
+      "Preview hunk",
+    },
+    ["<leader>hr"] = {
+      function()
+        require("gitsigns").reset_hunk()
+      end,
+      "Reset hunk",
+    },
+    ["<leader>hp"] = {
+      function()
+        require("gitsigns").preview_hunk()
+      end,
+      "Preview hunk",
+    },
   },
 
   v = {
-    ["<leader>hr"] = { ":Gitsigns reset_hunk<CR>", opts = { silent = true } },
+    ["<leader>hs"] = {
+      function()
+        require("gitsigns").stage_hunk()
+      end,
+      "Preview hunk",
+    },
+    ["<leader>hu"] = {
+      function()
+        require("gitsigns").undo_stage_hunk()
+      end,
+      "Preview hunk",
+    },
+    ["<leader>hr"] = {
+      function()
+        require("gitsigns").reset_hunk()
+      end,
+      "Reset hunk",
+    },
   },
 }
 
-M.luasnip = {
-  plugin = true,
-
-  i = {
-    ["<C-l>"] = {
+M.comment = {
+  n = {
+    ["<C-_>"] = {
       function()
-        local ls = require "luasnip"
-
-        if ls.expand_or_jumpable() then
-          ls.expand_or_jump()
-        end
+        require("Comment.api").toggle.linewise.current()
       end,
-    },
-    ["<C-h>"] = {
-      function()
-        local ls = require "luasnip"
-
-        if ls.jumpable(-1) then
-          ls.jump(-1)
-        end
-      end,
+      "toggle comment",
     },
   },
-  s = {
-    ["<leader>l"] = {
-      function()
-        local ls = require "luasnip"
-
-        if ls.expand_or_jumpable() then
-          ls.expand_or_jump()
-        end
-      end,
-    },
-    ["<leader>h"] = {
-      function()
-        local ls = require "luasnip"
-
-        if ls.jumpable(-1) then
-          ls.jump(-1)
-        end
-      end,
+  v = {
+    ["<C-_>"] = {
+      "<ESC><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>",
+      "toggle comment",
     },
   },
 }

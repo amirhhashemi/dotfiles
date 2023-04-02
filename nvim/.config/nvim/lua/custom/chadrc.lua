@@ -1,11 +1,23 @@
+---@type ChadrcConfig
 local M = {}
 
-M.ui = {
-  theme = "kanagawa",
-}
-
+M.plugins = "custom.plugins"
 M.mappings = require "custom.mappings"
 
-M.plugins = require "custom.plugins"
+M.ui = {
+  theme = "tokyonight",
+  tabufline = {
+    enabled = false,
+  },
+  statusline = {
+    overriden_modules = function()
+      return {
+        LSP_progress = function()
+          return ""
+        end,
+      }
+    end,
+  },
+}
 
 return M
