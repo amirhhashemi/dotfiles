@@ -113,20 +113,45 @@ return {
           }
         end,
       },
+      { "b0o/schemastore.nvim" },
+      { "jose-elias-alvarez/typescript.nvim" },
       {
-        "b0o/schemastore.nvim",
-        "jose-elias-alvarez/typescript.nvim",
+        "SmiteshP/nvim-navbuddy",
+        dependencies = {
+          "SmiteshP/nvim-navic",
+          "MunifTanjim/nui.nvim",
+        },
+        keys = {
+          {
+            "<leader>n",
+            function()
+              require("nvim-navbuddy").open()
+            end,
+            { silent = true },
+          },
+        },
+        config = function()
+          require("nvim-navbuddy").setup()
+        end,
       },
     },
     config = function()
       require "plugins.configs.lspconfig"
       vim.diagnostic.config {
-        virtual_text = false,--[[ , severity_sort = true ]]
+        virtual_text = false,
       }
-      local on_attach = require("plugins.configs.lspconfig").on_attach
+
+      local navbuddy = require "nvim-navbuddy"
+      local core_on_attach = require("plugins.configs.lspconfig").on_attach
       local capabilities = require("plugins.configs.lspconfig").capabilities
+
+      local function on_attach(client, bufnr)
+        core_on_attach(client, bufnr)
+        if client.server_capabilities.documentSymbolProvider then
+          navbuddy.attach(client, bufnr)
+        end
+      end
       local servers = {
-        "tsserver",
         "cssls",
         "html",
         "jsonls",
@@ -140,6 +165,7 @@ return {
         "taplo",
         "astro",
       }
+
       local typescript = require "typescript"
       typescript.setup {
         disable_commands = false,
@@ -149,6 +175,7 @@ return {
           capabilities = capabilities,
         },
       }
+
       for _, server in pairs(servers) do
         local opts = {
           on_attach = on_attach,
@@ -197,11 +224,41 @@ return {
   },
   {
     "nvim-treesitter/nvim-treesitter",
+    dependencies = {
+      "windwp/nvim-ts-autotag",
+      config = function()
+        require("nvim-ts-autotag").setup {
+          filetypes = {
+            "html",
+            "javascript",
+            "typescript",
+            "javascriptreact",
+            "typescriptreact",
+            "svelte",
+            "astro",
+            "vue",
+            "tsx",
+            "jsx",
+            "rescript",
+            "xml",
+            "php",
+            "markdown",
+            "glimmer",
+            "handlebars",
+            "hbs",
+          },
+        }
+      end,
+    },
     opts = {
       ensure_installed = "all",
       ignore_install = { "jsonc", "fusion", "blueprint" },
       autotag = {
         enable = true,
+      },
+      context_commentstring = {
+        enable = true,
+        enable_autocmd = false,
       },
     },
   },
@@ -212,6 +269,17 @@ return {
     end,
     config = function()
       require("treesitter-context").setup()
+    end,
+  },
+  {
+    "numToStr/Comment.nvim",
+    dependencies = {
+      "JoosepAlviste/nvim-ts-context-commentstring",
+    },
+    config = function()
+      require("Comment").setup {
+        pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
+      }
     end,
   },
   {

@@ -17,6 +17,8 @@ M.disabled = {
     ["<leader>gb"] = "",
     -- comment
     ["<leader>/"] = "",
+    -- line number
+    ["<leader>n"] = "",
   },
   v = {
     -- comment
@@ -74,6 +76,13 @@ M.lspconfig = {
       function()
         vim.diagnostic.open_float { border = "rounded" }
       end,
+    },
+
+    ["<leader>rn"] = {
+      function()
+        require("nvchad_ui.renamer").open()
+      end,
+      "lsp rename",
     },
   },
 }
