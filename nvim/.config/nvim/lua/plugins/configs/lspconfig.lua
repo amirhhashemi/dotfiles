@@ -5,10 +5,10 @@ local function lspSymbol(name, icon)
   vim.fn.sign_define(hl, { text = icon, numhl = hl, texthl = hl })
 end
 
-lspSymbol("Error", "")
-lspSymbol("Info", "")
-lspSymbol("Hint", "")
-lspSymbol("Warn", "")
+lspSymbol("Error", "")
+lspSymbol("Info", "")
+lspSymbol("Hint", "󰛩")
+lspSymbol("Warn", "")
 
 vim.diagnostic.config {
   virtual_text = {
@@ -33,6 +33,10 @@ M.on_attach = function(client, bufnr)
   -- if client.server_capabilities.signatureHelpProvider then
   --   require("nvchad_ui.signature").setup(client)
   -- end
+
+  if not utils.load_config().ui.lsp_semantic_tokens and client.supports_method "textDocument/semanticTokens" then
+    client.server_capabilities.semanticTokensProvider = nil
+  end
 end
 
 M.capabilities = vim.lsp.protocol.make_client_capabilities()

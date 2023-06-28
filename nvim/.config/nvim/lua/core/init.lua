@@ -58,7 +58,7 @@ end
 
 -- add binaries installed by mason.nvim to path
 local is_windows = vim.loop.os_uname().sysname == "Windows_NT"
-vim.env.PATH = vim.env.PATH .. (is_windows and ";" or ":") .. vim.fn.stdpath "data" .. "/mason/bin"
+vim.env.PATH = vim.fn.stdpath "data" .. "/mason/bin" .. (is_windows and ";" or ":") .. vim.env.PATH
 
 -------------------------------------- autocmds ------------------------------------------
 local autocmd = vim.api.nvim_create_autocmd
@@ -75,7 +75,7 @@ autocmd("FileType", {
 vim.api.nvim_create_autocmd("BufWritePost", {
   pattern = vim.tbl_map(
     vim.fs.normalize,
-    vim.fn.glob(vim.fn.stdpath "config" .. "/lua/custom/**/*.lua", true, true, true)
+    vim.fn.glob(vim.loop.fs_realpath(vim.fn.stdpath "config" .. "/lua/custom/**/*.lua"), true, true, true)
   ),
   group = vim.api.nvim_create_augroup("ReloadNvChad", {}),
 

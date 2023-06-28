@@ -105,9 +105,9 @@ local function config_winbar()
   end
 end
 
-autocmd({ "BufEnter", "BufWinEnter", "CursorMoved" }, {
-  pattern = "*",
-  callback = function()
-    config_winbar()
-  end,
-})
+-- autocmd({ "BufEnter", "BufWinEnter", "CursorMoved" }, {
+--   pattern = "*",
+--   callback = function()
+--     config_winbar()
+--   end,
+-- })

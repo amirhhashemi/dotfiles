@@ -95,13 +95,13 @@ local default_plugins = {
   -- git stuff
   {
     "lewis6991/gitsigns.nvim",
-    ft = "gitcommit",
+    ft = { "gitcommit", "diff" },
     init = function()
       -- load gitsigns only when a git file is opened
       vim.api.nvim_create_autocmd({ "BufRead" }, {
         group = vim.api.nvim_create_augroup("GitSignsLazyLoad", { clear = true }),
         callback = function()
-          vim.fn.system("git -C " .. vim.fn.expand "%:p:h" .. " rev-parse")
+          vim.fn.system("git -C " .. '"' .. vim.fn.expand "%:p:h" .. '"' .. " rev-parse")
           if vim.v.shell_error == 0 then
             vim.api.nvim_del_augroup_by_name "GitSignsLazyLoad"
             vim.schedule(function()
@@ -115,7 +115,7 @@ local default_plugins = {
       return require("plugins.configs.others").gitsigns
     end,
     config = function(_, opts)
-      dofile(vim.g.base46_cache .. "git")
+      -- dofile(vim.g.base46_cache .. "git")
       require("gitsigns").setup(opts)
     end,
   },
@@ -128,7 +128,7 @@ local default_plugins = {
       return require "plugins.configs.mason"
     end,
     config = function(_, opts)
-      dofile(vim.g.base46_cache .. "mason")
+      -- dofile(vim.g.base46_cache .. "mason")
       require("mason").setup(opts)
 
       -- custom nvchad cmd to install all mason binaries listed
@@ -190,7 +190,6 @@ local default_plugins = {
         "hrsh7th/cmp-path",
       },
     },
-
     opts = function()
       return require "plugins.configs.cmp"
     end,
@@ -201,12 +200,17 @@ local default_plugins = {
 
   {
     "numToStr/Comment.nvim",
-    -- keys = { "gc", "gb" },
+    keys = {
+      { "gcc", mode = "n" },
+      { "gc", mode = "v" },
+      { "gbc", mode = "n" },
+      { "gb", mode = "v" },
+    },
     init = function()
       require("core.utils").load_mappings "comment"
     end,
-    config = function()
-      require("Comment").setup()
+    config = function(_, opts)
+      require("Comment").setup(opts)
     end,
   },
 
@@ -229,15 +233,14 @@ local default_plugins = {
 
   {
     "nvim-telescope/telescope.nvim",
+    dependencies = "nvim-treesitter/nvim-treesitter",
     cmd = "Telescope",
     init = function()
       require("core.utils").load_mappings "telescope"
     end,
-
     opts = function()
       return require "plugins.configs.telescope"
     end,
-
     config = function(_, opts)
       dofile(vim.g.base46_cache .. "telescope")
       local telescope = require "telescope"
@@ -253,12 +256,9 @@ local default_plugins = {
   -- Only load whichkey after all the gui
   {
     "folke/which-key.nvim",
-    keys = { "<leader>", '"', "'", "`" },
+    keys = { "<leader>", '"', "'", "`", "c", "v" },
     init = function()
       require("core.utils").load_mappings "whichkey"
-    end,
-    opts = function()
-      return require "plugins.configs.whichkey"
     end,
     config = function(_, opts)
       dofile(vim.g.base46_cache .. "whichkey")

@@ -6,6 +6,7 @@ return {
   },
   { "folke/which-key.nvim", enabled = false },
   { "rafamadriz/friendly-snippets", enabled = false },
+  { "NvChad/nvim-colorizer.lua", enabled = false },
   {
     "nvim-tree/nvim-tree.lua",
     opts = {
@@ -94,6 +95,7 @@ return {
               b.formatting.gofmt,
               b.formatting.black,
               b.formatting.rustfmt,
+              b.diagnostics.eslint_d,
             },
             filter = function(client)
               return client.name == "null-ls"
@@ -137,6 +139,7 @@ return {
     },
     config = function()
       require "plugins.configs.lspconfig"
+
       vim.diagnostic.config {
         virtual_text = false,
       }
@@ -151,11 +154,12 @@ return {
           navbuddy.attach(client, bufnr)
         end
       end
+
       local servers = {
         "cssls",
         "html",
         "jsonls",
-        "eslint",
+        -- "eslint",
         "tailwindcss",
         "prismals",
         "rust_analyzer",
@@ -164,6 +168,7 @@ return {
         "pyright",
         "taplo",
         "astro",
+        "gopls",
       }
 
       local typescript = require "typescript"
@@ -181,6 +186,39 @@ return {
           on_attach = on_attach,
           capabilities = capabilities,
         }
+
+        if server == "tailwindcss" then
+          opts = vim.tbl_deep_extend("keep", {
+            filetypes = {
+              "astro",
+              "astro-markdown",
+              "django-html",
+              "htmldjango",
+              "html",
+              "mdx",
+              "css",
+              "less",
+              "postcss",
+              "sass",
+              "scss",
+              "javascript",
+              "javascriptreact",
+              "typescript",
+              "typescriptreact",
+              "vue",
+              "svelte",
+            },
+            settings = {
+              tailwindCSS = {
+                experimental = {
+                  classRegex = {
+                    { "cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
+                  },
+                },
+              },
+            },
+          }, opts)
+        end
 
         if server == "jsonls" then
           opts = vim.tbl_deep_extend("keep", {
@@ -204,21 +242,24 @@ return {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
-        "typescript-language-server",
+        -- "typescript-language-server",
         "css-lsp",
         "html-lsp",
         "json-lsp",
-        "eslint-lsp",
+        "eslint_d",
+        -- "eslint-lsp",
         "prettierd",
         "tailwindcss-language-server",
         "prisma-language-server",
         "rust-analyzer",
         "lua-language-server",
+        "stylua",
         "svelte-language-server",
         "dockerfile-language-server",
         "pyright",
         "taplo",
         "astro-language-server",
+        "gopls",
       },
     },
   },
@@ -300,18 +341,21 @@ return {
   {
     "numToStr/Navigator.nvim",
     keys = {
-      { "<C-h>", "<cmd> NavigatorLeft <CR>" },
+      { "<C-h>", "<CMD>NavigatorLeft<CR>", mode = { "n", "t" } },
       {
         "<C-l>",
-        "<cmd> NavigatorRight <CR>",
+        "<CMD>NavigatorRight<CR>",
+        mode = { "n", "t" },
       },
       {
         "<C-j>",
-        "<cmd> NavigatorDown <CR>",
+        "<CMD>NavigatorDown<CR>",
+        mode = { "n", "t" },
       },
       {
         "<C-k>",
-        "<cmd> NavigatorUp <CR>",
+        "<CMD>NavigatorUp<CR>",
+        mode = { "n", "t" },
       },
     },
     config = function()
@@ -327,6 +371,15 @@ return {
       require("auto-session").setup {
         log_level = "error",
       }
+    end,
+  },
+  {
+    "Bekaboo/dropbar.nvim",
+    init = function()
+      require("core.utils").lazy_load "dropbar.nvim"
+    end,
+    config = function()
+      require("dropbar").setup {}
     end,
   },
   {
@@ -365,6 +418,7 @@ return {
     end,
     config = function()
       require("satellite").setup {
+        excluded_filetypes = { "NvimTree" },
         handlers = {
           gitsigns = {
             enable = false,
@@ -394,6 +448,16 @@ return {
           long_message_to_split = true,
           inc_rename = false,
           lsp_doc_border = false,
+        },
+        routes = {
+          {
+            filter = {
+              event = "msg_show",
+              kind = "",
+              find = "written",
+            },
+            opts = { skip = true },
+          },
         },
       }
     end,
@@ -450,6 +514,61 @@ return {
     config = function()
       require("mini.misc").setup_auto_root { ".git", "Makefile", "LICENSE" }
       require("mini.misc").setup_restore_cursor()
+    end,
+  },
+  {
+    "echasnovski/mini.align",
+    keys = { "sp", "sP" },
+    config = function()
+      require("mini.align").setup {
+        mappings = {
+          start = "sp",
+          start_with_preview = "sP",
+        },
+      }
+    end,
+  },
+  {
+    "echasnovski/mini.hipatterns",
+    event = "BufReadPre",
+    config = function()
+      local hi = require "mini.hipatterns"
+      local colors = require "custom.colors"
+      local ft = { "typescriptreact", "javascriptreact", "css", "html", "astro", "svelte" }
+      local highlights = {}
+
+      require("mini.hipatterns").setup {
+        highlighters = {
+          hex_color = hi.gen_highlighter.hex_color { priority = 2000 },
+          tailwind = {
+            pattern = function()
+              if not vim.tbl_contains(ft, vim.bo.filetype) then
+                return
+              end
+              return "%f[%w:-][%w:-]+%-()[a-z%-]+%-%d+()%f[^%w:-]"
+            end,
+            group = function(_, _, m)
+              ---@type string
+              local match = m.full_match
+              ---@type string, number
+              local color, shade = match:match "[%w-]+%-([a-z%-]+)%-(%d+)"
+              shade = assert(tonumber(shade))
+              local bg = vim.tbl_get(colors, color, shade)
+              if bg then
+                local hl = "MiniHipatternsTailwind" .. color .. shade
+                if not highlights[hl] then
+                  highlights[hl] = true
+                  local bg_shade = shade == 500 and 950 or shade < 500 and 900 or 100
+                  local fg = vim.tbl_get(colors, color, bg_shade)
+                  vim.api.nvim_set_hl(0, hl, { bg = "#" .. bg, fg = "#" .. fg })
+                end
+                return hl
+              end
+            end,
+            priority = 2000,
+          },
+        },
+      }
     end,
   },
 }
