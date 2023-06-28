@@ -3,8 +3,9 @@ set fish_greeting
 abbr --add ni npm install
 abbr --add gs git switch
 abbr --add gss git status -s
-abbr --add glog git log --oneline --all --graph
+abbr --add glog git log --oneline --all --graph --decorate
 abbr --add glo git log --oneline --all
+abbr --add grs git restore --staged .
 abbr --add gcm git commit -m
 abbr --add gcam git commit -am
 abbr --add gca git commit --amend --no-edit
@@ -20,15 +21,16 @@ abbr --add pn pnpm
 abbr --add c clear
 abbr --add yd yarn dev
 abbr --add yt yarn test
+abbr --add nv nvim
 
 abbr --add .. cd ..
 abbr --add ... cd ../..
 abbr --add .... cd ../../..
 
-if status is-interactive
-and not set -q TMUX
-    exec tmux
-end
+# if status is-interactive
+# and not set -q TMUX
+#     exec tmux
+# end
 
 starship init fish | source
 
@@ -66,3 +68,13 @@ set -g fish_pager_color_prefix $cyan
 set -g fish_pager_color_completion $foreground
 set -g fish_pager_color_description $comment
 set -g fish_pager_color_selected_background --background=$selection
+
+# pnpm
+set -gx PNPM_HOME "/home/amir/.local/share/pnpm"
+if not string match -q -- $PNPM_HOME $PATH
+  set -gx PATH "$PNPM_HOME" $PATH
+end
+# pnpm end
+
+set -gx GOPATH "$HOME/go"
+set -gx PATH "$PATH:$GOPATH/bin"
