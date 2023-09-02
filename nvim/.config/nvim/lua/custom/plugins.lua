@@ -7,6 +7,8 @@ return {
   { "folke/which-key.nvim", enabled = false },
   { "rafamadriz/friendly-snippets", enabled = false },
   { "NvChad/nvim-colorizer.lua", enabled = false },
+  { "NvChad/base46", enabled = false },
+  { "windwp/nvim-autopairs", enabled = false },
   {
     "nvim-tree/nvim-tree.lua",
     opts = {
@@ -78,6 +80,7 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
+      { "b0o/schemastore.nvim" },
       {
         "jose-elias-alvarez/null-ls.nvim",
         config = function()
@@ -95,7 +98,8 @@ return {
               b.formatting.gofmt,
               b.formatting.black,
               b.formatting.rustfmt,
-              b.diagnostics.eslint_d,
+              b.formatting.ocamlformat,
+              -- b.diagnostics.eslint_d,
             },
             filter = function(client)
               return client.name == "null-ls"
@@ -115,8 +119,6 @@ return {
           }
         end,
       },
-      { "b0o/schemastore.nvim" },
-      { "jose-elias-alvarez/typescript.nvim" },
       {
         "SmiteshP/nvim-navbuddy",
         dependencies = {
@@ -133,7 +135,9 @@ return {
           },
         },
         config = function()
-          require("nvim-navbuddy").setup()
+          require("nvim-navbuddy").setup {
+            lsp = { auto_attach = true },
+          }
         end,
       },
     },
@@ -159,7 +163,7 @@ return {
         "cssls",
         "html",
         "jsonls",
-        -- "eslint",
+        "eslint",
         "tailwindcss",
         "prismals",
         "rust_analyzer",
@@ -169,16 +173,7 @@ return {
         "taplo",
         "astro",
         "gopls",
-      }
-
-      local typescript = require "typescript"
-      typescript.setup {
-        disable_commands = false,
-        debug = false,
-        server = {
-          on_attach = on_attach,
-          capabilities = capabilities,
-        },
+        "ocamllsp",
       }
 
       for _, server in pairs(servers) do
@@ -239,15 +234,29 @@ return {
     end,
   },
   {
+    "pmizio/typescript-tools.nvim",
+    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+    ft = { "typescript", "javascript", "typescriptreact", "javascriptreact" },
+    config = function()
+      local on_attach = require("plugins.configs.lspconfig").on_attach
+      local capabilities = require("plugins.configs.lspconfig").capabilities
+
+      require("typescript-tools").setup {
+        on_attach = on_attach,
+        capabilities = capabilities,
+      }
+    end,
+  },
+  {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
-        -- "typescript-language-server",
+        "typescript-language-server",
         "css-lsp",
         "html-lsp",
         "json-lsp",
-        "eslint_d",
-        -- "eslint-lsp",
+        -- "eslint_d",
+        "eslint-lsp",
         "prettierd",
         "tailwindcss-language-server",
         "prisma-language-server",
@@ -260,6 +269,8 @@ return {
         "taplo",
         "astro-language-server",
         "gopls",
+        "ocaml-lsp",
+        "ocamlformat",
       },
     },
   },
@@ -301,13 +312,19 @@ return {
         enable = true,
         enable_autocmd = false,
       },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = "<Enter>",
+          node_incremental = "<Enter>",
+          node_decremental = "<BS>",
+        },
+      },
     },
   },
   {
     "nvim-treesitter/nvim-treesitter-context",
-    init = function()
-      require("core.utils").lazy_load "nvim-treesitter-context"
-    end,
+    event = { "BufRead", "BufWinEnter", "BufNewFile" },
     config = function()
       require("treesitter-context").setup()
     end,
@@ -325,10 +342,47 @@ return {
   },
   {
     "folke/tokyonight.nvim",
+    enabled = false,
     lazy = false,
     priority = 1000,
     config = function()
       vim.cmd [[colorscheme tokyonight-night]]
+    end,
+  },
+  {
+    "rebelot/kanagawa.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require("kanagawa").setup {
+        overrides = function(colors)
+          local theme = colors.theme
+          return {
+            TelescopeTitle = { fg = theme.ui.special, bold = true },
+            TelescopePromptNormal = { bg = theme.ui.bg_p1 },
+            TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = theme.ui.bg_p1 },
+            TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
+            TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = theme.ui.bg_m1 },
+            TelescopePreviewNormal = { bg = theme.ui.bg_dim },
+            TelescopePreviewBorder = { bg = theme.ui.bg_dim, fg = theme.ui.bg_dim },
+
+            Pmenu = { fg = theme.ui.shade0, bg = theme.ui.bg_p1 }, -- add `blend = vim.o.pumblend` to enable transparency
+            PmenuSel = { fg = "NONE", bg = theme.ui.bg_p2 },
+            PmenuSbar = { bg = theme.ui.bg_m1 },
+            PmenuThumb = { bg = theme.ui.bg_p2 },
+          }
+        end,
+        colors = {
+          theme = {
+            all = {
+              ui = {
+                bg_gutter = "none",
+              },
+            },
+          },
+        },
+      }
+      vim.cmd [[colorscheme kanagawa]]
     end,
   },
   {
@@ -342,11 +396,7 @@ return {
     "numToStr/Navigator.nvim",
     keys = {
       { "<C-h>", "<CMD>NavigatorLeft<CR>", mode = { "n", "t" } },
-      {
-        "<C-l>",
-        "<CMD>NavigatorRight<CR>",
-        mode = { "n", "t" },
-      },
+      { "<C-l>", "<CMD>NavigatorRight<CR>", mode = { "n", "t" } },
       {
         "<C-j>",
         "<CMD>NavigatorDown<CR>",
@@ -375,11 +425,22 @@ return {
   },
   {
     "Bekaboo/dropbar.nvim",
-    init = function()
-      require("core.utils").lazy_load "dropbar.nvim"
-    end,
+    event = { "BufRead", "BufWinEnter", "BufNewFile" },
     config = function()
-      require("dropbar").setup {}
+      require("dropbar").setup {
+        sources = {
+          path = {
+            modified = function(sym)
+              return sym:merge {
+                name = sym.name .. "[+]",
+                icon = " ",
+                name_hl = "DiffAdded",
+                icon_hl = "DiffAdded",
+              }
+            end,
+          },
+        },
+      }
     end,
   },
   {
@@ -413,9 +474,7 @@ return {
   },
   {
     "lewis6991/satellite.nvim",
-    init = function()
-      require("core.utils").lazy_load "satellite.nvim"
-    end,
+    event = { "BufRead", "BufWinEnter", "BufNewFile" },
     config = function()
       require("satellite").setup {
         excluded_filetypes = { "NvimTree" },
@@ -467,27 +526,21 @@ return {
   },
   {
     "echasnovski/mini.move",
-    init = function()
-      require("core.utils").lazy_load "mini.move"
-    end,
+    event = { "BufRead", "BufWinEnter", "BufNewFile" },
     config = function()
       require("mini.move").setup()
     end,
   },
   {
     "echasnovski/mini.ai",
-    init = function()
-      require("core.utils").lazy_load "mini.ai"
-    end,
+    event = { "BufRead", "BufWinEnter", "BufNewFile" },
     config = function()
       require("mini.ai").setup()
     end,
   },
   {
     "echasnovski/mini.bracketed",
-    init = function()
-      require("core.utils").lazy_load "mini.bracketed"
-    end,
+    event = { "BufRead", "BufWinEnter", "BufNewFile" },
     config = function()
       require("mini.bracketed").setup()
     end,
@@ -500,12 +553,18 @@ return {
     end,
   },
   {
-    "echasnovski/mini.surround",
-    init = function()
-      require("core.utils").lazy_load "mini.surround"
-    end,
+    "kylechui/nvim-surround",
+    version = "*", -- Stable
+    event = { "BufRead", "BufWinEnter", "BufNewFile" },
     config = function()
-      require("mini.surround").setup()
+      require("nvim-surround").setup {
+        move_cursor = false,
+        keymaps = {
+          normal = "sa",
+          delete = "sd",
+          change = "sr",
+        },
+      }
     end,
   },
   {
@@ -514,18 +573,6 @@ return {
     config = function()
       require("mini.misc").setup_auto_root { ".git", "Makefile", "LICENSE" }
       require("mini.misc").setup_restore_cursor()
-    end,
-  },
-  {
-    "echasnovski/mini.align",
-    keys = { "sp", "sP" },
-    config = function()
-      require("mini.align").setup {
-        mappings = {
-          start = "sp",
-          start_with_preview = "sP",
-        },
-      }
     end,
   },
   {
@@ -552,7 +599,7 @@ return {
               local match = m.full_match
               ---@type string, number
               local color, shade = match:match "[%w-]+%-([a-z%-]+)%-(%d+)"
-              shade = assert(tonumber(shade))
+              shade = tonumber(shade)
               local bg = vim.tbl_get(colors, color, shade)
               if bg then
                 local hl = "MiniHipatternsTailwind" .. color .. shade

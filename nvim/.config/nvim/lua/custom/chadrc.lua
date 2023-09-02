@@ -5,17 +5,13 @@ M.plugins = "custom.plugins"
 M.mappings = require "custom.mappings"
 
 M.ui = {
-  theme = "tokyonight",
+  theme = "kanagawa",
   tabufline = {
     enabled = false,
   },
   statusline = {
-    overriden_modules = function()
-      return {
-        LSP_progress = function()
-          return ""
-        end,
-      }
+    overriden_modules = function(modules)
+      table.remove(modules, 5)
     end,
   },
 }

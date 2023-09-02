@@ -19,6 +19,11 @@ M.disabled = {
     ["<leader>/"] = "",
     -- line number
     ["<leader>n"] = "",
+
+    ["<C-h>"] = "",
+    ["<C-l>"] = "",
+    ["<C-j>"] = "",
+    ["<C-k>"] = "",
   },
   v = {
     -- comment
@@ -37,6 +42,7 @@ M.general = {
     ["gP"] = { '"+P', opts = { silent = true } },
 
     ["X"] = { '"_x' },
+    ["c"] = { '"_c' },
 
     ["J"] = { "mzJ`z" },
 
