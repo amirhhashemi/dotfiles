@@ -30,6 +30,13 @@ return {
           select = true,
         },
       },
+      sources = {
+        { name = "nvim_lsp" },
+        { name = "nvim_lua" },
+        { name = "luasnip" },
+        { name = "path" },
+        { name = "buffer" },
+      },
     },
   },
   {
@@ -81,44 +88,6 @@ return {
     "neovim/nvim-lspconfig",
     dependencies = {
       { "b0o/schemastore.nvim" },
-      {
-        "jose-elias-alvarez/null-ls.nvim",
-        config = function()
-          local null_ls = require "null-ls"
-          local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
-          local b = null_ls.builtins
-
-          null_ls.setup {
-            debug = false,
-            sources = {
-              b.formatting.prettierd.with {
-                extra_filetypes = { "astro", "svelte" },
-              },
-              b.formatting.stylua,
-              b.formatting.gofmt,
-              b.formatting.black,
-              b.formatting.rustfmt,
-              b.formatting.ocamlformat,
-              -- b.diagnostics.eslint_d,
-            },
-            filter = function(client)
-              return client.name == "null-ls"
-            end,
-            on_attach = function(client, bufnr)
-              if client.supports_method "textDocument/formatting" then
-                vim.api.nvim_clear_autocmds { group = augroup, buffer = bufnr }
-                vim.api.nvim_create_autocmd("BufWritePre", {
-                  group = augroup,
-                  buffer = bufnr,
-                  callback = function()
-                    vim.lsp.buf.format { bufnr = bufnr }
-                  end,
-                })
-              end
-            end,
-          }
-        end,
-      },
       {
         "SmiteshP/nvim-navbuddy",
         dependencies = {
@@ -234,6 +203,51 @@ return {
     end,
   },
   {
+    "stevearc/conform.nvim",
+    event = { "BufRead", "BufWinEnter", "BufNewFile" },
+    config = function()
+      require("conform").setup {
+        formatters_by_ft = {
+          javascript = { { "prettierd", "prettier" } },
+          javascriptreact = { { "prettierd", "prettier" } },
+          typescript = { { "prettierd", "prettier" } },
+          typescriptreact = { { "prettierd", "prettier" } },
+          html = { { "prettierd", "prettier" } },
+          css = { { "prettierd", "prettier" } },
+          svelte = { { "prettierd", "prettier" } },
+          astro = { { "prettierd", "prettier" } },
+          json = { { "prettierd", "prettier" } },
+          markdown = { { "prettierd", "prettier" } },
+          toml = { "taplo" },
+          yaml = { "yamlfmt" },
+          lua = { "stylua" },
+          python = { "black" },
+          go = { "gofmt" },
+          rust = { "rustfmt" },
+          ocaml = { "ocamlformat" },
+        },
+        format_on_save = {
+          timeout_ms = 500,
+          lsp_fallback = true,
+        },
+      }
+    end,
+  },
+  {
+    "mfussenegger/nvim-lint",
+    event = { "BufRead", "BufWinEnter", "BufNewFile" },
+    config = function()
+      require("lint").linters_by_ft = {
+        javascript = { "eslint" },
+        javascriptreact = { "eslint" },
+        typescript = { "eslint" },
+        typescriptreact = { "eslint" },
+        svelte = { "eslint" },
+        astro = { "eslint" },
+      }
+    end,
+  },
+  {
     "pmizio/typescript-tools.nvim",
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
     ft = { "typescript", "javascript", "typescriptreact", "javascriptreact" },
@@ -255,7 +269,6 @@ return {
         "css-lsp",
         "html-lsp",
         "json-lsp",
-        -- "eslint_d",
         "eslint-lsp",
         "prettierd",
         "tailwindcss-language-server",
@@ -271,6 +284,8 @@ return {
         "gopls",
         "ocaml-lsp",
         "ocamlformat",
+        "yamlfmt",
+        "yaml-language-server",
       },
     },
   },
@@ -523,6 +538,10 @@ return {
     dependencies = {
       "MunifTanjim/nui.nvim",
     },
+  },
+  {
+    "stevearc/dressing.nvim",
+    event = { "VeryLazy" },
   },
   {
     "echasnovski/mini.move",
