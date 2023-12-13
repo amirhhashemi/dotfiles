@@ -1,67 +1,53 @@
 local wezterm = require("wezterm")
 
-local function scheme_for_appearance(appearance)
-	if appearance:find("Dark") then
-		return "Catppuccin Mocha"
-	else
-		return "Catppuccin Latte"
-	end
-end
-
 return {
-	font = wezterm.font("FiraCode Nerd Font"),
-	font_size = 11.0,
-	window_background_opacity = 1.0,
-	enable_tab_bar = true,
-	window_padding = {
-		left = 0,
-		right = 0,
-		top = 0,
-		bottom = 0,
-	},
-	color_scheme = scheme_for_appearance(wezterm.gui.get_appearance()),
-	leader = { key = ",", mods = "CTRL" },
-	disable_default_key_bindings = true,
-	keys = {
-		{
-			key = "v",
-			mods = "LEADER",
-			action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
-		},
-		{
-			key = "s",
-			mods = "LEADER",
-			action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }),
-		},
-		{
-			key = "z",
-			mods = "LEADER",
-			action = wezterm.action.TogglePaneZoomState,
-		},
-		{
-			key = "h",
-			mods = "LEADER",
-			action = wezterm.action.AdjustPaneSize({ "Left", 5 }),
-		},
-		{
-			key = "l",
-			mods = "LEADER",
-			action = wezterm.action.AdjustPaneSize({ "Right", 5 }),
-		},
+  font = wezterm.font("JetBrainsMono NF"),
+  font_size = 11.0,
+  freetype_load_flags = "NO_HINTING",
+  window_background_opacity = 1.0,
+  enable_tab_bar = false,
+  bidi_enabled = true,
+  window_padding = {
+    left = 0,
+    right = 0,
+    top = 0,
+    bottom = 0,
+  },
+  force_reverse_video_cursor = true,
+  colors = {
+    foreground = "#c5c9c5",
+    background = "#181616",
 
-		{ key = "f", mods = "LEADER", action = wezterm.action.PaneSelect },
+    cursor_bg = "#C8C093",
+    cursor_fg = "#C8C093",
+    cursor_border = "#C8C093",
 
-		{ key = "r", mods = "LEADER", action = wezterm.action.RotatePanes("Clockwise") },
+    selection_fg = "#C8C093",
+    selection_bg = "#2D4F67",
 
-		{ key = "h", mods = "CTRL", action = wezterm.action.ActivatePaneDirection("Left") },
-		{ key = "l", mods = "CTRL", action = wezterm.action.ActivatePaneDirection("Right") },
-		{ key = "j", mods = "CTRL", action = wezterm.action.ActivatePaneDirection("Down") },
-		{ key = "k", mods = "CTRL", action = wezterm.action.ActivatePaneDirection("Up") },
-		{ key = "LeftArrow", mods = "CTRL", action = wezterm.action.ActivatePaneDirection("Left") },
-		{ key = "RightArrow", mods = "CTRL", action = wezterm.action.ActivatePaneDirection("Right") },
-		{ key = "DownArrow", mods = "CTRL", action = wezterm.action.ActivatePaneDirection("Down") },
-		{ key = "UpArrow", mods = "CTRL", action = wezterm.action.ActivatePaneDirection("Up") },
+    scrollbar_thumb = "#16161d",
+    split = "#16161d",
 
-		{ key = "/", mods = "CTRL", action = wezterm.action.SendKey({ key = "_", mods = "CTRL" }) },
-	},
+    ansi = {
+      "#0d0c0c",
+      "#c4746e",
+      "#8a9a7b",
+      "#c4b28a",
+      "#8ba4b0",
+      "#a292a3",
+      "#8ea4a2",
+      "#C8C093",
+    },
+    brights = {
+      "#a6a69c",
+      "#E46876",
+      "#87a987",
+      "#E6C384",
+      "#7FB4CA",
+      "#938AA9",
+      "#7AA89F",
+      "#c5c9c5",
+    },
+    indexed = { [16] = "#b6927b", [17] = "#b98d7b" },
+  },
 }
