@@ -6,9 +6,9 @@ return {
   },
   { "folke/which-key.nvim", enabled = false },
   { "rafamadriz/friendly-snippets", enabled = false },
-  { "NvChad/nvim-colorizer.lua", enabled = false },
   { "NvChad/base46", enabled = false },
   { "windwp/nvim-autopairs", enabled = false },
+  { "NvChad/nvim-colorizer.lua", opts = { user_default_options = { tailwind = true } } },
   {
     "nvim-tree/nvim-tree.lua",
     opts = {
@@ -62,6 +62,7 @@ return {
       delay = 0,
     },
   } },
+  { "sindrets/diffview.nvim", cmd = { "DiffviewOpen", "DiffviewFileHistory" } },
   {
     "lukas-reineke/indent-blankline.nvim",
     opts = {
@@ -85,30 +86,19 @@ return {
     },
   },
   {
+    "L3MON4D3/LuaSnip",
+    opts = {
+      load_ft_func = require("luasnip.extras.filetype_functions").extend_load_ft {
+        typescript = { "javascript" },
+        javascriptreact = { "javascript" },
+        typescriptreact = { "typescript" },
+      },
+    },
+  },
+  {
     "neovim/nvim-lspconfig",
     dependencies = {
       { "b0o/schemastore.nvim" },
-      {
-        "SmiteshP/nvim-navbuddy",
-        dependencies = {
-          "SmiteshP/nvim-navic",
-          "MunifTanjim/nui.nvim",
-        },
-        keys = {
-          {
-            "<leader>n",
-            function()
-              require("nvim-navbuddy").open()
-            end,
-            { silent = true },
-          },
-        },
-        config = function()
-          require("nvim-navbuddy").setup {
-            lsp = { auto_attach = true },
-          }
-        end,
-      },
     },
     config = function()
       require "plugins.configs.lspconfig"
@@ -117,15 +107,11 @@ return {
         virtual_text = false,
       }
 
-      local navbuddy = require "nvim-navbuddy"
       local core_on_attach = require("plugins.configs.lspconfig").on_attach
       local capabilities = require("plugins.configs.lspconfig").capabilities
 
       local function on_attach(client, bufnr)
         core_on_attach(client, bufnr)
-        if client.server_capabilities.documentSymbolProvider then
-          navbuddy.attach(client, bufnr)
-        end
       end
 
       local servers = {
@@ -142,7 +128,6 @@ return {
         "taplo",
         "astro",
         "gopls",
-        "ocamllsp",
       }
 
       for _, server in pairs(servers) do
@@ -177,6 +162,7 @@ return {
                 experimental = {
                   classRegex = {
                     { "cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
+                    { "tv\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
                   },
                 },
               },
@@ -204,7 +190,21 @@ return {
   },
   {
     "stevearc/conform.nvim",
-    event = { "BufRead", "BufWinEnter", "BufNewFile" },
+    event = { "BufWritePre" },
+    cmd = { "ConformInfo" },
+    init = function()
+      vim.api.nvim_create_user_command("Format", function(args)
+        local range = nil
+        if args.count ~= -1 then
+          local end_line = vim.api.nvim_buf_get_lines(0, args.line2 - 1, args.line2, true)[1]
+          range = {
+            start = { args.line1, 0 },
+            ["end"] = { args.line2, end_line:len() },
+          }
+        end
+        require("conform").format { async = true, lsp_fallback = true, range = range }
+      end, { range = true })
+    end,
     config = function()
       require("conform").setup {
         formatters_by_ft = {
@@ -224,10 +224,9 @@ return {
           python = { "black" },
           go = { "gofmt" },
           rust = { "rustfmt" },
-          ocaml = { "ocamlformat" },
         },
         format_on_save = {
-          timeout_ms = 500,
+          timeout_ms = 1000,
           lsp_fallback = true,
         },
       }
@@ -237,14 +236,65 @@ return {
     "mfussenegger/nvim-lint",
     event = { "BufRead", "BufWinEnter", "BufNewFile" },
     config = function()
-      require("lint").linters_by_ft = {
+      local M = {}
+      local lint = require "lint"
+
+      lint.linters_by_ft = {
         javascript = { "eslint" },
         javascriptreact = { "eslint" },
         typescript = { "eslint" },
         typescriptreact = { "eslint" },
         svelte = { "eslint" },
         astro = { "eslint" },
+        go = { "golangcilint" },
       }
+
+      function M.debounce(ms, fn)
+        local timer = vim.loop.new_timer()
+        return function(...)
+          local argv = { ... }
+          timer:start(ms, 0, function()
+            timer:stop()
+            vim.schedule_wrap(fn)(unpack(argv))
+          end)
+        end
+      end
+
+      function M.lint()
+        -- Use nvim-lint's logic first:
+        -- * checks if linters exist for the full filetype first
+        -- * otherwise will split filetype by "." and add all those linters
+        local names = lint._resolve_linter_by_ft(vim.bo.filetype)
+
+        -- Add fallback linters.
+        if #names == 0 then
+          vim.list_extend(names, lint.linters_by_ft["_"] or {})
+        end
+
+        -- Add global linters.
+        vim.list_extend(names, lint.linters_by_ft["*"] or {})
+
+        -- Filter out linters that don't exist or don't match the condition.
+        local ctx = { filename = vim.api.nvim_buf_get_name(0) }
+        ctx.dirname = vim.fn.fnamemodify(ctx.filename, ":h")
+        names = vim.tbl_filter(function(name)
+          local linter = lint.linters[name]
+          if not linter then
+            Util.warn("Linter not found: " .. name, { title = "nvim-lint" })
+          end
+          return linter and not (type(linter) == "table" and linter.condition and not linter.condition(ctx))
+        end, names)
+
+        -- Run linters.
+        if #names > 0 then
+          lint.try_lint(names)
+        end
+      end
+
+      vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
+        group = vim.api.nvim_create_augroup("nvim-lint", { clear = true }),
+        callback = M.debounce(100, M.lint),
+      })
     end,
   },
   {
@@ -282,10 +332,9 @@ return {
         "taplo",
         "astro-language-server",
         "gopls",
-        "ocaml-lsp",
-        "ocamlformat",
         "yamlfmt",
         "yaml-language-server",
+        "golangcilint",
       },
     },
   },
@@ -356,15 +405,6 @@ return {
     end,
   },
   {
-    "folke/tokyonight.nvim",
-    enabled = false,
-    lazy = false,
-    priority = 1000,
-    config = function()
-      vim.cmd [[colorscheme tokyonight-night]]
-    end,
-  },
-  {
     "rebelot/kanagawa.nvim",
     lazy = false,
     priority = 1000,
@@ -385,6 +425,27 @@ return {
             PmenuSel = { fg = "NONE", bg = theme.ui.bg_p2 },
             PmenuSbar = { bg = theme.ui.bg_m1 },
             PmenuThumb = { bg = theme.ui.bg_p2 },
+
+            -- update kanagawa to handle new treesitter highlight captures
+            ["@string.regexp"] = { link = "@string.regex" },
+            ["@variable.parameter"] = { link = "@parameter" },
+            ["@exception"] = { link = "@exception" },
+            ["@string.special.symbol"] = { link = "@symbol" },
+            ["@markup.strong"] = { link = "@text.strong" },
+            ["@markup.italic"] = { link = "@text.emphasis" },
+            ["@markup.heading"] = { link = "@text.title" },
+            ["@markup.raw"] = { link = "@text.literal" },
+            ["@markup.quote"] = { link = "@text.quote" },
+            ["@markup.math"] = { link = "@text.math" },
+            ["@markup.environment"] = { link = "@text.environment" },
+            ["@markup.environment.name"] = { link = "@text.environment.name" },
+            ["@markup.link.url"] = { link = "Special" },
+            ["@markup.link.label"] = { link = "Identifier" },
+            ["@comment.note"] = { link = "@text.note" },
+            ["@comment.warning"] = { link = "@text.warning" },
+            ["@comment.danger"] = { link = "@text.danger" },
+            ["@diff.plus"] = { link = "@text.diff.add" },
+            ["@diff.minus"] = { link = "@text.diff.delete" },
           }
         end,
         colors = {
@@ -396,6 +457,10 @@ return {
             },
           },
         },
+        commentStyle = { italic = false },
+        keywordStyle = { italic = false },
+        statementStyle = { bold = false },
+        background = { dark = "dragon" },
       }
       vim.cmd [[colorscheme kanagawa]]
     end,
@@ -454,6 +519,14 @@ return {
               }
             end,
           },
+        },
+        bar = {
+          sources = function()
+            local sources = require "dropbar.sources"
+            return {
+              sources.path,
+            }
+          end,
         },
       }
     end,
@@ -572,18 +645,11 @@ return {
     end,
   },
   {
-    "kylechui/nvim-surround",
-    version = "*", -- Stable
+    "echasnovski/mini.surround",
+    version = "*",
     event = { "BufRead", "BufWinEnter", "BufNewFile" },
     config = function()
-      require("nvim-surround").setup {
-        move_cursor = false,
-        keymaps = {
-          normal = "sa",
-          delete = "sd",
-          change = "sr",
-        },
-      }
+      require("mini.surround").setup()
     end,
   },
   {
@@ -592,49 +658,6 @@ return {
     config = function()
       require("mini.misc").setup_auto_root { ".git", "Makefile", "LICENSE" }
       require("mini.misc").setup_restore_cursor()
-    end,
-  },
-  {
-    "echasnovski/mini.hipatterns",
-    event = "BufReadPre",
-    config = function()
-      local hi = require "mini.hipatterns"
-      local colors = require "custom.colors"
-      local ft = { "typescriptreact", "javascriptreact", "css", "html", "astro", "svelte" }
-      local highlights = {}
-
-      require("mini.hipatterns").setup {
-        highlighters = {
-          hex_color = hi.gen_highlighter.hex_color { priority = 2000 },
-          tailwind = {
-            pattern = function()
-              if not vim.tbl_contains(ft, vim.bo.filetype) then
-                return
-              end
-              return "%f[%w:-][%w:-]+%-()[a-z%-]+%-%d+()%f[^%w:-]"
-            end,
-            group = function(_, _, m)
-              ---@type string
-              local match = m.full_match
-              ---@type string, number
-              local color, shade = match:match "[%w-]+%-([a-z%-]+)%-(%d+)"
-              shade = tonumber(shade)
-              local bg = vim.tbl_get(colors, color, shade)
-              if bg then
-                local hl = "MiniHipatternsTailwind" .. color .. shade
-                if not highlights[hl] then
-                  highlights[hl] = true
-                  local bg_shade = shade == 500 and 950 or shade < 500 and 900 or 100
-                  local fg = vim.tbl_get(colors, color, bg_shade)
-                  vim.api.nvim_set_hl(0, hl, { bg = "#" .. bg, fg = "#" .. fg })
-                end
-                return hl
-              end
-            end,
-            priority = 2000,
-          },
-        },
-      }
     end,
   },
 }

@@ -17,6 +17,7 @@ autocmd("FileType", {
     "PlenaryTestPopup",
   },
   callback = function(event)
+    vim.pretty_print(event)
     vim.bo[event.buf].buflisted = false
     vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
   end,
@@ -49,11 +50,5 @@ autocmd("TermOpen", {
     vim.cmd [[ setfiletype terminal ]]
 
     vim.cmd [[ startinsert ]]
-  end,
-})
-
-autocmd({ "InsertLeave" }, {
-  callback = function()
-    require("lint").try_lint()
   end,
 })

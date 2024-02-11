@@ -5,6 +5,10 @@ opt.cmdheight = 0
 opt.wrap = false
 opt.relativenumber = true
 opt.whichwrap = ""
+opt.smoothscroll = true
+
+opt.listchars = "extends:…,precedes:…,nbsp:␣,tab:  >"
+opt.list = false
 
 vim.o.guifont = "FiraCode Nerd Font:h11"
 
