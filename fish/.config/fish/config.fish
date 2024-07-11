@@ -8,11 +8,12 @@ set fish_cursor_replace_one underscore
 set fish_cursor_visual block
 bind --mode insert --sets-mode default jk repaint
 
+# https://github.com/sindresorhus/trash-cli
+abbr --add rm trash
 abbr --add c clear
 abbr --add nv nvim
 abbr --add .. cd ..
 abbr --add ... cd ../..
-abbr --add .... cd ../../..
 abbr --add pn pnpm
 abbr --add gs git switch
 abbr --add gss git status -s
@@ -31,16 +32,24 @@ abbr --add gsu git stash -u
 abbr --add gdc git diff-tree --no-commit-id --name-status -r
 abbr --add gvv git branch -vv
 
-# pnpm
-set -gx PNPM_HOME "/home/amir/.local/share/pnpm"
+set -gx PNPM_HOME /home/amir/.local/share/pnpm
 if not string match -q -- $PNPM_HOME $PATH
-  set -gx PATH "$PNPM_HOME" $PATH
+  set -gx PATH $PNPM_HOME $PATH
 end
 
-# go
-set -gx GOPATH "$HOME/go"
-set -gx PATH "$PATH:$GOPATH/bin"
+set -gx GOPATH $HOME/go
+set -gx PATH $GOPATH/bin /usr/local/go/bin $PATH
 
-# bun
-set --export BUN_INSTALL "$HOME/.bun"
-set --export PATH $BUN_INSTALL/bin $PATH
+set -gx BUN_INSTALL $HOME/.bun
+set -gx PATH $BUN_INSTALL/bin $PATH
+
+set -gx PATH ~/.local/bin $PATH
+
+zoxide init fish | source
+
+jj util completion fish | source
+
+fzf --fish | source
+
+set -gx FZF_DEFAULT_OPTS --layout=reverse
+set -gx FZF_CTRL_T_OPTS --walker-skip .git,node_modules
