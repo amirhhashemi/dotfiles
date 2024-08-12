@@ -1,8 +1,0 @@
-# Use this proxy
---proxy socks5://127.0.0.1:9050
-
-# Save all videos under Movies directory in your home directory
--o ~/Movies/youtube/%(title)s.%(ext)s
-
-# Download best format available but no better than 720p
--f 'bestvideo[height<=720]+bestaudio/best[height<=720]'

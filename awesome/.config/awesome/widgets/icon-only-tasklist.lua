@@ -1,1 +1,0 @@
-../../../.dotfiles/awesome/.config/awesome/widgets/icon-only-tasklist.lua
