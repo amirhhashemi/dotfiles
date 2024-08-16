@@ -1,0 +1,41 @@
+themes {
+    kanagawa-wave {
+        fg "#DCD7BA"
+        bg "#1F1F28"
+        red "#C34043"
+        green "#76946A"
+        yellow "#FF9E3B"
+        blue "#7E9CD8"
+        magenta "#957FB8"
+        orange "#FFA066"
+        cyan "#7FB4CA"
+        black "#16161D"
+        white "#DCD7BA"
+    }
+    kanagawa-dragon {
+        fg "#C5C9C5"
+        bg "#181616"
+        red "#C4746E"
+        green "#8A9A7B"
+        yellow "#C4B28A"
+        blue "#8BA4B0"
+        magenta "#A292A3"
+        orange "#B6927B"
+        cyan "#8EA4A2"
+        black "#0D0C0C"
+        white "#C8C093"
+    }
+    kanagawa-lotus {
+        fg "#545464"
+        bg "#F2ECBC"
+        red "#C84053"
+        green "#6F894E"
+        yellow "#77713F"
+        blue "#4D699B"
+        magenta "#B35B79"
+        orange "#E98A00"
+        cyan "#5E857A"
+        black "#545464"
+        white "#1F1F28"
+    }
+}

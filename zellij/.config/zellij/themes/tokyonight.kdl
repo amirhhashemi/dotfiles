@@ -1,0 +1,62 @@
+themes {
+    tokyonight-day {
+        fg "#3760bf"
+        bg "#c4c8da"
+        // Black should match the terminal background color
+        // This ensures the top and bottom bars are transparent
+        black "#e1e2e7"
+        red "#f52a65"
+        green "#587539"
+        yellow "#8c6c3e"
+        blue "#2e7de9"
+        magenta "#9854f1"
+        cyan "#007197"
+        white "#6172b0"
+        orange "#b15c00"
+    }
+    tokyonight-moon {
+        fg "#c8d3f5"
+        bg "#2f334d"
+        // Black should match the terminal background color
+        // This ensures the top and bottom bars are transparent
+        black "#222436"
+        red "#ff757f"
+        green "#c3e88d"
+        yellow "#ffc777"
+        blue "#82aaff"
+        magenta "#c099ff"
+        cyan "#86e1fc"
+        white "#828bb8"
+        orange "#ff966c"
+    }
+    tokyonight-night {
+        fg "#c0caf5"
+        bg "#292e42"
+        // Black should match the terminal background color
+        // This ensures the top and bottom bars are transparent
+        black "#1a1b26"
+        red "#f7768e"
+        green "#9ece6a"
+        yellow "#e0af68"
+        blue "#7aa2f7"
+        magenta "#bb9af7"
+        cyan "#7dcfff"
+        white "#a9b1d6"
+        orange "#ff9e64"
+    }
+    tokyonight-storm {
+        fg "#c0caf5"
+        bg "#292e42"
+        // Black should match the terminal background color
+        // This ensures the top and bottom bars are transparent
+        black "#24283b"
+        red "#f7768e"
+        green "#9ece6a"
+        yellow "#e0af68"
+        blue "#7aa2f7"
+        magenta "#bb9af7"
+        cyan "#7dcfff"
+        white "#a9b1d6"
+        orange "#ff9e64"
+    }
+}
