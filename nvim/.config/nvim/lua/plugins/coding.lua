@@ -56,7 +56,6 @@ return {
 				typescriptreact = { "eslint" },
 				svelte = { "eslint" },
 				astro = { "eslint" },
-				go = { "golangcilint" },
 			}
 
 			function M.debounce(ms, fn)

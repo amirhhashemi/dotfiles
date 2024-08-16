@@ -60,19 +60,4 @@ function M.foldexpr()
 	return "0"
 end
 
-function M.sync_theme()
-	local obj = vim
-		.system({ "awk", '$1=="include" {print $2}', vim.env.HOME .. "/.config/kitty/kitty.conf" }, { text = true })
-		:wait()
-	local theme = vim.trim(obj.stdout):gsub(".conf", "")
-
-	vim.cmd("colorscheme" .. " " .. theme)
-
-	if theme == "rose-pine-dawn" then
-		vim.o.background = "light"
-	else
-		vim.o.background = "dark"
-	end
-end
-
 return M
