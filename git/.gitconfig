@@ -1,0 +1,10 @@
+[user]
+	name = amirhhashemi
+	email = 87268103+amirhhashemi@users.noreply.github.com
+[rerere]
+	enabled = true
+	autoUpdate = true
+[branch]
+	sort = -committerdate
+[column]
+	ui = auto
