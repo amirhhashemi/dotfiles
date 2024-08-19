@@ -35,10 +35,10 @@ return {
 				python = { "black" },
 				go = { "gofmt" },
 				rust = { "rustfmt" },
+				bash = { "shfmt" },
 			},
 			format_on_save = {
 				lsp_fallback = true,
-				timeout_ms = 1000,
 			},
 		},
 	},
@@ -56,6 +56,7 @@ return {
 				typescriptreact = { "eslint" },
 				svelte = { "eslint" },
 				astro = { "eslint" },
+				bash = { "shellcheck" },
 			}
 
 			function M.debounce(ms, fn)

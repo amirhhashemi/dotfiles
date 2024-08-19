@@ -1,15 +1,7 @@
 set fish_greeting
 
-# vim mode
-fish_vi_key_bindings
-set fish_cursor_default block
-set fish_cursor_insert line
-set fish_cursor_replace_one underscore
-set fish_cursor_visual block
-bind --mode insert --sets-mode default jk repaint
-
-# https://github.com/sindresorhus/trash-cli
-abbr --add rm trash
+# aliases
+abbr --add rm trash # https://github.com/sindresorhus/trash-cli
 abbr --add c clear
 abbr --add nv nvim
 abbr --add .. cd ..
@@ -31,25 +23,35 @@ abbr --add gsp git stash pop
 abbr --add gsu git stash -u
 abbr --add gdc git diff-tree --no-commit-id --name-status -r
 abbr --add gvv git branch -vv
+abbr --add gpf git push --force-with-lease
 
-set -gx PNPM_HOME /home/amir/.local/share/pnpm
+# vim mode
+fish_vi_key_bindings
+set fish_cursor_default block
+set fish_cursor_insert line
+set fish_cursor_replace_one underscore
+set fish_cursor_visual block
+bind --mode insert --sets-mode default jk repaint
+
+set -gx PATH "$HOME/.local/bin" $PATH
+
+# pnpm
+set -gx PNPM_HOME "$HOME/.local/share/pnpm"
 if not string match -q -- $PNPM_HOME $PATH
-  set -gx PATH $PNPM_HOME $PATH
+  set -gx PATH "$PNPM_HOME" $PATH
 end
+# pnpm end
 
-set -gx GOPATH $HOME/go
-set -gx PATH $GOPATH/bin /usr/local/go/bin $PATH
-
-set -gx BUN_INSTALL $HOME/.bun
-set -gx PATH $BUN_INSTALL/bin $PATH
-
-set -gx PATH ~/.local/bin $PATH
-
-zoxide init fish | source
-
-jj util completion fish | source
-
+# fzf
 fzf --fish | source
-
 set -gx FZF_DEFAULT_OPTS --layout=reverse
 set -gx FZF_CTRL_T_OPTS --walker-skip .git,node_modules
+# fzf end
+
+# zoxide
+zoxide init fish | source
+# zoxide end
+ 
+# go
+set -gx PATH "/usr/local/go/bin" $PATH
+# go end

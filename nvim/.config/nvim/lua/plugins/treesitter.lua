@@ -1,27 +1,7 @@
 return {
 	{
 		"windwp/nvim-ts-autotag",
-		opts = {
-			filetypes = {
-				"html",
-				"javascript",
-				"typescript",
-				"javascriptreact",
-				"typescriptreact",
-				"svelte",
-				"astro",
-				"vue",
-				"tsx",
-				"jsx",
-				"rescript",
-				"xml",
-				"php",
-				"markdown",
-				"glimmer",
-				"handlebars",
-				"hbs",
-			},
-		},
+		config = true,
 	},
 	{
 		"nvim-treesitter/nvim-treesitter-context",
@@ -31,7 +11,6 @@ return {
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",
-		dependencies = { "windwp/nvim-ts-autotag", "nvim-treesitter/nvim-treesitter-context" },
 		event = { "BufRead", "BufWinEnter", "BufNewFile" },
 		cmd = { "TSInstall", "TSBufEnable", "TSBufDisable", "TSModuleInfo" },
 		build = ":TSUpdate",
@@ -42,13 +21,6 @@ return {
 					enable = true,
 					use_languagetree = true,
 					additional_vim_regex_highlighting = false,
-				},
-				autotag = {
-					enable = true,
-				},
-				context_commentstring = {
-					enable = true,
-					enable_autocmd = false,
 				},
 			})
 		end,

@@ -1,0 +1,128 @@
+#!/bin/bash
+
+LIGHT_BACKGROUND="$HOME/.local/share/backgrounds/nature.jpg"
+LIGHT_BACKGROUND_URI="file://$LIGHT_BACKGROUND"
+DARK_BACKGROUND="$HOME/.local/share/backgrounds/nature-d.jpg"
+DARK_BACKGROUND_URI="file://$DARK_BACKGROUND"
+LIGHT_THEME="rose-pine-dawn"
+DARK_THEME="kanagawa-dragon"
+ZELLIJ_CONFIG_DIR="$HOME/.config/zellij"
+ZELLIJ_CONFIG="$ZELLIJ_CONFIG_DIR/config.kdl"
+KITTY_CONFIG_DIR="$HOME/.config/kitty"
+KITTY_CONFIG="$KITTY_CONFIG_DIR/kitty.conf"
+NVIM_THEME_CONFIG="$HOME/.config/nvim/lua/plugins/theme.lua"
+LOG_FILE="/tmp/theme-updater.log"
+
+log() {
+    echo "$(date): $1" | tee -a "$LOG_FILE"
+}
+
+log_error() {
+    echo "$(date): ERROR - $1" | tee -a "$LOG_FILE" >&2
+}
+
+check_background_files() {
+    if [ ! -f "$LIGHT_BACKGROUND" ]; then
+        log_error "Background file not found at $LIGHT_BACKGROUND"
+        exit 1
+    fi
+    if [ ! -f "$DARK_BACKGROUND" ]; then
+        log_error "Background file not found at $DARK_BACKGROUND"
+        exit 1
+    fi
+}
+
+update_background() {
+    gsettings set org.gnome.desktop.background picture-uri "$1"
+    gsettings set org.gnome.desktop.background picture-uri-dark "$1"
+    log "Updated background to $1"
+}
+
+check_config_files() {
+    if [ ! -f "$ZELLIJ_CONFIG" ]; then
+        log_error "Zellij config file not found at $ZELLIJ_CONFIG"
+        exit 1
+    fi
+    if [ ! -f "$KITTY_CONFIG" ]; then
+        log_error "Kitty config file not found at $KITTY_CONFIG"
+        exit 1
+    fi
+    if [ ! -f "$NVIM_THEME_CONFIG" ]; then
+        log_error "Neovim theme config file not found at $NVIM_THEME_CONFIG"
+        exit 1
+    fi
+}
+
+update_zellij_theme() {
+    if sed -i "s/theme \".*\"/theme \"$1\"/g" "$ZELLIJ_CONFIG"; then
+        log "Updated Zellij theme to $1"
+    else
+        log_error "Failed to update Zellij theme"
+    fi
+}
+
+update_kitty_theme() {
+    if sed -i -e "s/include.*/include .\/themes\/$1.conf/" "$KITTY_CONFIG"; then
+        log "Updated Kitty theme to $1"
+        reload_kitty
+    else
+        log_error "Failed to update Kitty theme"
+    fi
+}
+
+reload_kitty() {
+    kitty_pids=$(pgrep kitty)
+    for pid in $kitty_pids; do
+        if kill -SIGUSR1 "$pid" 2>/dev/null; then
+            log "Sent reload signal to Kitty process $pid"
+        else
+            log_error "Failed to send signal to Kitty process $pid"
+        fi
+    done
+    log "Reload signal sent to all Kitty processes"
+}
+
+update_neovim_theme() {
+    if sed -i -e "s/colorscheme = \".*\"/colorscheme = \"$1\"/" "$NVIM_THEME_CONFIG"; then
+        log "Updated Neovim theme to $1"
+    else
+        log_error "Failed to update Neovim theme"
+    fi
+}
+
+
+handle_theme_change() {
+    local new_background
+    local current_theme="$1"
+    local new_theme
+
+    if [ "$current_theme" = "Pop-dark" ]; then
+        new_background=$DARK_BACKGROUND_URI
+        new_theme=$DARK_THEME
+    else
+        new_background=$LIGHT_BACKGROUND_URI
+        new_theme=$LIGHT_THEME
+    fi
+
+    log "Changing background to $new_background"
+    update_background "$new_background"
+
+    log "Changing theme to $new_theme"
+    update_zellij_theme "$new_theme"
+    update_kitty_theme "$new_theme"
+    update_neovim_theme "$new_theme"
+}
+
+main() {
+    check_background_files
+    check_config_files
+
+    log "Theme updater started"
+    gsettings monitor org.gnome.desktop.interface gtk-theme | while read -r line; do
+        current_theme=$(echo "$line" | awk '{print $2}' | sed "s/^'//;s/'$//")
+        log "Detected theme change to: $current_theme"
+        handle_theme_change "$current_theme"
+    done
+}
+
+main

@@ -1,0 +1,11 @@
+[Unit]
+Description=Theme Updater Service
+After=graphical-session.target
+
+[Service]
+ExecStart=/bin/bash ${HOME}/.local/bin/theme-updater
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=graphical-session.target

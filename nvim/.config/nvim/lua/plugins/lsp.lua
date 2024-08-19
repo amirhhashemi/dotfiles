@@ -121,6 +121,7 @@ return {
 				"prismals",
 				"yamlls",
 				"gopls",
+				"bashls",
 			}
 
 			for _, server in pairs(servers) do
