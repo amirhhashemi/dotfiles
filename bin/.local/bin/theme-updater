@@ -1,9 +1,7 @@
 #!/bin/bash
 
-LIGHT_BACKGROUND="$HOME/.local/share/backgrounds/nature.jpg"
-LIGHT_BACKGROUND_URI="file://$LIGHT_BACKGROUND"
-DARK_BACKGROUND="$HOME/.local/share/backgrounds/nature-d.jpg"
-DARK_BACKGROUND_URI="file://$DARK_BACKGROUND"
+LIGHT_BACKGROUNDS_DIR="$HOME/.local/share/backgrounds/light"
+DARK_BACKGROUNDS_DIR="$HOME/.local/share/backgrounds/dark"
 LIGHT_THEME="rose-pine-dawn"
 DARK_THEME="kanagawa-dragon"
 ZELLIJ_CONFIG_DIR="$HOME/.config/zellij"
@@ -21,21 +19,32 @@ log_error() {
     echo "$(date): ERROR - $1" | tee -a "$LOG_FILE" >&2
 }
 
-check_background_files() {
-    if [ ! -f "$LIGHT_BACKGROUND" ]; then
-        log_error "Background file not found at $LIGHT_BACKGROUND"
-        exit 1
-    fi
-    if [ ! -f "$DARK_BACKGROUND" ]; then
-        log_error "Background file not found at $DARK_BACKGROUND"
-        exit 1
-    fi
-}
+set_random_background() {
+    local background_dir
 
-update_background() {
-    gsettings set org.gnome.desktop.background picture-uri "$1"
-    gsettings set org.gnome.desktop.background picture-uri-dark "$1"
-    log "Updated background to $1"
+    if [ "$1" = "dark" ]; then
+        background_dir="$DARK_BACKGROUNDS_DIR"
+    else
+        background_dir="$LIGHT_BACKGROUNDS_DIR"
+    fi
+
+    if [ ! -d "$background_dir" ]; then
+        log_error "Background directory not found at $background_dir"
+        return
+    fi
+
+    background=$(find "$background_dir/" -type f | shuf -n 1)
+
+    if [ -n "$background" ]; then
+        if gsettings set org.gnome.desktop.background picture-uri "file://$background" && \
+           gsettings set org.gnome.desktop.background picture-uri-dark "file://$background"; then
+            log "Updated background to $background"
+        else
+            log_error "Failed to update background to $background"
+        fi
+    else
+        log_error "No backgrounds found in $background_dir"
+    fi
 }
 
 check_config_files() {
@@ -92,29 +101,26 @@ update_neovim_theme() {
 
 
 handle_theme_change() {
-    local new_background
+    local background_theme
     local current_theme="$1"
     local new_theme
 
     if [ "$current_theme" = "Pop-dark" ]; then
-        new_background=$DARK_BACKGROUND_URI
+        background_theme="dark"
         new_theme=$DARK_THEME
     else
-        new_background=$LIGHT_BACKGROUND_URI
+        background_theme="light"
         new_theme=$LIGHT_THEME
     fi
 
-    log "Changing background to $new_background"
-    update_background "$new_background"
-
     log "Changing theme to $new_theme"
+    set_random_background "$background_theme"
     update_zellij_theme "$new_theme"
     update_kitty_theme "$new_theme"
     update_neovim_theme "$new_theme"
 }
 
 main() {
-    check_background_files
     check_config_files
 
     log "Theme updater started"
