@@ -8,3 +8,5 @@
 	sort = -committerdate
 [column]
 	ui = auto
+[core]
+	editor = nvim
