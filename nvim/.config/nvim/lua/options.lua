@@ -4,8 +4,7 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.g.skip_ts_context_commentstring_module = true
 
-vim.o.guifont = "JetBrainsMono NF:h11"
-
+vim.opt.background = ""
 vim.opt.autowrite = true
 vim.opt.clipboard = ""
 vim.opt.cmdheight = 0
@@ -64,14 +63,14 @@ vim.opt.fillchars = {
 	diff = "╱",
 	eob = " ",
 }
-vim.opt.statusline = "%!v:lua.require('utils.statusline').run()"
+vim.opt.statusline = "%!v:lua.require('statusline').run()"
 vim.opt.smoothscroll = true
 vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "v:lua.require'utils'.foldexpr()"
+vim.opt.foldexpr = "v:lua.require'fold-helpers'.foldexpr()"
 vim.opt.foldmethod = "indent"
 vim.opt.foldlevel = 99
-vim.opt.foldtext = "v:lua.require'utils'.foldtext()"
-vim.opt.formatexpr = "v:lua.require'utils'.formatexpr()"
+vim.opt.foldtext = "v:lua.require'fold-helpers'.foldtext()"
+vim.opt.formatexpr = "v:lua.require'fold-helpers'.formatexpr()"
 
 vim.filetype.add({
 	filename = {

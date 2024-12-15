@@ -18,28 +18,35 @@ return {
 		end,
 		opts = {
 			formatters_by_ft = {
+				lua = { "stylua" },
+				html = { "prettierd" },
+				css = { "prettierd" },
 				javascript = { "prettierd" },
 				javascriptreact = { "prettierd" },
 				typescript = { "prettierd" },
 				typescriptreact = { "prettierd" },
-				html = { "prettierd" },
-				css = { "prettierd" },
 				svelte = { "prettierd" },
 				astro = { "prettierd" },
+				php = { "php-cs-fixer" },
+				go = { "gofmt" },
+				python = { "black" },
+				bash = { "shfmt" },
 				json = { "prettierd" },
 				jsonc = { "prettierd" },
-				markdown = { "prettierd" },
-				toml = { "taplo" },
 				yaml = { "yamlfmt" },
-				lua = { "stylua" },
-				python = { "black" },
-				go = { "gofmt" },
-				rust = { "rustfmt" },
-				bash = { "shfmt" },
+				toml = { "taplo" },
+				markdown = { "prettierd" },
+			},
+			default_format_opts = {
+				lsp_format = "fallback",
 			},
 			format_on_save = {
-				lsp_fallback = true,
+				lsp_format = "fallback",
+				timeout_ms = 500,
 			},
+			log_level = vim.log.levels.ERROR,
+			notify_on_error = true,
+			notify_no_formatters = true,
 		},
 	},
 	{
@@ -56,6 +63,7 @@ return {
 				typescriptreact = { "eslint" },
 				svelte = { "eslint" },
 				astro = { "eslint" },
+				python = { "pyright" },
 				bash = { "shellcheck" },
 			}
 
@@ -148,8 +156,8 @@ return {
 			require("Comment").setup({
 				pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
 			})
-			vim.keymap.set("n", "<leader>c", "<Plug>(comment_toggle_linewise_current)")
-			vim.keymap.set("x", "<leader>c", "<Plug>(comment_toggle_linewise_visual)")
+			-- vim.keymap.set("n", "<leader>c", "<Plug>(comment_toggle_linewise_current)")
+			-- vim.keymap.set("x", "<leader>c", "<Plug>(comment_toggle_linewise_visual)")
 		end,
 	},
 	{
@@ -199,14 +207,6 @@ return {
 		"hrsh7th/nvim-cmp",
 		version = false,
 		event = "InsertEnter",
-		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-buffer",
-			"hrsh7th/cmp-path",
-			"L3MON4D3/LuaSnip",
-			"saadparwaiz1/cmp_luasnip",
-			"onsails/lspkind.nvim",
-		},
 		opts = function()
 			local cmp = require("cmp")
 			local lspkind = require("lspkind")
@@ -253,13 +253,18 @@ return {
 	},
 	{
 		"nvim-telescope/telescope.nvim",
-		dependencies = { "nvim-telescope/telescope-fzf-native.nvim" },
 		config = function()
 			local telescope = require("telescope")
 			telescope.setup({
 				pickers = {
 					find_files = {
-						find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/**" },
+						find_command = {
+							"rg",
+							"--files",
+							"--hidden",
+							"--glob",
+							"!**/.git/**",
+						},
 					},
 				},
 				defaults = {
@@ -271,8 +276,6 @@ return {
 						horizontal = {
 							prompt_position = "top",
 						},
-						-- width = 0.99,
-						-- height = 0.99,
 					},
 					file_ignore_patterns = { "node_modules" },
 					path_display = { filename_first = true },
@@ -330,19 +333,19 @@ return {
 		"echasnovski/mini.move",
 		version = "*",
 		event = { "BufRead", "BufWinEnter", "BufNewFile" },
-		config = true,
+		opts = {},
 	},
 	{
 		"echasnovski/mini.ai",
 		version = "*",
 		event = { "BufRead", "BufWinEnter", "BufNewFile" },
-		config = true,
+		opts = {},
 	},
 	{
 		"echasnovski/mini.bracketed",
 		version = "*",
 		event = { "BufRead", "BufWinEnter", "BufNewFile" },
-		config = true,
+		opts = {},
 	},
 	{
 		"windwp/nvim-autopairs",
@@ -355,7 +358,7 @@ return {
 		"echasnovski/mini.surround",
 		version = "*",
 		event = { "BufRead", "BufWinEnter", "BufNewFile" },
-		config = true,
+		opts = {},
 	},
 	{ "mbbill/undotree", cmd = "UndotreeToggle" },
 	{
@@ -384,8 +387,78 @@ return {
 			},
 		},
 	},
-	-- {
-	-- 	"supermaven-inc/supermaven-nvim",
-	-- 	config = true,
-	-- },
+	{
+		"jake-stewart/multicursor.nvim",
+		branch = "1.0",
+		config = function()
+			local mc = require("multicursor-nvim")
+
+			mc.setup()
+
+			local map = vim.keymap.set
+
+			-- Add or skip cursor above/below the main cursor.
+			map({ "n", "v" }, "<leader>k", function()
+				mc.lineAddCursor(-1)
+			end)
+			map({ "n", "v" }, "<leader>j", function()
+				mc.lineAddCursor(1)
+			end)
+
+			-- Add or skip adding a new cursor by matching word/selection
+			map({ "n", "v" }, "<leader>n", function()
+				mc.matchAddCursor(1)
+			end)
+			map({ "n", "v" }, "<leader>N", function()
+				mc.matchAddCursor(-1)
+			end)
+
+			-- Add all matches in the document
+			map({ "n", "v" }, "<leader>A", mc.matchAllAddCursors)
+
+			-- Rotate the main cursor.
+			map({ "n", "v" }, "<up>", mc.prevCursor)
+			map({ "n", "v" }, "<down>", mc.nextCursor)
+
+			-- Easy way to add and remove cursors using the main cursor.
+			map({ "n", "v" }, "<c-q>", mc.toggleCursor)
+
+			map("n", "<esc>", function()
+				if not mc.cursorsEnabled() then
+					mc.enableCursors()
+				elseif mc.hasCursors() then
+					mc.clearCursors()
+				end
+			end)
+
+			-- bring back cursors if you accidentally clear them
+			map("n", "<leader>gv", mc.restoreCursors)
+
+			-- Align cursor columns.
+			map("v", "<leader>m", function()
+				vim.print("yo")
+				mc.alignCursors()
+			end)
+
+			-- Append/insert for each line of visual selections.
+			map("v", "I", mc.insertVisual)
+			map("v", "A", mc.appendVisual)
+
+			-- match new cursors within visual selections by regex.
+			map("v", "M", mc.matchCursors)
+
+			-- Jumplist support
+			map({ "v", "n" }, "<c-i>", mc.jumpForward)
+			map({ "v", "n" }, "<c-o>", mc.jumpBackward)
+
+			-- Customize how cursors look.
+			local hl = vim.api.nvim_set_hl
+			hl(0, "MultiCursorCursor", { link = "Cursor" })
+			hl(0, "MultiCursorVisual", { link = "Visual" })
+			hl(0, "MultiCursorSign", { link = "SignColumn" })
+			hl(0, "MultiCursorDisabledCursor", { link = "Visual" })
+			hl(0, "MultiCursorDisabledVisual", { link = "Visual" })
+			hl(0, "MultiCursorDisabledSign", { link = "SignColumn" })
+		end,
+	},
 }

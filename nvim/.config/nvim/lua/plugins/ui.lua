@@ -1,5 +1,9 @@
 return {
-	{ "NvChad/nvim-colorizer.lua", event = { "BufRead", "BufWinEnter", "BufNewFile" }, config = true },
+	{
+		"NvChad/nvim-colorizer.lua",
+		event = { "BufRead", "BufWinEnter", "BufNewFile" },
+		opts = {},
+	},
 	{
 		"nvim-tree/nvim-web-devicons",
 		config = function()
@@ -134,9 +138,6 @@ return {
 		opts = {
 			excluded_filetypes = { "NvimTree" },
 			handlers = {
-				cursor = {
-					enable = false,
-				},
 				gitsigns = {
 					enable = false,
 				},

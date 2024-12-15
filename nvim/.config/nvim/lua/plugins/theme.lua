@@ -7,15 +7,11 @@ return {
 		opts = {
 			colorscheme = "rose-pine-dawn",
 		},
-		config = function(_, opts)
-			require("colorscheme").setup(opts)
-		end,
 	},
 	{
 		"rose-pine/neovim",
 		name = "rose-pine",
 		lazy = true,
-		priority = 1000,
 		opts = {
 			styles = {
 				italic = false,
@@ -40,7 +36,6 @@ return {
 	{
 		"rebelot/kanagawa.nvim",
 		lazy = true,
-		priority = 1000,
 		opts = {
 			overrides = function(colors)
 				local theme = colors.theme
@@ -80,7 +75,6 @@ return {
 	{
 		"folke/tokyonight.nvim",
 		lazy = true,
-		priority = 1000,
 		opts = {
 			on_highlights = function(hl, c)
 				local prompt = "#2d3149"
@@ -118,7 +112,6 @@ return {
 		"catppuccin/nvim",
 		name = "catppuccin",
 		lazy = true,
-		priority = 1000,
 		opts = {
 			background = {
 				light = "latte",

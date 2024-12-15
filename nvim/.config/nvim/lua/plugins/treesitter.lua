@@ -1,7 +1,7 @@
 return {
 	{
 		"windwp/nvim-ts-autotag",
-		config = true,
+		opts = {},
 	},
 	{
 		"nvim-treesitter/nvim-treesitter-context",
