@@ -33,6 +33,8 @@ set fish_cursor_replace_one underscore
 set fish_cursor_visual block
 bind --mode insert --sets-mode default jk repaint
 
+set -gx EDITOR nvim
+
 set -gx PATH "$HOME/.local/bin" $PATH
 
 # pnpm
@@ -54,4 +56,9 @@ zoxide init fish | source
  
 # go
 set -gx PATH "/usr/local/go/bin" $PATH
+set -gx PATH "$HOME/go/bin" $PATH
 # go end
+
+# zig
+set -gx PATH "$HOME/zig" $PATH
+# zig end
