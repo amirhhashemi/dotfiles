@@ -1,0 +1,115 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+	{
+		"context": "vim_mode == normal",
+		"bindings": {
+			"shift-y": ["workspace::SendKeystrokes", "y $"],
+			"g y": ["workspace::SendKeystrokes", "\" + y"],
+			"g shift-y": ["workspace::SendKeystrokes", "\" + y $"],
+			"g p": ["workspace::SendKeystrokes", "\" + p"],
+			"g shift-p": ["workspace::SendKeystrokes", "\" + shift-p"],
+			"c": ["workspace::SendKeystrokes", "\" _ c"],
+			"shift-c": ["workspace::SendKeystrokes", "\" _ shift-c"],
+			"shift-x": ["workspace::SendKeystrokes", "\" _ x"],
+			"space e": "project_panel::ToggleFocus",
+			"space g": "git_panel::ToggleFocus",
+			"space s": "outline_panel::ToggleFocus",
+			"space a": "assistant::ToggleFocus",
+			"space r": "workspace::ToggleRightDock",
+			"space l": "workspace::ToggleLeftDock"
+		}
+	},
+	{
+		"context": "vim_mode == insert",
+		"bindings": {
+			"j k": "vim::NormalBefore"
+		}
+	},
+	{
+		"context": "vim_mode == visual",
+		"bindings": {
+			"g y": ["workspace::SendKeystrokes", "\" + y"],
+			"g p": ["workspace::SendKeystrokes", "\" _ d \" + shift-p"],
+			"g shift-p": ["workspace::SendKeystrokes", "\" + shift-p"],
+			"p": ["vim::Paste", { "preserve_clipboard": true }],
+			"shift-x": ["workspace::SendKeystrokes", "\" _ x"]
+		}
+	},
+	{
+		"context": "VimControl && !menu",
+		"bindings": {
+			"space space": "pane::AlternateFile",
+			"n": ["workspace::SendKeystrokes", "n z z z v"],
+			"shift-n": ["workspace::SendKeystrokes", "shift-n z z z v"],
+			"ctrl-u": ["workspace::SendKeystrokes", "ctrl-u z z"],
+			"ctrl-d": ["workspace::SendKeystrokes", "ctrl-d z z"],
+			"alt-k": "editor::MoveLineUp",
+			"alt-j": "editor::MoveLineDown",
+			"space f": "file_finder::Toggle"
+		}
+	},
+	{
+		"context": "VimControl && !menu && vim_operator != cs",
+		"bindings": {
+			"'": ["vim::PushJump", { "line": false }]
+		}
+	},
+	{
+		"context": "ProjectPanel && not_editing",
+		"bindings": {
+			"space e": "workspace::ToggleRightDock",
+			"space g": "git_panel::ToggleFocus",
+			"space s": "outline_panel::ToggleFocus"
+		}
+	},
+	{
+		"context": "GitPanel && ChangesList",
+		"bindings": {
+			"space": null,
+			"space g": "workspace::ToggleRightDock",
+			"space e": "project_panel::ToggleFocus",
+			"space s": "outline_panel::ToggleFocus"
+		}
+	},
+	{
+		"context": "OutlinePanel && not_editing",
+		"bindings": {
+			"space s": "workspace::ToggleRightDock",
+			"space e": "project_panel::ToggleFocus",
+			"space g": "git_panel::ToggleFocus"
+		}
+	},
+	{
+		"context": "(ProjectPanel && not_editing) || (GitPanel && ChangesList) || (OutlinePanel && not_editing)",
+		"bindings": {
+			"space r": "workspace::ToggleRightDock"
+		}
+	},
+	{
+		"context": "AssistantPanel",
+		"bindings": {
+			"space a": "workspace::ToggleLeftDock"
+		}
+	},
+	{
+		"context": "Workspace && not_editing",
+		"bindings": {
+			"space t": "terminal_panel::ToggleFocus"
+		}
+	},
+	{
+		"context": "Dock || GitPanel || ProjectPanel || CollabPanel || OutlinePanel || ChatPanel || VimControl || EmptyPane || SharedScreen || MarkdownPreview || KeyContextView",
+		"bindings": {
+			"ctrl-h": "workspace::ActivatePaneLeft",
+			"ctrl-l": "workspace::ActivatePaneRight",
+			"ctrl-k": "workspace::ActivatePaneUp",
+			"ctrl-j": "workspace::ActivatePaneDown"
+		}
+	}
+]

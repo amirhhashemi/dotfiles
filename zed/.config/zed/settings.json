@@ -1,0 +1,154 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette
+{
+	// Theme and Font Settings
+	"theme": {
+		"mode": "system",
+		"light": "My Light Theme",
+		"dark": "My Dark Theme"
+	},
+	"ui_font_family": "JetBrainsMono Nerd Font",
+	"buffer_font_family": "JetBrainsMono Nerd Font",
+	"ui_font_size": 14,
+	"buffer_font_size": 13,
+
+	// UI Layout and Appearance
+	"outline_panel": {
+		"dock": "right"
+	},
+	"git_panel": {
+		"dock": "right"
+	},
+	"project_panel": {
+		"dock": "right"
+	},
+	"tab_bar": {
+		"show_tab_bar_buttons": false,
+		"show_nav_history_buttons": false
+	},
+	"toolbar": {
+		"breadcrumbs": true,
+		"quick_actions": false,
+		"selections_menu": false
+	},
+	"pane_split_direction_horizontal": "down",
+	"pane_split_direction_vertical": "right",
+
+	// Editor Behavior
+	"tab_size": 2,
+	"hard_tabs": true,
+	"cursor_blink": false,
+	"relative_line_numbers": true,
+	"vertical_scroll_margin": 5,
+	"soft_wrap": "editor_width",
+	"wrap_guides": [80],
+	"show_completions_on_input": false,
+	"show_edit_predictions": false,
+
+	// Vim Settings
+	"vim_mode": true,
+	"vim": {
+		"use_system_clipboard": "never",
+		"use_smartcase_find": true
+	},
+
+	// Git Settings
+	"git": {
+		"inline_blame": {
+			"enabled": false,
+			"show_commit_summary": true
+		}
+	},
+
+	// Terminal Settings
+	"terminal": {
+		"toolbar": {
+			"breadcrumbs": false
+		}
+	},
+
+	// Search Settings
+	"search": {
+		"regex": true
+	},
+	"use_smartcase_search": true,
+	"seed_search_query_from_cursor": "selection",
+
+	// Extensions
+	"auto_install_extensions": {
+		"html": true,
+		"astro": true,
+		"svelte": true,
+		"make": true,
+		"dockerfile": true
+	},
+
+	// Assistant Settings
+	"assistant": {
+		"always_allow_tool_actions": true,
+		"default_profile": "write",
+		"dock": "left",
+		"profiles": {
+			"ask": {
+				"name": "Ask",
+				"tools": {
+					"symbol_info": true,
+					"batch_tool": true,
+					"code_symbols": true,
+					"contents": true,
+					"diagnostics": true,
+					"fetch": true,
+					"list_directory": true,
+					"now": true,
+					"path_search": true,
+					"read_file": true,
+					"grep": true,
+					"thinking": true,
+					"web_search": true,
+					"code_actions": true
+				},
+				"enable_all_context_servers": false,
+				"context_servers": {}
+			},
+			"write": {
+				"name": "Write",
+				"tools": {
+					"terminal": true,
+					"batch_tool": true,
+					"code_symbols": true,
+					"copy_path": true,
+					"create_file": true,
+					"delete_path": true,
+					"diagnostics": true,
+					"edit_file": true,
+					"fetch": true,
+					"list_directory": true,
+					"move_path": true,
+					"now": true,
+					"path_search": true,
+					"read_file": true,
+					"grep": true,
+					"symbol_info": true,
+					"thinking": true,
+					"create_directory": true
+				},
+				"enable_all_context_servers": true,
+				"context_servers": {}
+			}
+		},
+		"default_model": {
+			"provider": "zed.dev",
+			"model": "claude-3-7-sonnet-thinking-latest"
+		},
+		"version": "2"
+	},
+
+	// Misc
+	"proxy": "http://127.0.0.1:20171"
+}
