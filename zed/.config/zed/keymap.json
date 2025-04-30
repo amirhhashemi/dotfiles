@@ -44,6 +44,7 @@
 	{
 		"context": "VimControl && !menu",
 		"bindings": {
+			"space f": "file_finder::Toggle",
 			"space space": "pane::AlternateFile",
 			"n": ["workspace::SendKeystrokes", "n z z z v"],
 			"shift-n": ["workspace::SendKeystrokes", "shift-n z z z v"],
@@ -51,13 +52,13 @@
 			"ctrl-d": ["workspace::SendKeystrokes", "ctrl-d z z"],
 			"alt-k": "editor::MoveLineUp",
 			"alt-j": "editor::MoveLineDown",
-			"space f": "file_finder::Toggle"
+			"'": ["vim::PushJump", { "line": false }]
 		}
 	},
 	{
-		"context": "VimControl && !menu && vim_operator != cs",
+		"context": "vim_operator == a || vim_operator == i || vim_operator == cs",
 		"bindings": {
-			"'": ["vim::PushJump", { "line": false }]
+			"'": "vim::Quotes"
 		}
 	},
 	{
